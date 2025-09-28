@@ -1,0 +1,12 @@
+@keyframes slide-in-left-to-right {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.tab-active {
+  animation: slide-in-left-to-right 0.5s ease forwards;
+}
