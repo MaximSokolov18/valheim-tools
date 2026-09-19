@@ -30,3 +30,4 @@ export {
 export { hexToHsv, hsvToHex } from './hsv-color';
 export type { Hsv } from './hsv-color';
 export { showSelectionHighlight, hideSelectionHighlight } from './selection-highlight';
+export { translateSignText, SIGN_CHAR_LIMIT } from './translate-sign-text';

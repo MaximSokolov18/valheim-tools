@@ -1,5 +1,6 @@
 import { Board } from './board';
 import { Toolbar } from './toolbar';
+import { CopySignPanel } from './copy-sign-panel';
 import { SignEditorProvider } from '../model';
 
 export const SignEditorPage = () => {
@@ -10,7 +11,7 @@ export const SignEditorPage = () => {
             >
                 <Toolbar />
                 <Board />
-                <div>Copy sign feature</div>
+                <CopySignPanel />
             </div>
         </SignEditorProvider>
     );
