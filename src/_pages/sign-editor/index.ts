@@ -1,0 +1,1 @@
+export {SignEditorPage as default} from './ui/sign-editor'
