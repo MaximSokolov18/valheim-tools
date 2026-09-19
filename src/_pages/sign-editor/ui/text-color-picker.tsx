@@ -185,7 +185,7 @@ export const TextColorPicker = () => {
             <Popover.Trigger
                 aria-label={activeColor == null ? 'Text color' : `Text color: ${activeColor}`}
                 onMouseDown={preventFocusSteal}
-                className="flex flex-col items-center justify-center gap-0.5 h-7 min-w-7 rounded-[calc(var(--radius-md)-2px)] px-1.5 text-xs font-bold outline-hidden select-none hover:bg-muted aria-expanded:bg-muted"
+                className="flex flex-col items-center justify-center gap-0.5 h-7 min-w-7 rounded-[calc(var(--radius-md)-2px)] px-1.5 text-xs font-bold outline-hidden select-none bg-control text-control-foreground transition-colors hover:bg-control-hover aria-expanded:bg-control-active aria-expanded:text-control-active-foreground"
             >
                 <span aria-hidden>A</span>
                 <span

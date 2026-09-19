@@ -15,8 +15,10 @@ export const ToolbarButton = ({ children, isActive = false, className, ...props 
         className={cn(
             'flex justify-center items-center aspect-square min-w-7 rounded-[calc(var(--radius-md)-2px)]',
             'px-2 py-[calc(--spacing(0.85))] text-xs/relaxed font-bold outline-hidden select-none',
-            'hover:bg-muted aria-expanded:bg-muted',
-            isActive && 'bg-primary/90 text-primary-foreground hover:bg-primary/90',
+            'bg-control text-control-foreground transition-colors',
+            'hover:bg-control-hover aria-expanded:bg-control-hover',
+            isActive &&
+                'bg-control-active text-control-active-foreground hover:bg-control-active aria-expanded:bg-control-active',
             className,
         )}
         {...props}
