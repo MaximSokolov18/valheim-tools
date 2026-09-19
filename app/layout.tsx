@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import localFont from 'next/font/local'
 import "./globals.css";
 import {cn} from "lib/utils";
+import { ThemeProvider, THEME_INIT_SCRIPT } from "@/shared/model";
 
 
 const norse = localFont({
@@ -22,9 +24,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", norse.className, norse.variable, "dark", "text-xl")}
+      suppressHydrationWarning
+      className={cn("h-full", "antialiased", norse.className, norse.variable, "text-xl")}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

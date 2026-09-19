@@ -6,6 +6,7 @@ import { ToolbarButton } from './toolbar-button';
 import { TextColorPicker } from './text-color-picker';
 import { useSignEditor } from '../model';
 import { toggleBold } from '../lib';
+import { ThemeToggle } from '../../../shared/ui';
 
 export const Toolbar = () => {
     const editor = useSignEditor();
@@ -27,6 +28,7 @@ export const Toolbar = () => {
             </ToolbarButton>
             <TextColorPicker />
             {/*<FontSizeSelect />*/}
+            <ThemeToggle className="ml-auto" />
         </div>
     );
 };
