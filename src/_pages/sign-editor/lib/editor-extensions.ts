@@ -2,6 +2,7 @@ import { StarterKit } from '@tiptap/starter-kit';
 import { Placeholder } from '@tiptap/extensions';
 import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import type { Extensions } from '@tiptap/core';
+import { SelectionHighlight } from './selection-highlight';
 
 /**
  * The extension set for the sign editor.
@@ -11,7 +12,8 @@ import type { Extensions } from '@tiptap/core';
  * switched off here. `TextStyle` is the shared `<span style>` mark; `FontSize`
  * adds the `fontSize` attribute and `Color` adds the `color` attribute to
  * that same mark. Adding italic / underline later means flipping a flag
- * below or appending an extension to the array.
+ * below or appending an extension to the array. `SelectionHighlight` keeps
+ * the selection visible while the color picker's hex input has focus.
  */
 export const signEditorExtensions: Extensions = [
     StarterKit.configure({
@@ -34,4 +36,5 @@ export const signEditorExtensions: Extensions = [
     FontSize,
     Color,
     Placeholder.configure({ placeholder: 'Carve your rune…' }),
+    SelectionHighlight,
 ];

@@ -1,5 +1,12 @@
 export { signEditorExtensions } from './editor-extensions';
-export { toggleBold, setFontSize, clearFontSize, setTextColor, clearTextColor } from './commands';
+export {
+    toggleBold,
+    setFontSize,
+    clearFontSize,
+    setTextColor,
+    setTextColorTransient,
+    unsetTextColorTransient,
+} from './commands';
 export { resolveClickSelection } from './resolve-click-selection';
 export { computeAutoFitFontSize } from './auto-fit-font-size';
 export type { FontSizeFitCheck } from './auto-fit-font-size';
@@ -13,4 +20,13 @@ export {
     formatFontSize,
     resolveActiveFontSize,
 } from './font-size';
-export { TEXT_COLOR_PRESETS, isValidHexColor, normalizeHexColor, resolveActiveColor } from './text-color';
+export {
+    TEXT_COLOR_PRESETS,
+    DEFAULT_TEXT_COLOR,
+    isValidHexColor,
+    normalizeHexColor,
+    resolveActiveColor,
+} from './text-color';
+export { hexToHsv, hsvToHex } from './hsv-color';
+export type { Hsv } from './hsv-color';
+export { showSelectionHighlight, hideSelectionHighlight } from './selection-highlight';

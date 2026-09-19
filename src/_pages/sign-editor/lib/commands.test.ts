@@ -1,9 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { signEditorExtensions } from './editor-extensions';
-import { toggleBold, setFontSize, clearFontSize, setTextColor, clearTextColor } from './commands';
+import {
+    toggleBold,
+    setFontSize,
+    clearFontSize,
+    setTextColor,
+    setTextColorTransient,
+    unsetTextColorTransient,
+} from './commands';
 import { resolveActiveFontSize } from './font-size';
-import { resolveActiveColor } from './text-color';
+import { resolveActiveColor, DEFAULT_TEXT_COLOR } from './text-color';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });
@@ -172,7 +179,7 @@ describe('setTextColor', () => {
         setTextColor(editor, '#ff0000');
 
         editor.commands.setTextSelection({ from: 1, to: 1 });
-        expect(resolveActiveColor(editor)).toBeNull();
+        expect(resolveActiveColor(editor)).toBe(DEFAULT_TEXT_COLOR);
 
         editor.view.dispatch(editor.state.tr.insertText('Y'));
         expect(editor.getHTML()).toBe('<p>Yhello</p>');
@@ -190,18 +197,71 @@ describe('setTextColor', () => {
     });
 });
 
-describe('clearTextColor', () => {
-    it('removes the color and leaves no empty span', () => {
-        const editor = makeEditor('<p><span style="color: #ff0000">hello</span></p>');
+describe('setTextColorTransient', () => {
+    it('applies the color without creating an undo step', () => {
+        const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        clearTextColor(editor);
+        setTextColorTransient(editor, '#ff0000');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(255, 0, 0);">hello</span></p>');
+        expect(editor.can().undo()).toBe(false);
+    });
+
+    it('rejects an invalid color and leaves the document unchanged', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        expect(setTextColorTransient(editor, 'notacolor')).toBe(false);
         expect(editor.getHTML()).toBe('<p>hello</p>');
     });
 
-    it('is a no-op on already-uncolored text and pushes no undo step', () => {
+    it('leaves an earlier recorded color separately undoable, once the drag rolls back to it before committing', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        expect(clearTextColor(editor)).toBe(false);
+        setTextColor(editor, '#ff0000');
+
+        setTextColorTransient(editor, '#00ff00');
+        setTextColorTransient(editor, '#0000ff');
+        // The drag's commit step, mirroring `endDrag` in the UI: roll back to
+        // the pre-drag color transiently, so the real `setTextColor` below
+        // records a clean red -> green transition rather than one from
+        // whatever transient color the drag last landed on.
+        setTextColorTransient(editor, '#ff0000');
+        setTextColor(editor, '#00ff00');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(0, 255, 0);">hello</span></p>');
+
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(255, 0, 0);">hello</span></p>');
+
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p>hello</p>');
+    });
+});
+
+describe('unsetTextColorTransient', () => {
+    it('removes the color without creating an undo step', () => {
+        const editor = makeEditor('<p><span style="color: #ff0000">hello</span></p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        unsetTextColorTransient(editor);
+        expect(editor.getHTML()).toBe('<p>hello</p>');
+        expect(editor.can().undo()).toBe(false);
+    });
+});
+
+describe('a drag: transient moves followed by a real commit', () => {
+    it('collapses into exactly one undo step, back to the pre-drag color', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+
+        setTextColorTransient(editor, '#111111');
+        setTextColorTransient(editor, '#222222');
+        setTextColorTransient(editor, '#333333');
+        expect(editor.can().undo()).toBe(false);
+
+        unsetTextColorTransient(editor);
+        setTextColor(editor, '#333333');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(51, 51, 51);">hello</span></p>');
+
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p>hello</p>');
         expect(editor.can().undo()).toBe(false);
     });
 });

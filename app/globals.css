@@ -153,4 +153,12 @@
     .tiptap strong {
         font-weight: 700;
     }
+
+    /* Stands in for the native text-selection highlight while the color
+       picker's hex input holds focus (see selection-highlight.ts) — focusing
+       a plain form control collapses the browser's Selection, which would
+       otherwise make the selected text look deselected. */
+    .tiptap .sign-editor-force-selection {
+        background-color: color-mix(in oklab, var(--primary) 35%, transparent);
+    }
 }

@@ -1,7 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { signEditorExtensions } from './editor-extensions';
-import { TEXT_COLOR_PRESETS, isValidHexColor, normalizeHexColor, resolveActiveColor } from './text-color';
+import {
+    TEXT_COLOR_PRESETS,
+    DEFAULT_TEXT_COLOR,
+    isValidHexColor,
+    normalizeHexColor,
+    resolveActiveColor,
+} from './text-color';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });
@@ -65,10 +71,10 @@ describe('resolveActiveColor', () => {
         expect(resolveActiveColor(editor)).toBeNull();
     });
 
-    it('returns null when the selection has no color', () => {
+    it('returns the default white when the selection has no color', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        expect(resolveActiveColor(editor)).toBeNull();
+        expect(resolveActiveColor(editor)).toBe(DEFAULT_TEXT_COLOR);
     });
 
     it('returns null for a selection spanning two different colors', () => {

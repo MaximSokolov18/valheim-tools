@@ -12,6 +12,9 @@ export const TEXT_COLOR_PRESETS: readonly { label: string; hex: string }[] = [
     { label: 'Purple', hex: '#8e24aa' },
 ];
 
+/** The color a sign's text has until the user explicitly picks another one. */
+export const DEFAULT_TEXT_COLOR = '#ffffff';
+
 const HEX_COLOR_PATTERN = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
 /** `true` for a `#rgb` or `#rrggbb` string (case-insensitive), else `false`. */
@@ -37,9 +40,10 @@ export const normalizeHexColor = (value: string): string | null => {
 };
 
 /**
- * The color that applies to the entire current selection, or `null` when the
- * selection has no color or mixes colors — in which case the picker shows a
- * "no color" trigger state.
+ * The color that applies to the entire current selection: the explicit color
+ * when the whole selection shares one, `DEFAULT_TEXT_COLOR` when none of the
+ * selection has an explicit color, or `null` when the selection mixes colors
+ * — in which case the picker shows a "no color" trigger state.
  *
  * `getAttributes('textStyle').color` gives the raw color string at one edge of
  * the selection; `isActive('textStyle', { color })` against that same raw
@@ -50,9 +54,12 @@ export const normalizeHexColor = (value: string): string | null => {
  */
 export const resolveActiveColor = (editor: Editor): string | null => {
     const raw = editor.getAttributes('textStyle').color as string | undefined;
-    const normalized = raw == null ? null : normalizeHexColor(raw);
+    if (raw == null) {
+        return DEFAULT_TEXT_COLOR;
+    }
+    const normalized = normalizeHexColor(raw);
     if (normalized == null) {
-        return null;
+        return DEFAULT_TEXT_COLOR;
     }
     return editor.isActive('textStyle', { color: raw }) ? normalized : null;
 };

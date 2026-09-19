@@ -57,14 +57,54 @@ export const setTextColor = (editor: Editor, hex: string): boolean => {
 };
 
 /**
- * Remove the text color from the selection (the picker's "Automatic" entry)
- * so the run falls back to the sign's default text color. Early-returns
- * `false` when the selection carries no color, so choosing "Automatic" on
- * already-uncolored text does not push an empty undo step.
+ * Like `setTextColor`, but the transaction is excluded from undo/redo
+ * history (`addToHistory: false`) — for live feedback while dragging the
+ * color-picker's saturation/value square or hue slider, or while typing in
+ * its hex input, where every pointer move or keystroke would otherwise push
+ * its own undo step.
+ *
+ * Deliberately skips `.focus()` (unlike `setTextColor`): focusing the editor
+ * schedules `view.focus()` for the next animation frame whenever the view
+ * doesn't already have it (see TipTap's `focus` command), which would yank
+ * focus away from the hex input on every keystroke and make it unusable.
+ * Since a mark applies to `editor.state.selection` regardless of DOM focus,
+ * skipping it doesn't change what gets colored.
+ *
+ * At the end of the drag or edit, first roll back to the pre-preview color
+ * with this function (or `unsetTextColorTransient` if there was none) and
+ * only then call `setTextColor` for the final value — that records one clean
+ * step from the pre-preview color to the chosen one. Calling `setTextColor`
+ * directly mid-preview would instead record a step *from whatever the
+ * preview last landed on*, since `addMark`'s invert targets that specific
+ * mark instance: once a later transient call has replaced it, an earlier
+ * recorded step's undo can silently no-op.
  */
-export const clearTextColor = (editor: Editor): boolean => {
-    if (editor.getAttributes('textStyle').color == null) {
+export const setTextColorTransient = (editor: Editor, hex: string): boolean => {
+    const normalized = normalizeHexColor(hex);
+    if (normalized == null) {
         return false;
     }
-    return editor.chain().focus().unsetColor().run();
+    return editor
+        .chain()
+        .command(({ tr }) => {
+            tr.setMeta('addToHistory', false);
+            return true;
+        })
+        .setColor(normalized)
+        .run();
 };
+
+/**
+ * The inverse of `setTextColorTransient` — removes the color transiently, so
+ * a drag or edit that started with no explicit color can be rolled back to
+ * that state before the real, recorded commit is applied.
+ */
+export const unsetTextColorTransient = (editor: Editor): boolean =>
+    editor
+        .chain()
+        .command(({ tr }) => {
+            tr.setMeta('addToHistory', false);
+            return true;
+        })
+        .unsetColor()
+        .run();

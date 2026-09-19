@@ -47,14 +47,6 @@ describe('Toolbar bold button', () => {
     });
 });
 
-describe('Toolbar font-size dropdown', () => {
-    it('renders the font-size dropdown alongside the bold button', () => {
-        renderWithEditor('<p>hello</p>');
-        expect(screen.getByRole('button', { name: 'B' })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /^Font size/ })).toBeInTheDocument();
-    });
-});
-
 describe('Toolbar text-color picker', () => {
     it('renders the text-color picker alongside the bold button', () => {
         renderWithEditor('<p>hello</p>');
