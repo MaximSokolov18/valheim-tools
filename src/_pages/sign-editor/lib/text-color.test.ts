@@ -6,6 +6,7 @@ import {
     DEFAULT_TEXT_COLOR,
     isValidHexColor,
     normalizeHexColor,
+    shortenHexColor,
     resolveActiveColor,
 } from './text-color';
 
@@ -15,14 +16,14 @@ const makeEditor = (content: string) =>
 describe('TEXT_COLOR_PRESETS', () => {
     it('is the agreed 8-color palette', () => {
         expect(TEXT_COLOR_PRESETS).toEqual([
-            { label: 'Black', hex: '#000000' },
+            { label: 'Red', hex: '#ff0000' },
+            { label: 'Cyan', hex: '#00ffff' },
+            { label: 'Green', hex: '#00ff00' },
+            { label: 'Yellow', hex: '#ffff00' },
+            { label: 'Orange', hex: '#ffa500' },
+            { label: 'Magenta', hex: '#ff00ff' },
             { label: 'White', hex: '#ffffff' },
-            { label: 'Red', hex: '#e53935' },
-            { label: 'Orange', hex: '#fb8c00' },
-            { label: 'Yellow', hex: '#fdd835' },
-            { label: 'Green', hex: '#43a047' },
-            { label: 'Blue', hex: '#1e88e5' },
-            { label: 'Purple', hex: '#8e24aa' },
+            { label: 'Blue', hex: '#0000ff' },
         ]);
     });
 });
@@ -55,6 +56,19 @@ describe('normalizeHexColor', () => {
     it('returns null for invalid input', () => {
         expect(normalizeHexColor('notacolor')).toBeNull();
         expect(normalizeHexColor('')).toBeNull();
+    });
+});
+
+describe('shortenHexColor', () => {
+    it('shortens to 3 digits when every channel\'s pair matches', () => {
+        expect(shortenHexColor('#ff66ff')).toBe('#f6f');
+        expect(shortenHexColor('#aabbcc')).toBe('#abc');
+        expect(shortenHexColor('#000000')).toBe('#000');
+    });
+
+    it('keeps 6 digits when any channel cannot be shortened', () => {
+        expect(shortenHexColor('#ff6612')).toBe('#ff6612');
+        expect(shortenHexColor('#123456')).toBe('#123456');
     });
 });
 

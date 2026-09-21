@@ -26,7 +26,7 @@ const isDragging = (event: ReactPointerEvent): boolean => (event.buttons & 1) ==
 
 /**
  * Word-style text-color control for the toolbar. The trigger swatch shows the
- * color that covers the whole selection — white by default, per
+ * color that covers the whole selection — black by default, per
  * `resolveActiveColor` — or a "no color" outline when colors are mixed. The
  * popover holds a preset swatch grid, a mouse-driven saturation/value square
  * and hue slider, and a free hex input that live-previews as you type. Like

@@ -2,18 +2,18 @@ import type { Editor } from '@tiptap/core';
 
 /** Preset swatches shown in the picker, standard web colors. */
 export const TEXT_COLOR_PRESETS: readonly { label: string; hex: string }[] = [
-    { label: 'Black', hex: '#000000' },
+    { label: 'Red', hex: '#ff0000' },
+    { label: 'Cyan', hex: '#00ffff' },
+    { label: 'Green', hex: '#00ff00' },
+    { label: 'Yellow', hex: '#ffff00' },
+    { label: 'Orange', hex: '#ffa500' },
+    { label: 'Magenta', hex: '#ff00ff' },
     { label: 'White', hex: '#ffffff' },
-    { label: 'Red', hex: '#e53935' },
-    { label: 'Orange', hex: '#fb8c00' },
-    { label: 'Yellow', hex: '#fdd835' },
-    { label: 'Green', hex: '#43a047' },
-    { label: 'Blue', hex: '#1e88e5' },
-    { label: 'Purple', hex: '#8e24aa' },
+    { label: 'Blue', hex: '#0000ff' },
 ];
 
 /** The color a sign's text has until the user explicitly picks another one. */
-export const DEFAULT_TEXT_COLOR = '#ffffff';
+export const DEFAULT_TEXT_COLOR = '#000000';
 
 const HEX_COLOR_PATTERN = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 
@@ -37,6 +37,20 @@ export const normalizeHexColor = (value: string): string | null => {
                   .join('')
             : hex;
     return `#${expanded}`;
+};
+
+/**
+ * Shortens a normalized `#rrggbb` hex to `#rgb` when every channel's two
+ * digits match (`#ff66ff` -> `#f6f`), saving 3 characters toward
+ * `SIGN_CHAR_LIMIT` in the sign markup. Returns the input unchanged when a
+ * channel's digits differ, since the shorthand can't represent it.
+ */
+export const shortenHexColor = (hex: string): string => {
+    const [r1, r2, g1, g2, b1, b2] = hex.slice(1);
+    if (r1 !== r2 || g1 !== g2 || b1 !== b2) {
+        return hex;
+    }
+    return `#${r1}${g1}${b1}`;
 };
 
 /**

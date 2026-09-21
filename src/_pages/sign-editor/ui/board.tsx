@@ -3,8 +3,13 @@
 import { useRef, type MouseEvent } from 'react';
 import { EditorContent } from '@tiptap/react';
 import { useSignEditor } from '../model';
-import { resolveClickSelection } from '../lib';
-import { BORDER_ID } from './constants';
+import {
+    resolveClickSelection,
+    GAME_COLOR_FILTER,
+    GAME_COLOR_FILTER_ID,
+    GAME_COLOR_MATRIX_VALUES,
+} from '../lib';
+import { BORDER_ID, TEXT_AREA_ID } from './constants';
 import { useAutoFitFontSize } from './use-auto-fit-font-size';
 
 /**
@@ -88,9 +93,16 @@ export const Board = () => {
             onClick={handleBoardClick}
             className="max-w-250 w-full aspect-2/1 bg-center relative flex items-center justify-center bg-[url(/images/board-light.png)] dark:bg-[url(/images/board.png)] bg-no-repeat bg-contain"
         >
+            <svg width="0" height="0" aria-hidden focusable="false" className="absolute">
+                <filter id={GAME_COLOR_FILTER_ID} colorInterpolationFilters="sRGB">
+                    <feColorMatrix type="matrix" values={GAME_COLOR_MATRIX_VALUES} />
+                </filter>
+            </svg>
             <div
+                id={TEXT_AREA_ID}
                 ref={textAreaRef}
-                className="w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-white"
+                className="w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-black"
+                style={{ filter: GAME_COLOR_FILTER }}
             >
                 <EditorContent editor={editor} className="w-full" />
             </div>

@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { render, act, fireEvent } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions } from '../lib';
+import { signEditorExtensions, GAME_COLOR_FILTER_ID, GAME_COLOR_MATRIX_VALUES } from '../lib';
 import { Board } from './board';
-import { BORDER_ID } from './constants';
+import { BORDER_ID, TEXT_AREA_ID } from './constants';
 
 // jsdom has no layout, so ProseMirror's own mousedown handler (which calls
 // `posAtCoords` -> `elementFromPoint`) needs a stub to avoid throwing.
@@ -84,5 +84,22 @@ describe('Board', () => {
 
         expect(editor.state.selection.from).toBe(selectionAtRelease.from);
         expect(editor.state.selection.to).toBe(selectionAtRelease.to);
+    });
+});
+
+describe('Board color mode', () => {
+    it('applies the game-color filter to the text area', () => {
+        const { board } = renderWithEditor('<p>hello</p>');
+        const textArea = board.querySelector(`#${TEXT_AREA_ID}`) as HTMLElement;
+        // The CSSOM re-serializes `url(#id)` with quotes around the fragment
+        // reference once it's read back from `style.filter`.
+        expect(textArea.style.filter).toBe(`url("#${GAME_COLOR_FILTER_ID}")`);
+    });
+
+    it('renders the feColorMatrix that GAME_COLOR_FILTER references, with the exact calibrated matrix', () => {
+        const { board } = renderWithEditor('<p>hello</p>');
+        const matrix = board.querySelector('feColorMatrix');
+        expect(matrix?.getAttribute('type')).toBe('matrix');
+        expect(matrix?.getAttribute('values')).toBe(GAME_COLOR_MATRIX_VALUES);
     });
 });
