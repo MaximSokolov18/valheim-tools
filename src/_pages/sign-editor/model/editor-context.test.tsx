@@ -34,6 +34,21 @@ describe('SignEditorProvider', () => {
         expect(editorClass).not.toMatch(/text-\[\d+px\]/);
     });
 
+    it('falls back to Noto Emoji for glyphs the Norse font has no rune for', () => {
+        let captured: Editor | null = null;
+        render(
+            <SignEditorProvider>
+                <Probe onEditor={(editor) => (captured = editor)} />
+            </SignEditorProvider>,
+        );
+        const attributes = (captured as Editor | null)?.options.editorProps.attributes;
+        const editorClass = String(
+            (typeof attributes === 'function' ? '' : attributes?.['class']) ?? '',
+        );
+        expect(editorClass).toContain('var(--font-norse)');
+        expect(editorClass).toContain('var(--font-noto-emoji)');
+    });
+
     it('blocks native drag-and-drop of the current selection', () => {
         let captured: Editor | null = null;
         render(

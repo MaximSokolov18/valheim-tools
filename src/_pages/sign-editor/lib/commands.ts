@@ -108,3 +108,13 @@ export const unsetTextColorTransient = (editor: Editor): boolean =>
         })
         .unsetColor()
         .run();
+
+/**
+ * Inserts `char` at the current selection — replacing it if non-empty, or
+ * at the collapsed caret otherwise. Unlike `setFontSize`/`setTextColor`,
+ * this isn't a toggleable "apply to selection" operation, so one function
+ * covers both cases: TipTap's `insertContent` already does the right thing
+ * for a collapsed vs. a live selection.
+ */
+export const insertEmoji = (editor: Editor, char: string): boolean =>
+    editor.chain().focus().insertContent(char).run();

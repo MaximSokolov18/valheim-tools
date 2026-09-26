@@ -8,6 +8,7 @@ import {
     setTextColor,
     setTextColorTransient,
     unsetTextColorTransient,
+    insertEmoji,
 } from './commands';
 import { resolveActiveFontSize } from './font-size';
 import { resolveActiveColor, DEFAULT_TEXT_COLOR } from './text-color';
@@ -263,5 +264,21 @@ describe('a drag: transient moves followed by a real commit', () => {
         editor.commands.undo();
         expect(editor.getHTML()).toBe('<p>hello</p>');
         expect(editor.can().undo()).toBe(false);
+    });
+});
+
+describe('insertEmoji', () => {
+    it('inserts at a collapsed caret', () => {
+        const editor = makeEditor('<p>hi</p>');
+        editor.commands.setTextSelection(3);
+        insertEmoji(editor, '🔥');
+        expect(editor.getHTML()).toBe('<p>hi🔥</p>');
+    });
+
+    it('replaces a non-empty selection', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        insertEmoji(editor, '🔥');
+        expect(editor.getHTML()).toBe('<p>🔥</p>');
     });
 });

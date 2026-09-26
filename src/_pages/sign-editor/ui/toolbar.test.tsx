@@ -57,3 +57,11 @@ describe('Toolbar text-color picker', () => {
         expect(screen.getByRole('button', { name: /^Text color/ })).toBeInTheDocument();
     });
 });
+
+describe('Toolbar emoji picker', () => {
+    it('renders the emoji picker alongside the text-color picker', () => {
+        renderWithEditor('<p>hello</p>');
+        expect(screen.getByRole('button', { name: 'Insert emoji' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /^Text color/ })).toBeInTheDocument();
+    });
+});
