@@ -1,0 +1,20 @@
+name: Set up Node app
+description: Install Node (with npm cache) and project dependencies
+
+inputs:
+  node-version:
+    description: Node.js version
+    default: '22'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci

@@ -1,0 +1,23 @@
+name: Test (reusable)
+
+on:
+  workflow_call: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint & unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-node-app
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test

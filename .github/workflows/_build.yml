@@ -1,0 +1,34 @@
+name: Build (reusable)
+
+on:
+  workflow_call:
+    inputs:
+      artifact_name:
+        description: Name of the uploaded build artifact
+        type: string
+        default: site
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Static export
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-node-app
+
+      - name: Build static export
+        run: npm run build
+
+      # Deploy ships exactly this output instead of building a second time.
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: out/
+          if-no-files-found: error
+          retention-days: 7
