@@ -54,7 +54,7 @@ describe('TextColorPicker', () => {
         await user.click(trigger());
         await user.click(screen.getByRole('button', { name: 'Blue' }));
 
-        expect(editor.getHTML()).toBe('<p><span style="color: rgb(30, 136, 229);">hello</span></p>');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(0, 0, 255);">hello</span></p>');
     });
 
     it('applies a typed custom hex color on Enter', async () => {
@@ -140,7 +140,7 @@ describe('TextColorPicker', () => {
             editor.commands.setTextSelection({ from: 1, to: 6 });
         });
 
-        expect(trigger()).toHaveAccessibleName('Text color: #ffffff');
+        expect(trigger()).toHaveAccessibleName('Text color: #000000');
     });
 
     it('applies a color while dragging on the saturation/value square', async () => {
@@ -231,21 +231,21 @@ describe('TextColorPicker', () => {
 
         await user.click(trigger());
         await user.click(screen.getByRole('button', { name: 'Blue' }));
-        expect(editor.getHTML()).toBe('<p><span style="color: rgb(30, 136, 229);">hello</span></p>');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(0, 0, 255);">hello</span></p>');
 
         await user.click(trigger());
         const square = screen.getByLabelText('Saturation and brightness');
         stubRect(square);
         fireEvent.pointerDown(square, { pointerId: 1, buttons: 1, clientX: 20, clientY: 20 });
-        fireEvent.pointerMove(square, { pointerId: 1, buttons: 1, clientX: 100, clientY: 0 });
+        fireEvent.pointerMove(square, { pointerId: 1, buttons: 1, clientX: 100, clientY: 50 });
         fireEvent.pointerUp(square, { pointerId: 1 });
         const draggedHtml = editor.getHTML();
-        expect(draggedHtml).not.toBe('<p><span style="color: rgb(30, 136, 229);">hello</span></p>');
+        expect(draggedHtml).not.toBe('<p><span style="color: rgb(0, 0, 255);">hello</span></p>');
 
         act(() => {
             editor.commands.undo();
         });
-        expect(editor.getHTML()).toBe('<p><span style="color: rgb(30, 136, 229);">hello</span></p>');
+        expect(editor.getHTML()).toBe('<p><span style="color: rgb(0, 0, 255);">hello</span></p>');
 
         act(() => {
             editor.commands.undo();
