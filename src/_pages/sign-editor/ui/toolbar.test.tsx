@@ -3,17 +3,14 @@ import { render, screen} from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
 import { signEditorExtensions } from '../lib';
-import { ThemeProvider } from '../../../shared/model';
 import { Toolbar } from './toolbar';
 
 const renderWithEditor = (content: string) => {
     const editor = new Editor({ extensions: signEditorExtensions, content });
     render(
-        <ThemeProvider>
-            <EditorContext.Provider value={{ editor }}>
-                <Toolbar />
-            </EditorContext.Provider>
-        </ThemeProvider>,
+        <EditorContext.Provider value={{ editor }}>
+            <Toolbar />
+        </EditorContext.Provider>,
     );
     return editor;
 };

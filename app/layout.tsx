@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import localFont from 'next/font/local'
 import { Noto_Emoji } from 'next/font/google'
 import "./globals.css";
 import {cn} from "lib/utils";
-import { ThemeProvider, THEME_INIT_SCRIPT } from "@/shared/model";
 
 
 const norse = localFont({
@@ -31,16 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={cn("h-full", "antialiased", norse.className, norse.variable, notoEmoji.variable, "text-xl")}
+      className={cn("h-full", "antialiased", "dark", norse.className, norse.variable, notoEmoji.variable, "text-xl")}
     >
       <body className="min-h-full flex flex-col">
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
-        />
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   );

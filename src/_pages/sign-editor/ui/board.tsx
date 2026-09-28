@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef, type MouseEvent } from 'react';
+import { useCallback, useRef, useState, type MouseEvent } from 'react';
+import { preload } from 'react-dom';
 import { EditorContent } from '@tiptap/react';
 import { useSignEditor } from '../model';
 import {
@@ -18,9 +19,48 @@ import { useAutoFitFontSize } from './use-auto-fit-font-size';
  */
 const CLICK_DRAG_THRESHOLD_PX = 5;
 
+// Plain <img>/preload URLs are not rewritten by Next's basePath (see docs/deployment-guide.md).
+const BOARD_IMAGE = '/valheim-tool/images/board.webp';
+
+/**
+ * Board artwork. It's an <img> (not a CSS background) so the browser fetches it
+ * at high priority straight from the HTML instead of only after CSS is parsed
+ * and the element is laid out. `onReady` fires once it's decoded (or failed),
+ * letting the caller hold back the content so text never shows up on a bare
+ * page before the wood pops in.
+ */
+const BoardArtwork = ({ onReady }: { onReady: () => void }) => {
+    preload(BOARD_IMAGE, { as: 'image', fetchPriority: 'high' });
+
+    // The image may already be complete before hydration attaches onLoad
+    // (cached, or loaded from the static HTML), so that event would be missed.
+    const attach = useCallback(
+        (img: HTMLImageElement | null) => {
+            if (img?.complete) img.decode().then(onReady, onReady);
+        },
+        [onReady],
+    );
+
+    return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+            ref={attach}
+            src={BOARD_IMAGE}
+            alt=""
+            fetchPriority="high"
+            decoding="async"
+            onLoad={onReady}
+            onError={onReady}
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+        />
+    );
+};
+
 export const Board = () => {
     const editor = useSignEditor();
     const textAreaRef = useRef<HTMLDivElement>(null);
+    const [artworkReady, setArtworkReady] = useState(false);
+    const handleArtworkReady = useCallback(() => setArtworkReady(true), []);
     useAutoFitFontSize(editor, textAreaRef);
     // A text-selection drag can start inside the editor and end with the
     // mouseup (and thus `click`) landing on the board outside it — e.g. the
@@ -91,8 +131,9 @@ export const Board = () => {
             id={BORDER_ID}
             onMouseDown={handleBoardMouseDown}
             onClick={handleBoardClick}
-            className="max-w-250 w-full aspect-2/1 bg-center relative flex items-center justify-center bg-[url(/valheim-tool/images/board-light.png)] dark:bg-[url(/valheim-tool/images/board.png)] bg-no-repeat bg-contain"
+            className="max-w-250 w-full aspect-2/1 relative flex items-center justify-center"
         >
+            <BoardArtwork onReady={handleArtworkReady} />
             <svg width="0" height="0" aria-hidden focusable="false" className="absolute">
                 <filter id={GAME_COLOR_FILTER_ID} colorInterpolationFilters="sRGB">
                     <feColorMatrix type="matrix" values={GAME_COLOR_MATRIX_VALUES} />
@@ -101,7 +142,7 @@ export const Board = () => {
             <div
                 id={TEXT_AREA_ID}
                 ref={textAreaRef}
-                className="w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-black"
+                className={`relative w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-black transition-opacity duration-200 ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
                 style={{ filter: GAME_COLOR_FILTER }}
             >
                 <EditorContent editor={editor} className="w-full" />
