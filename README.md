@@ -29,8 +29,17 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This app is a static export (`output: 'export'` in `next.config.ts`), deployed to a public
+Google Cloud Storage bucket by `.github/workflows/deploy.yml` on every push to `main`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Ongoing deploys
+
+Every push to `main` runs lint, tests, and build, then syncs `out/` to the bucket. Trigger a
+redeploy without a new commit via the Actions tab -> "Deploy to GCS" -> "Run workflow".
+
+The site is served directly from `https://storage.googleapis.com/valheim-tool/index.html`
+(no custom domain or CDN yet — see `docs/superpowers/specs/2026-09-27-gcp-static-deploy-design.md`
+for what's deferred).
+

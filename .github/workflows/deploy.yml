@@ -1,0 +1,54 @@
+name: Deploy to GCS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run test
+
+      - name: Build static export
+        run: npm run build
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Set active project
+        run: gcloud config set project ${{ vars.GCP_PROJECT_ID }}
+
+      - name: Sync hashed static assets with long-lived cache headers
+        run: gsutil -m -h "Cache-Control:public,max-age=31536000,immutable" rsync -r -d out/_next/static gs://${{ vars.GCP_BUCKET }}/_next/static
+
+      - name: Sync remaining build output with no-cache headers
+        run: gsutil -m -h "Cache-Control:no-cache" rsync -r -d -x '^_next/static/.*' out/ gs://${{ vars.GCP_BUCKET }}

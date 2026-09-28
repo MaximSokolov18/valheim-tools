@@ -91,7 +91,7 @@ export const Board = () => {
             id={BORDER_ID}
             onMouseDown={handleBoardMouseDown}
             onClick={handleBoardClick}
-            className="max-w-250 w-full aspect-2/1 bg-center relative flex items-center justify-center bg-[url(/images/board-light.png)] dark:bg-[url(/images/board.png)] bg-no-repeat bg-contain"
+            className="max-w-250 w-full aspect-2/1 bg-center relative flex items-center justify-center bg-[url(/valheim-tool/images/board-light.png)] dark:bg-[url(/valheim-tool/images/board.png)] bg-no-repeat bg-contain"
         >
             <svg width="0" height="0" aria-hidden focusable="false" className="absolute">
                 <filter id={GAME_COLOR_FILTER_ID} colorInterpolationFilters="sRGB">
