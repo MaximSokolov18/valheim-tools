@@ -15,7 +15,7 @@ permissions:
 # A newer push to a PR supersedes the older run. Runs on main are never cancelled.
 concurrency:
   group: ci-cd-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 jobs:
   test:
