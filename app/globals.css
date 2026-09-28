@@ -177,3 +177,15 @@
         background-color: color-mix(in oklab, var(--primary) 35%, transparent);
     }
 }
+
+/*
+ * The game only wraps at spaces / explicit newlines, never mid-word.
+ * ProseMirror injects an unlayered `.ProseMirror { word-wrap: break-word }`, and
+ * unlayered styles beat anything inside @layer, so this rule lives outside the
+ * layers and doubles the class for higher specificity.
+ */
+.tiptap.ProseMirror {
+    overflow-wrap: normal;
+    word-wrap: normal;
+    word-break: normal;
+}
