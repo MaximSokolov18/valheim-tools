@@ -3,6 +3,7 @@ import { Placeholder } from '@tiptap/extensions';
 import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import type { Extensions } from '@tiptap/core';
 import { SelectionHighlight } from './selection-highlight';
+import { StripEmojiPresentation } from './strip-emoji-presentation';
 
 /**
  * The extension set for the sign editor.
@@ -37,4 +38,5 @@ export const signEditorExtensions: Extensions = [
     Color,
     Placeholder.configure({ placeholder: 'Carve your rune…' }),
     SelectionHighlight,
+    StripEmojiPresentation,
 ];

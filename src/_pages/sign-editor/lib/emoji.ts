@@ -13,6 +13,10 @@ export interface EmojiCategory {
  * the in-game sign symbol reference the user supplied. Any other emoji can
  * still be pasted into a sign directly — this list only backs the picker's
  * dropdown, not what's allowed in the document.
+ *
+ * Characters must not carry U+FE0F (the emoji-presentation selector): it makes
+ * the browser render the full-color system emoji instead of the monochrome
+ * Noto Emoji glyph that matches Valheim's sign style.
  */
 export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
     {
@@ -36,11 +40,11 @@ export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
     {
         label: 'Gear & War',
         emoji: [
-            { char: '⚔️', label: 'Swords' },
-            { char: '🗡️', label: 'Dagger' },
-            { char: '🛡️', label: 'Shield' },
+            { char: '⚔', label: 'Swords' },
+            { char: '🗡', label: 'Dagger' },
+            { char: '🛡', label: 'Shield' },
             { char: '🏹', label: 'Bow' },
-            { char: '⛏️', label: 'Pickaxe' },
+            { char: '⛏', label: 'Pickaxe' },
             { char: '🔨', label: 'Hammer' },
             { char: '🪓', label: 'Axe' },
             { char: '🧰', label: 'Toolbox' },
@@ -75,12 +79,12 @@ export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
             { char: '🐗', label: 'Boar' },
             { char: '🐴', label: 'Lox' },
             { char: '🐝', label: 'Bee' },
-            { char: '🕷️', label: 'Spider' },
+            { char: '🕷', label: 'Spider' },
             { char: '🐍', label: 'Serpent' },
             { char: '🐢', label: 'Turtle' },
             { char: '🐞', label: 'Beetle' },
             { char: '💀', label: 'Skull' },
-            { char: '☠️', label: 'Skull and crossbones' },
+            { char: '☠', label: 'Skull and crossbones' },
             { char: '🧟', label: 'Draugr' },
             { char: '👹', label: 'Troll' },
             { char: '🐌', label: 'Snail' },
@@ -95,12 +99,12 @@ export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
             { char: '📜', label: 'Scroll' },
             { char: '🌀', label: 'Portal' },
             { char: '🚧', label: 'Beacon' },
-            { char: '🖼️', label: 'Painting' },
+            { char: '🖼', label: 'Painting' },
             { char: '🧭', label: 'Compass' },
             { char: '⚓', label: 'Anchor' },
             { char: '🌊', label: 'Ocean' },
             { char: '🌿', label: 'Plant' },
-            { char: '🛏️', label: 'Bed' },
+            { char: '🛏', label: 'Bed' },
             { char: '📦', label: 'Chest' },
         ],
     },
@@ -111,16 +115,16 @@ export const EMOJI_CATEGORIES: readonly EmojiCategory[] = [
             { char: '❌', label: 'Cross' },
             { char: '❗', label: 'Exclamation' },
             { char: '❓', label: 'Question' },
-            { char: '⚠️', label: 'Warning' },
+            { char: '⚠', label: 'Warning' },
             { char: '⭐', label: 'Star' },
             { char: '✨', label: 'Sparkles' },
-            { char: '❤️', label: 'Red heart' },
+            { char: '❤', label: 'Red heart' },
             { char: '💚', label: 'Green heart' },
             { char: '💙', label: 'Blue heart' },
-            { char: '➡️', label: 'Right arrow' },
-            { char: '⬅️', label: 'Left arrow' },
-            { char: '⬆️', label: 'Up arrow' },
-            { char: '⬇️', label: 'Down arrow' },
+            { char: '➡', label: 'Right arrow' },
+            { char: '⬅', label: 'Left arrow' },
+            { char: '⬆', label: 'Up arrow' },
+            { char: '⬇', label: 'Down arrow' },
             { char: '🔔', label: 'Bell' },
             { char: '🔒', label: 'Lock' },
             { char: '🔑', label: 'Key' },

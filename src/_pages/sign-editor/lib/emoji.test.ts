@@ -26,4 +26,10 @@ describe('EMOJI_CATEGORIES', () => {
         const labels = EMOJI_CATEGORIES.flatMap((category) => category.emoji.map((option) => option.label));
         expect(new Set(labels).size).toBe(labels.length);
     });
+
+    it('has no U+FE0F emoji-presentation selector (it forces the color system font instead of the monochrome sign style)', () => {
+        EMOJI_CATEGORIES.flatMap((category) => category.emoji).forEach((option) => {
+            expect(option.char).not.toContain('\uFE0F');
+        });
+    });
 });

@@ -62,4 +62,10 @@ describe('signEditorExtensions', () => {
             editor.extensionManager.extensions.some((extension) => extension.name === 'color'),
         ).toBe(true);
     });
+
+    it('strips the U+FE0F emoji-presentation selector from inserted content', () => {
+        const editor = makeEditor();
+        editor.commands.insertContent('a\u{1F6E1}\uFE0Fb');
+        expect(editor.getText()).toBe('a\u{1F6E1}b');
+    });
 });
