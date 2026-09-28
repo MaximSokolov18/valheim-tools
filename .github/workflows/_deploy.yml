@@ -33,6 +33,15 @@ jobs:
       group: deploy-production
       cancel-in-progress: false
     steps:
+      - name: Check bucket is configured
+        env:
+          BUCKET: ${{ inputs.gcp_bucket }}
+        run: |
+          if [ -z "$BUCKET" ]; then
+            echo "::error::GCP_BUCKET repository variable is empty. Set it under Settings > Secrets and variables > Actions > Variables."
+            exit 1
+          fi
+
       - name: Download build output
         uses: actions/download-artifact@v4
         with:
