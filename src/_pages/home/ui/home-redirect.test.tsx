@@ -22,6 +22,6 @@ describe('HomeRedirect', () => {
 
         render(<HomeRedirect />);
 
-        expect(screen.getByRole('link', { name: 'sign editor' })).toHaveAttribute('href', '/valheim-tool/sign-editor');
+        expect(screen.getByRole('link', { name: 'sign editor' })).toHaveAttribute('href', '/sign-editor');
     });
 });

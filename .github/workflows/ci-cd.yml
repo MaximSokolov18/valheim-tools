@@ -33,7 +33,6 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/_deploy.yml
     with:
-      gcp_project_id: ${{ vars.GCP_PROJECT_ID }}
-      gcp_bucket: ${{ vars.GCP_BUCKET }}
+      firebase_project_id: ${{ vars.FIREBASE_PROJECT_ID }}
     secrets:
-      GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}

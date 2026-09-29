@@ -19,8 +19,7 @@ import { useAutoFitFontSize } from './use-auto-fit-font-size';
  */
 const CLICK_DRAG_THRESHOLD_PX = 5;
 
-// Plain <img>/preload URLs are not rewritten by Next's basePath (see docs/deployment-guide.md).
-const BOARD_IMAGE = '/valheim-tool/images/board.webp';
+const BOARD_IMAGE = '/images/board.webp';
 
 /**
  * Board artwork. It's an <img> (not a CSS background) so the browser fetches it

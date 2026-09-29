@@ -31,15 +31,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deployment
 
-This app is a static export (`output: 'export'` in `next.config.ts`), deployed to a public
-Google Cloud Storage bucket by `.github/workflows/deploy.yml` on every push to `main`.
-
-### Ongoing deploys
-
-Every push to `main` runs lint, tests, and build, then syncs `out/` to the bucket. Trigger a
-redeploy without a new commit via the Actions tab -> "Deploy to GCS" -> "Run workflow".
-
-The site is served directly from `https://storage.googleapis.com/valheim-tool/index.html`
-(no custom domain or CDN yet — see `docs/superpowers/specs/2026-09-27-gcp-static-deploy-design.md`
-for what's deferred).
-
+This app is a static export (`output: 'export'` in `next.config.ts`), hosted on Firebase Hosting.
+`.github/workflows/ci-cd.yml` runs lint + tests + build on every push/PR, and deploys to the
+live channel on every push to `main` (or a manual "Run workflow" from the Actions tab).

@@ -3,12 +3,8 @@ name: Deploy (reusable)
 on:
   workflow_call:
     inputs:
-      gcp_project_id:
-        description: GCP project that owns the bucket
-        type: string
-        required: true
-      gcp_bucket:
-        description: Destination GCS bucket name
+      firebase_project_id:
+        description: Firebase project that hosts the site
         type: string
         required: true
       artifact_name:
@@ -16,8 +12,8 @@ on:
         type: string
         default: site
     secrets:
-      GCP_SA_KEY:
-        description: Service account key JSON
+      FIREBASE_SERVICE_ACCOUNT:
+        description: Service account key JSON with the Firebase Hosting Admin role
         required: true
 
 permissions:
@@ -25,36 +21,26 @@ permissions:
 
 jobs:
   deploy:
-    name: Sync to GCS
+    name: Deploy to Firebase Hosting
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Never run two deploys at once, and never cancel one mid-sync.
+    # Never run two deploys at once, and never cancel one mid-release.
     concurrency:
       group: deploy-production
       cancel-in-progress: false
     steps:
+      # firebase.json (headers, cleanUrls) lives in the repo.
+      - uses: actions/checkout@v4
+
       - name: Download build output
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.artifact_name }}
           path: out/
 
-      - name: Authenticate to GCP
-        uses: google-github-actions/auth@v2
+      - name: Deploy to live channel
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ inputs.gcp_project_id }}
-
-      - name: Sync hashed static assets (long-lived cache)
-        run: >
-          gsutil -m -h "Cache-Control:public,max-age=31536000,immutable"
-          rsync -r -d out/_next/static gs://${{ inputs.gcp_bucket }}/_next/static
-
-      - name: Sync remaining output (no-cache)
-        run: >
-          gsutil -m -h "Cache-Control:no-cache"
-          rsync -r -d -x '^_next/static/.*' out/ gs://${{ inputs.gcp_bucket }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ inputs.firebase_project_id }}
+          channelId: live
