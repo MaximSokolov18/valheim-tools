@@ -38,7 +38,7 @@ export const EmojiPicker = () => {
                     >
                         {EMOJI_CATEGORIES.map((category) => (
                             <div key={category.label} className="flex flex-col gap-1">
-                                <span className="text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                                <span className="text-[15px] font-bold uppercase tracking-wide text-muted-foreground">
                                     {category.label}
                                 </span>
                                 <div className="grid grid-cols-7 gap-1">
