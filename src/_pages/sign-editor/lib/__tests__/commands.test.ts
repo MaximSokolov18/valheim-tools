@@ -9,6 +9,8 @@ import {
     setTextColorTransient,
     unsetTextColorTransient,
     insertEmoji,
+    insertSprite,
+    setHighlightColor,
 } from '../commands';
 import { resolveActiveFontSize } from '../font-size';
 import { resolveActiveColor, DEFAULT_TEXT_COLOR } from '../text-color';
@@ -280,5 +282,22 @@ describe('insertEmoji', () => {
         editor.commands.setTextSelection({ from: 1, to: 6 });
         insertEmoji(editor, '🔥');
         expect(editor.getHTML()).toBe('<p>🔥</p>');
+    });
+});
+
+describe('insertSprite', () => {
+    it('carries an armed highlight onto the sprite', () => {
+        const editor = makeEditor('<p></p>');
+        setHighlightColor(editor, '#ff0000');
+        insertSprite(editor, 1);
+        expect(editor.getHTML()).toContain('--sign-mark: #ff0000');
+        expect(editor.getHTML()).toContain('data-sprite="1"');
+    });
+
+    it('inserts a plain sprite when no mark is armed', () => {
+        const editor = makeEditor('<p>hi</p>');
+        editor.commands.setTextSelection(3);
+        insertSprite(editor, 2);
+        expect(editor.getHTML()).not.toContain('--sign-mark');
     });
 });

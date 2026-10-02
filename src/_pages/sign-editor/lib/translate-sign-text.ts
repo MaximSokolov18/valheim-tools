@@ -12,16 +12,29 @@ export const SIGN_CHAR_LIMIT = 50;
  */
 const SIGN_NEWLINE = '\\n';
 
+type Script = 'sub' | 'sup';
+
 interface RunStyle {
     color: string | null;
+    highlight: string | null;
     size: number | null;
+    italic: boolean;
+    underline: boolean;
+    strike: boolean;
+    script: Script | null;
 }
 
 const resolveRunStyle = (marks: JSONContent['marks']): RunStyle => {
     const textStyle = marks?.find((mark) => mark.type === 'textStyle');
+    const has = (type: string) => marks?.some((mark) => mark.type === type) ?? false;
     return {
         color: normalizeHexColor(String(textStyle?.attrs?.color ?? '')),
+        highlight: normalizeHexColor(String(textStyle?.attrs?.backgroundColor ?? '')),
         size: parseFontSize(textStyle?.attrs?.fontSize as string | null | undefined),
+        italic: has('italic'),
+        underline: has('underline'),
+        strike: has('strike'),
+        script: has('subscript') ? 'sub' : has('superscript') ? 'sup' : null,
     };
 };
 
@@ -36,6 +49,15 @@ const resolveRunStyle = (marks: JSONContent['marks']): RunStyle => {
  * otherwise inherit still-open styling, and — since a still-open tag can be
  * many runs deep by that point — as many closing tags as remain open.
  *
+ * `<mark=#rrggbb>` is always written as a full 6-digit hex (the game ignores
+ * shorter codes) and is closed and reopened whenever the highlight changes.
+ *
+ * `<i>`, `<u>`, `<s>`, `<sub>` and `<sup>` are on/off tags: opened when a run
+ * needs them and not already open, closed as soon as a run no longer does.
+ * Underline and strikethrough take the color that was active when their tag
+ * opened, so they are always opened after `<color>`, and are closed and
+ * reopened whenever the color changes underneath them.
+ *
  * `suppressTrailingClose` skips the flush that would otherwise follow the
  * paragraph's last styled run: Valheim's parser closes any tags still open
  * at the sign's end for free, so paying for that close here would only cost
@@ -46,6 +68,11 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
     let sizeDepth = 0;
     let activeColor: string | null = null;
     let activeSize: number | null = null;
+    let activeHighlight: string | null = null;
+    let italicOpen = false;
+    let underlineOpen = false;
+    let strikeOpen = false;
+    let activeScript: Script | null = null;
     let out = '';
 
     const closeSize = () => {
@@ -55,6 +82,12 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             activeSize = null;
         }
     };
+    const closeHighlight = () => {
+        if (activeHighlight != null) {
+            out += '</mark>';
+            activeHighlight = null;
+        }
+    };
     const closeColor = () => {
         if (colorDepth > 0) {
             out += '</color>'.repeat(colorDepth);
@@ -62,46 +95,114 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             activeColor = null;
         }
     };
+    const closeItalic = () => {
+        if (italicOpen) {
+            out += '</i>';
+            italicOpen = false;
+        }
+    };
+    const closeUnderline = () => {
+        if (underlineOpen) {
+            out += '</u>';
+            underlineOpen = false;
+        }
+    };
+    const closeStrike = () => {
+        if (strikeOpen) {
+            out += '</s>';
+            strikeOpen = false;
+        }
+    };
+    const closeScript = () => {
+        if (activeScript != null) {
+            out += `</${activeScript}>`;
+            activeScript = null;
+        }
+    };
+    const closeAll = () => {
+        closeScript();
+        closeItalic();
+        closeStrike();
+        closeUnderline();
+        closeSize();
+        closeHighlight();
+        closeColor();
+    };
 
     nodes.forEach((node) => {
         if (node.type === 'hardBreak') {
-            closeSize();
-            closeColor();
+            closeAll();
             out += SIGN_NEWLINE;
             return;
         }
-        if (node.type !== 'text') {
-            // only paragraph/text/hardBreak exist in this editor's schema (see editor-extensions.ts); a future extension must be handled here too
+        if (node.type !== 'text' && node.type !== 'sprite') {
+            // only paragraph/text/sprite/hardBreak exist in this editor's schema (see editor-extensions.ts); a future extension must be handled here too
             return;
         }
 
-        const { color, size } = resolveRunStyle(node.marks);
+        const { color, highlight, size, italic, underline, strike, script } = resolveRunStyle(node.marks);
+        const colorChanges = color !== activeColor;
 
-        // closes, innermost (size) first
+        // closes, innermost first; a color change also closes u/s so they reopen in the new color
+        if (script !== activeScript) {
+            closeScript();
+        }
+        if (!italic) {
+            closeItalic();
+        }
+        if (!strike || colorChanges) {
+            closeStrike();
+        }
+        if (!underline || colorChanges) {
+            closeUnderline();
+        }
         if (size == null) {
             closeSize();
+        }
+        if (highlight !== activeHighlight) {
+            closeHighlight();
         }
         if (color == null) {
             closeColor();
         }
         // opens, outermost (color) first
-        if (color != null && color !== activeColor) {
+        if (color != null && colorChanges) {
             out += `<${shortenHexColor(color)}>`;
             colorDepth += 1;
             activeColor = color;
+        }
+        if (highlight != null && highlight !== activeHighlight) {
+            out += `<mark=${highlight}>`;
+            activeHighlight = highlight;
+        }
+        if (underline && !underlineOpen) {
+            out += '<u>';
+            underlineOpen = true;
+        }
+        if (strike && !strikeOpen) {
+            out += '<s>';
+            strikeOpen = true;
         }
         if (size != null && size !== activeSize) {
             out += `<size=${size}>`;
             sizeDepth += 1;
             activeSize = size;
         }
+        if (italic && !italicOpen) {
+            out += '<i>';
+            italicOpen = true;
+        }
+        if (script != null && script !== activeScript) {
+            out += `<${script}>`;
+            activeScript = script;
+        }
 
-        out += node.text ?? '';
+        // a sprite is an atom carrying the same marks as surrounding text, so it tints/underlines like a glyph
+        out += node.type === 'sprite' ? `<sprite=${node.attrs?.index ?? 0}>` : (node.text ?? '');
     });
 
     if (!suppressTrailingClose) {
-        closeSize();
-        closeColor();
+        closeAll();
     }
 
     return out;

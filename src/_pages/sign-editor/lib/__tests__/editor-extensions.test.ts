@@ -19,12 +19,17 @@ describe('signEditorExtensions', () => {
         expect(editor.schema.nodes.blockquote).toBeUndefined();
     });
 
-    it('does not register inline marks that are out of scope for now', () => {
+    it('registers the inline formats a sign supports', () => {
         const editor = makeEditor();
-        expect(editor.schema.marks.italic).toBeUndefined();
-        expect(editor.schema.marks.strike).toBeUndefined();
-        expect(editor.schema.marks.underline).toBeUndefined();
+        ['italic', 'underline', 'strike', 'subscript', 'superscript'].forEach((mark) => {
+            expect(editor.schema.marks[mark]).toBeDefined();
+        });
+    });
+
+    it('does not register inline marks that are out of scope', () => {
+        const editor = makeEditor();
         expect(editor.schema.marks.link).toBeUndefined();
+        expect(editor.schema.marks.code).toBeUndefined();
     });
 
     it('flattens pasted heading markup into a paragraph', () => {

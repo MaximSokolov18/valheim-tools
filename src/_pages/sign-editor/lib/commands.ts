@@ -11,11 +11,34 @@ import { normalizeHexColor } from './text-color';
  *  - collapsed caret: arm (or disarm) bold for the next typed characters.
  *
  * All of this is `toggleBold()` from TipTap's Bold extension; `focus()` keeps
- * the caret in the editor after the toolbar button is clicked. This helper is
- * the seam where future formats (`toggleItalic`, `setColor`, ...) will live.
+ * the caret in the editor after the toolbar button is clicked.
  */
 export const toggleBold = (editor: Editor): boolean =>
     editor.chain().focus().toggleBold().run();
+
+/** Toggle italic (`<i>`) with the same selection / armed-caret semantics as `toggleBold`. */
+export const toggleItalic = (editor: Editor): boolean =>
+    editor.chain().focus().toggleItalic().run();
+
+/** Toggle underline (`<u>`) with the same selection / armed-caret semantics as `toggleBold`. */
+export const toggleUnderline = (editor: Editor): boolean =>
+    editor.chain().focus().toggleUnderline().run();
+
+/** Toggle strikethrough (`<s>`) with the same selection / armed-caret semantics as `toggleBold`. */
+export const toggleStrike = (editor: Editor): boolean =>
+    editor.chain().focus().toggleStrike().run();
+
+/**
+ * Toggle subscript (`<sub>`). Subscript and superscript are mutually exclusive
+ * (a run can't sit above and below the baseline), so turning one on first
+ * removes the other.
+ */
+export const toggleSubscript = (editor: Editor): boolean =>
+    editor.chain().focus().unsetSuperscript().toggleSubscript().run();
+
+/** Toggle superscript (`<sup>`); turning it on removes subscript. See `toggleSubscript`. */
+export const toggleSuperscript = (editor: Editor): boolean =>
+    editor.chain().focus().unsetSubscript().toggleSuperscript().run();
 
 /**
  * Set the font size (px) for the selection, or arm it at a collapsed caret so
@@ -110,6 +133,23 @@ export const unsetTextColorTransient = (editor: Editor): boolean =>
         .run();
 
 /**
+ * Set the background highlight (`<mark>`) for the selection, or arm it at a
+ * collapsed caret. `hex` is normalized like `setTextColor`; invalid input
+ * returns `false`. Writes the `backgroundColor` attribute on `textStyle`.
+ */
+export const setHighlightColor = (editor: Editor, hex: string): boolean => {
+    const normalized = normalizeHexColor(hex);
+    if (normalized == null) {
+        return false;
+    }
+    return editor.chain().focus().setBackgroundColor(normalized).run();
+};
+
+/** Remove the background highlight from the selection. */
+export const clearHighlightColor = (editor: Editor): boolean =>
+    editor.chain().focus().unsetBackgroundColor().run();
+
+/**
  * Inserts `char` at the current selection — replacing it if non-empty, or
  * at the collapsed caret otherwise. Unlike `setFontSize`/`setTextColor`,
  * this isn't a toggleable "apply to selection" operation, so one function
@@ -118,3 +158,15 @@ export const unsetTextColorTransient = (editor: Editor): boolean =>
  */
 export const insertEmoji = (editor: Editor, char: string): boolean =>
     editor.chain().focus().insertContent(char).run();
+
+/**
+ * Inserts the in-game `<sprite=index>` graphic at the current selection. Unlike
+ * text, an inserted node doesn't pick up the armed (stored) marks on its own, so
+ * they are carried over explicitly — otherwise a highlight or color chosen just
+ * before inserting would be dropped.
+ */
+export const insertSprite = (editor: Editor, index: number): boolean => {
+    const { storedMarks, selection } = editor.state;
+    const marks = (storedMarks ?? selection.$from.marks()).map((mark) => mark.toJSON());
+    return editor.chain().focus().insertContent({ type: 'sprite', attrs: { index }, marks }).run();
+};

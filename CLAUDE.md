@@ -30,6 +30,15 @@ There is no test runner configured in this repo yet.
 - **Fonts**: `app/layout.tsx` loads Geist Sans/Mono through `next/font/google` and exposes them as CSS variables
   (`--font-geist-sans`, `--font-geist-mono`) on the `<html>` element.
 
+## UI components
+
+Use the UI kit first, custom second. The kit is shadcn (`components.json`, style `base-mira`, built on
+`@base-ui/react`) and lives in `components/ui/`. For any button, toggle, menu, dialog, input, etc., check
+`components/ui/` for an existing component; if missing, add it with `npx shadcn@latest add <name>` (then move the
+generated file from `src/components/ui/` to `components/ui/` and make its `cn` import `../../lib/utils`).
+Only build a custom component when the kit has no suitable one, and style it with the existing theme tokens
+(`bg-control`, `text-control-foreground`, ...).
+
 ## Working with this fork of Next.js
 
 Per `AGENTS.md`, the installed `next` package (v16.3.0) has behavior that diverges from training data. Before

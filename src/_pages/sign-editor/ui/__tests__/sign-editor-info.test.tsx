@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { SignEditorInfo } from './sign-editor-info';
+import { SignEditorInfo } from 'src/_pages/sign-editor/ui/sign-editor-info';
 
 describe('SignEditorInfo', () => {
     it('explains the tool in a level-2 section, leaving the h1 to the page', () => {

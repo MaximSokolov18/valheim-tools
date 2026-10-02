@@ -2,10 +2,18 @@
 
 import { Popover } from '@base-ui/react/popover';
 import { useSignEditor } from '../model';
-import { EMOJI_CATEGORIES, insertEmoji } from '../lib';
+import { EMOJI_CATEGORIES, SPRITES, insertEmoji, insertSprite, spriteStyle } from '../lib';
 import { useFontPreload } from './use-font-preload';
 
 const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();
+
+const cssStyle = (style: string): React.CSSProperties =>
+    Object.fromEntries(
+        style.split(';').map((rule) => {
+            const [prop, ...value] = rule.split(':');
+            return [prop.replace(/-(\w)/g, (_, c: string) => c.toUpperCase()), value.join(':')];
+        }),
+    );
 
 const EMOJI_TEXT = EMOJI_CATEGORIES.flatMap((category) => category.emoji.map((option) => option.char)).join('');
 
@@ -23,6 +31,11 @@ export const EmojiPicker = () => {
     const handlePick = (char: string) => {
         if (!editor) return;
         insertEmoji(editor, char);
+    };
+
+    const handlePickSprite = (index: number) => {
+        if (!editor) return;
+        insertSprite(editor, index);
     };
 
     return (
@@ -61,6 +74,26 @@ export const EmojiPicker = () => {
                                 </div>
                             </div>
                         ))}
+                        <div className="flex flex-col gap-1">
+                            <span className="text-[15px] font-bold uppercase tracking-wide text-muted-foreground">
+                                Sprites
+                            </span>
+                            <div className="grid grid-cols-7 gap-1">
+                                {SPRITES.map((sprite) => (
+                                    <button
+                                        key={sprite.index}
+                                        type="button"
+                                        aria-label={`Sprite ${sprite.index}: ${sprite.label}`}
+                                        title={`<sprite=${sprite.index}> ${sprite.label}`}
+                                        onMouseDown={preventFocusSteal}
+                                        onClick={() => handlePickSprite(sprite.index)}
+                                        className="flex aspect-square items-center justify-center rounded-sm border border-border text-base outline-hidden hover:bg-control-hover"
+                                    >
+                                        <span aria-hidden className="text-xl" style={cssStyle(spriteStyle(sprite.index))} />
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </Popover.Popup>
                 </Popover.Positioner>
             </Popover.Portal>

@@ -2,12 +2,20 @@ export { signEditorExtensions, createSignEditorExtensions } from './editor-exten
 export { SignLengthLimit } from './sign-length-limit';
 export {
     toggleBold,
+    toggleItalic,
+    toggleUnderline,
+    toggleStrike,
+    toggleSubscript,
+    toggleSuperscript,
     setFontSize,
     clearFontSize,
     setTextColor,
     setTextColorTransient,
     unsetTextColorTransient,
+    setHighlightColor,
+    clearHighlightColor,
     insertEmoji,
+    insertSprite,
 } from './commands';
 export { resolveClickSelection } from './resolve-click-selection';
 export { computeAutoFitFontSize } from './auto-fit-font-size';
@@ -36,3 +44,5 @@ export { showSelectionHighlight, hideSelectionHighlight } from './selection-high
 export { translateSignText, translateSignDoc, SIGN_CHAR_LIMIT } from './translate-sign-text';
 export { EMOJI_CATEGORIES } from './emoji';
 export type { EmojiOption, EmojiCategory } from './emoji';
+export { SPRITES, SPRITE_COUNT, SPRITE_SHEET_URL, spriteStyle } from './sprite';
+export type { SpriteOption } from './sprite';

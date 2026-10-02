@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen} from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
 import { signEditorExtensions } from '../../lib';
@@ -27,5 +27,20 @@ describe('Toolbar emoji picker', () => {
         renderWithEditor('<p>hello</p>');
         expect(screen.getByRole('button', { name: 'Insert emoji' })).toBeInTheDocument();
         expect(screen.getByRole('button', { name: /^Text color/ })).toBeInTheDocument();
+    });
+});
+
+describe('Toolbar format buttons', () => {
+    it.each(['Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript'])('renders a %s toggle', (name) => {
+        renderWithEditor('<p>hello</p>');
+        expect(screen.getByRole('button', { name })).toHaveAttribute('aria-pressed', 'false');
+    });
+
+    it('applies and shows the format on the selection', () => {
+        const editor = renderWithEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        fireEvent.click(screen.getByRole('button', { name: 'Italic' }));
+        expect(editor.getHTML()).toBe('<p><em>hello</em></p>');
+        expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute('aria-pressed', 'true');
     });
 });

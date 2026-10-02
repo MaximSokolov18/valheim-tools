@@ -1,7 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
 import { signEditorExtensions } from '../editor-extensions';
-import { toggleBold, setTextColor, setFontSize } from '../commands';
+import {
+    toggleBold,
+    toggleItalic,
+    toggleUnderline,
+    toggleStrike,
+    toggleSubscript,
+    toggleSuperscript,
+    setTextColor,
+    setFontSize,
+    setHighlightColor,
+    insertSprite,
+} from '../commands';
 import { translateSignText, SIGN_CHAR_LIMIT } from '../translate-sign-text';
 
 const makeEditor = (content: string) => new Editor({ extensions: signEditorExtensions, content });
@@ -125,5 +136,105 @@ describe('translateSignText', () => {
             setTextColor(editor, hex as string);
         });
         expect(translateSignText(editor)).toBe('<#f00>a<#0ff>b<#0f0>c</color></color></color> rest');
+    });
+});
+
+describe('translateSignText on/off formats', () => {
+    const select = (editor: Editor, from: number, to: number) => editor.commands.setTextSelection({ from, to });
+
+    it.each([
+        ['italic', toggleItalic, '<i>hello'],
+        ['underline', toggleUnderline, '<u>hello'],
+        ['strikethrough', toggleStrike, '<s>hello'],
+        ['subscript', toggleSubscript, '<sub>hello'],
+        ['superscript', toggleSuperscript, '<sup>hello'],
+    ])('emits the %s tag', (_name, toggle, expected) => {
+        const editor = makeEditor('<p>hello</p>');
+        select(editor, 1, 6);
+        toggle(editor);
+        expect(translateSignText(editor)).toBe(expected);
+    });
+
+    it('closes the tag when plain text follows', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        select(editor, 1, 6);
+        toggleItalic(editor);
+        expect(translateSignText(editor)).toBe('<i>hello</i> world');
+    });
+
+    it('keeps one tag open across adjacent runs that share it', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        select(editor, 1, 12);
+        toggleUnderline(editor);
+        select(editor, 1, 6);
+        setTextColor(editor, '#ff0000');
+        expect(translateSignText(editor)).toBe('<#f00><u>hello</u></color><u> world');
+    });
+
+    it('opens underline after color so the line takes the color', () => {
+        const editor = makeEditor('<p>hello</p>');
+        select(editor, 1, 6);
+        toggleUnderline(editor);
+        setTextColor(editor, '#ff0000');
+        expect(translateSignText(editor)).toBe('<#f00><u>hello');
+    });
+
+    it('closes all open tags at a hard break', () => {
+        const editor = makeEditor('<p><em>one</em><br>two</p>');
+        expect(translateSignText(editor)).toBe('<i>one</i>\\ntwo');
+    });
+
+    it('turning on superscript removes subscript', () => {
+        const editor = makeEditor('<p>hello</p>');
+        select(editor, 1, 6);
+        toggleSubscript(editor);
+        toggleSuperscript(editor);
+        expect(translateSignText(editor)).toBe('<sup>hello');
+    });
+
+    it('combines formats', () => {
+        const editor = makeEditor('<p>hi</p>');
+        select(editor, 1, 3);
+        toggleItalic(editor);
+        toggleStrike(editor);
+        expect(translateSignText(editor)).toBe('<s><i>hi');
+    });
+});
+
+describe('translateSignText highlight', () => {
+    it('wraps a highlighted run in a full 6-digit <mark> tag', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setHighlightColor(editor, '#ff0');
+        expect(translateSignText(editor)).toBe('<mark=#ffff00>hello');
+    });
+
+    it('closes the mark when following text is not highlighted', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setHighlightColor(editor, '#ff0000');
+        expect(translateSignText(editor)).toBe('<mark=#ff0000>hello</mark> world');
+    });
+
+    it('rejects an invalid hex', () => {
+        const editor = makeEditor('<p>hello</p>');
+        expect(setHighlightColor(editor, 'red')).toBe(false);
+    });
+});
+
+describe('translateSignText sprites', () => {
+    it('emits <sprite=N> for a sprite node, inline with text', () => {
+        const editor = new Editor({
+            extensions: signEditorExtensions,
+            content: '<p>hi <span data-sprite="12"></span>!</p>',
+        });
+        expect(translateSignText(editor)).toBe('hi <sprite=12>!');
+    });
+
+    it('insertSprite inserts a sprite at the caret', () => {
+        const editor = makeEditor('<p>hi</p>');
+        editor.commands.setTextSelection(3);
+        insertSprite(editor, 3);
+        expect(translateSignText(editor)).toBe('hi<sprite=3>');
     });
 });

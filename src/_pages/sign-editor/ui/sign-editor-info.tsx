@@ -7,7 +7,7 @@ export function SignEditorInfo() {
                 About the Sign Editor
             </h2>
             <p className="mt-3">
-                Type your sign text, choose colours, sizes and emoji from the toolbar, and see the result on a sign
+                Type your sign text, choose colours and emoji from the toolbar, and see the result on a sign
                 board as you go. When it looks right, copy the finished text and paste it into a sign in Valheim.
             </p>
             <p className="mt-3">

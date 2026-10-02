@@ -1,6 +1,6 @@
 # Viking Tools
 
-> Free, unofficial browser tools for Valheim players. The Sign Editor styles sign text with colours, sizes and emoji, checks the 50-character sign limit and copies the result into the game. Not affiliated with Iron Gate AB or Coffee Stain Publishing.
+> Free, unofficial browser tools for Valheim players. The Sign Editor styles sign text with colours and emoji, checks the 50-character sign limit and copies the result into the game. Not affiliated with Iron Gate AB or Coffee Stain Publishing.
 
 ## Pages
 

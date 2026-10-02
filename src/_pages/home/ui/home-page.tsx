@@ -31,7 +31,7 @@ const FEATURES = [
 const STEPS = [
     {
         title: 'Write and style',
-        text: 'Type your text, then pick colours, sizes and emoji from the toolbar.',
+        text: 'Type your text, then pick colours and emoji from the toolbar.',
     },
     {
         title: 'Check that it fits',
@@ -86,7 +86,7 @@ export function HomePage() {
                     Viking Tools
                 </h1>
                 <p className="max-w-2xl text-xl">
-                    Free browser tools for Valheim players. Design sign text with colours, sizes and emoji, then copy
+                    Free browser tools for Valheim players. Design sign text with colours and emoji, then copy
                     it into the game.
                 </p>
                 <div className="flex flex-wrap gap-3">
@@ -107,7 +107,7 @@ export function HomePage() {
                     <li className="rounded-lg border border-border bg-card p-5 text-card-foreground">
                         <h3 className="text-xl font-semibold">Sign Editor</h3>
                         <p className="mt-2">
-                            Pick colours, sizes and emoji, stay within the character limit and copy the finished
+                            Pick colours and emoji, stay within the character limit and copy the finished
                             sign text.
                         </p>
                         <Link href="/sign-editor" className="mt-3 inline-block underline underline-offset-4">

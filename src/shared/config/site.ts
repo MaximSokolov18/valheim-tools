@@ -11,7 +11,7 @@ export const SITE = {
     language: 'en',
     locale: 'en_US',
     description:
-        'Free browser tools for Valheim players. Style sign text with colours, sizes and emoji, check the character limit and copy it into the game.',
+        'Free browser tools for Valheim players. Style sign text with colours and emoji, check the character limit and copy it into the game.',
     disclaimer:
         'Viking Tools is an unofficial fan-made project. It is not affiliated with, endorsed by or sponsored by Iron Gate AB or Coffee Stain Publishing. Valheim is a trademark of its respective owners.',
     socialImageAlt: 'Viking Tools: free sign editor and tools for Valheim players',

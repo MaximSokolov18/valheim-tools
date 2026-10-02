@@ -169,6 +169,15 @@
         font-weight: 700;
     }
 
+    /* Decoration lines take thickness/position from the font of each glyph run, and
+       the Noto Emoji fallback has very heavy metrics. Pin them to the Norse font's
+       (0.05em thick, 0.075em below the baseline) so emoji get the same thin lines. */
+    .tiptap u,
+    .tiptap s {
+        text-decoration-thickness: 0.05em;
+        text-underline-offset: 0.075em;
+    }
+
     /* Stands in for the native text-selection highlight while the color
        picker's hex input holds focus (see selection-highlight.ts) — focusing
        a plain form control collapses the browser's Selection, which would
@@ -194,4 +203,9 @@
     .font-body {
         font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     }
+}
+
+/* Sign `<mark>` highlight: in game it is a faint tint over the wood, not an opaque block. */
+span[style*="--sign-mark"] {
+    background-color: color-mix(in srgb, var(--sign-mark) 30%, transparent);
 }

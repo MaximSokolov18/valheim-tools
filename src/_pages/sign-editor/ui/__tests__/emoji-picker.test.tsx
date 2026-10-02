@@ -3,7 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions, EMOJI_CATEGORIES } from '../../lib';
+import { signEditorExtensions, EMOJI_CATEGORIES, translateSignText } from '../../lib';
 import { EmojiPicker } from '../emoji-picker';
 
 const renderWithEditor = (content: string) => {
@@ -64,5 +64,18 @@ describe('EmojiPicker', () => {
         await user.click(screen.getByRole('button', { name: second.label }));
 
         expect(editor.getHTML()).toBe(`<p>${first.char}${second.char}</p>`);
+    });
+
+    it('inserts a colored sprite that translates to <sprite=N>', async () => {
+        const user = userEvent.setup();
+        const editor = renderWithEditor('<p></p>');
+        act(() => {
+            editor.commands.setTextSelection(1);
+        });
+
+        await user.click(trigger());
+        await user.click(screen.getByRole('button', { name: 'Sprite 2: Heart eyes' }));
+
+        expect(translateSignText(editor)).toBe('<sprite=2>');
     });
 });

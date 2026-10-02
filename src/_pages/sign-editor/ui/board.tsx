@@ -12,6 +12,7 @@ import {
 } from '../lib';
 import { BORDER_ID, TEXT_AREA_ID } from './constants';
 import { useAutoFitFontSize } from './use-auto-fit-font-size';
+import { SpriteOverlay } from './sprite-overlay';
 
 /**
  * Beyond this many pixels of movement between mousedown and the trailing
@@ -141,11 +142,12 @@ export const Board = () => {
             <div
                 id={TEXT_AREA_ID}
                 ref={textAreaRef}
-                className={`relative w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-black transition-opacity duration-200 ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
+                className={`relative w-[62%] h-[80%] p-[30px] flex flex-col justify-center overflow-hidden text-black transition-opacity duration-200 [&_[data-sprite]]:bg-none! ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
                 style={{ filter: GAME_COLOR_FILTER }}
             >
                 <EditorContent editor={editor} className="w-full" />
             </div>
+            <SpriteOverlay visible={artworkReady} />
         </div>
     );
 };
