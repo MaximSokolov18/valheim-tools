@@ -7,7 +7,7 @@ export const SignEditorPage = () => {
     return (
         <SignEditorProvider>
             <div
-                className="flex flex-col items-center justify-between h-dvh"
+                className="flex flex-col items-center justify-between h-[calc(100dvh-var(--site-header-height,0px))]"
             >
                 <Toolbar />
                 <Board />

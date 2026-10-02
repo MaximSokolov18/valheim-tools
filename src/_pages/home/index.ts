@@ -1,1 +1,1 @@
-export {HomeRedirect as default} from './ui/home-redirect'
+export { HomePage as default } from './ui/home-page';
