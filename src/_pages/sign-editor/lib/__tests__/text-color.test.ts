@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
+import { signEditorExtensions } from '../editor-extensions';
 import {
     TEXT_COLOR_PRESETS,
     DEFAULT_TEXT_COLOR,
@@ -8,7 +8,7 @@ import {
     normalizeHexColor,
     shortenHexColor,
     resolveActiveColor,
-} from './text-color';
+} from '../text-color';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
-import { resolveClickSelection } from './resolve-click-selection';
+import { signEditorExtensions } from '../editor-extensions';
+import { resolveClickSelection } from '../resolve-click-selection';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });

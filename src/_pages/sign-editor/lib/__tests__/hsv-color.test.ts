@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { TEXT_COLOR_PRESETS } from './text-color';
-import { hexToHsv, hsvToHex } from './hsv-color';
+import { TEXT_COLOR_PRESETS } from '../text-color';
+import { hexToHsv, hsvToHex } from '../hsv-color';
 
 describe('hexToHsv / hsvToHex round-trip', () => {
     it.each(TEXT_COLOR_PRESETS)('round-trips $label ($hex)', ({ hex }) => {

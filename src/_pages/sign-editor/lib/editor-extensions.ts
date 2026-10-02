@@ -4,6 +4,7 @@ import { TextStyle, FontSize, Color } from '@tiptap/extension-text-style';
 import type { Extensions } from '@tiptap/core';
 import { SelectionHighlight } from './selection-highlight';
 import { StripEmojiPresentation } from './strip-emoji-presentation';
+import { SignLengthLimit } from './sign-length-limit';
 
 /**
  * The extension set for the sign editor.
@@ -15,8 +16,10 @@ import { StripEmojiPresentation } from './strip-emoji-presentation';
  * that same mark. Adding italic / underline later means flipping a flag
  * below or appending an extension to the array. `SelectionHighlight` keeps
  * the selection visible while the color picker's hex input has focus.
+ * `SignLengthLimit` blocks input past Valheim's sign character cap and calls
+ * `onLimitReached` when it does.
  */
-export const signEditorExtensions: Extensions = [
+export const createSignEditorExtensions = (onLimitReached?: () => void): Extensions => [
     StarterKit.configure({
         blockquote: false,
         bulletList: false,
@@ -39,4 +42,7 @@ export const signEditorExtensions: Extensions = [
     Placeholder.configure({ placeholder: 'Carve your rune…' }),
     SelectionHighlight,
     StripEmojiPresentation,
+    SignLengthLimit.configure({ onLimitReached }),
 ];
+
+export const signEditorExtensions: Extensions = createSignEditorExtensions();

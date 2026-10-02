@@ -3,8 +3,8 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions, EMOJI_CATEGORIES } from '../lib';
-import { EmojiPicker } from './emoji-picker';
+import { signEditorExtensions, EMOJI_CATEGORIES } from '../../lib';
+import { EmojiPicker } from '../emoji-picker';
 
 const renderWithEditor = (content: string) => {
     const editor = new Editor({ extensions: signEditorExtensions, content });

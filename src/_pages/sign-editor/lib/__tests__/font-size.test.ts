@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
+import { signEditorExtensions } from '../editor-extensions';
 import {
     BASE_FONT_SIZE,
     MIN_FONT_SIZE,
@@ -10,7 +10,7 @@ import {
     parseFontSize,
     formatFontSize,
     resolveActiveFontSize,
-} from './font-size';
+} from '../font-size';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });

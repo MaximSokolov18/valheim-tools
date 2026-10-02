@@ -3,8 +3,8 @@ import { render, screen, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions } from '../lib';
-import { TextColorPicker } from './text-color-picker';
+import { signEditorExtensions } from '../../lib';
+import { TextColorPicker } from '../text-color-picker';
 
 const renderWithEditor = (content: string) => {
     const editor = new Editor({ extensions: signEditorExtensions, content });

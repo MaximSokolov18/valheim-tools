@@ -3,8 +3,8 @@ import { render, act } from '@testing-library/react';
 import { useRef } from 'react';
 import { Editor } from '@tiptap/core';
 import { EditorContent } from '@tiptap/react';
-import { signEditorExtensions } from '../lib';
-import { useAutoFitFontSize } from './use-auto-fit-font-size';
+import { signEditorExtensions } from '../../lib';
+import { useAutoFitFontSize } from '../use-auto-fit-font-size';
 
 /**
  * jsdom has no real layout, so `clientWidth`/`clientHeight` are fixed and

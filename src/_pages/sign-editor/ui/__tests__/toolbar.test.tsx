@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { render, screen} from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions } from '../lib';
-import { Toolbar } from './toolbar';
+import { signEditorExtensions } from '../../lib';
+import { Toolbar } from '../toolbar';
 
 const renderWithEditor = (content: string) => {
     const editor = new Editor({ extensions: signEditorExtensions, content });

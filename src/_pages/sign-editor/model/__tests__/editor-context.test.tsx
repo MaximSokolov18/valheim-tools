@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
-import { SignEditorProvider, useSignEditor } from './editor-context';
+import { SignEditorProvider, useSignEditor } from '../editor-context';
 
 function Probe({ onEditor }: { onEditor?: (editor: Editor | null) => void }) {
     const editor = useSignEditor();
@@ -68,5 +68,22 @@ describe('SignEditorProvider', () => {
         // plain selection-extend instead, so it survives leaving the text.
         const notCancelled = fireEvent.dragStart(editor!.view.dom);
         expect(notCancelled).toBe(false);
+    });
+
+    it('shows a closable toast when input is blocked by the sign character limit', async () => {
+        let captured: Editor | null = null;
+        render(
+            <SignEditorProvider>
+                <Probe onEditor={(editor) => (captured = editor)} />
+            </SignEditorProvider>,
+        );
+        expect(screen.queryByText('Character limit reached')).toBeNull();
+        act(() => {
+            (captured as Editor | null)?.commands.insertContent('a'.repeat(50));
+            (captured as Editor | null)?.commands.insertContent('b');
+        });
+        expect(screen.getByText(/at most 50 characters/)).toBeInTheDocument();
+        fireEvent.click(screen.getByLabelText('Close'));
+        await waitFor(() => expect(screen.queryByText('Character limit reached')).toBeNull());
     });
 });

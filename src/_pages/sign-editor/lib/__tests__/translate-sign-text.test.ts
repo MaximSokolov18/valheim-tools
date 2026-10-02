@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
-import { toggleBold, setTextColor, setFontSize } from './commands';
-import { translateSignText, SIGN_CHAR_LIMIT } from './translate-sign-text';
+import { signEditorExtensions } from '../editor-extensions';
+import { toggleBold, setTextColor, setFontSize } from '../commands';
+import { translateSignText, SIGN_CHAR_LIMIT } from '../translate-sign-text';
 
 const makeEditor = (content: string) => new Editor({ extensions: signEditorExtensions, content });
 
@@ -96,7 +96,11 @@ describe('translateSignText', () => {
     });
 
     it('drops the closing tag between two consecutively colored runs, since the next run\'s opening tag already overrides it', () => {
-        const editor = makeEditor('<p>hello</p>');
+        // the intermediate steps carry extra closing tags and would trip the length limit
+        const editor = new Editor({
+            extensions: signEditorExtensions.filter((extension) => extension.name !== 'signLengthLimit'),
+            content: '<p>hello</p>',
+        });
         [
             [1, 2, '#ff0000'],
             [2, 3, '#00ffff'],

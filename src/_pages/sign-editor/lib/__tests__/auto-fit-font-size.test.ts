@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { computeAutoFitFontSize } from './auto-fit-font-size';
+import { computeAutoFitFontSize } from '../auto-fit-font-size';
 
 describe('computeAutoFitFontSize', () => {
     it('returns the largest size that fits', () => {

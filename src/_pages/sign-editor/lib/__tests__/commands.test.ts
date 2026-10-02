@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
+import { signEditorExtensions } from '../editor-extensions';
 import {
     toggleBold,
     setFontSize,
@@ -9,9 +9,9 @@ import {
     setTextColorTransient,
     unsetTextColorTransient,
     insertEmoji,
-} from './commands';
-import { resolveActiveFontSize } from './font-size';
-import { resolveActiveColor, DEFAULT_TEXT_COLOR } from './text-color';
+} from '../commands';
+import { resolveActiveFontSize } from '../font-size';
+import { resolveActiveColor, DEFAULT_TEXT_COLOR } from '../text-color';
 
 const makeEditor = (content: string) =>
     new Editor({ extensions: signEditorExtensions, content });

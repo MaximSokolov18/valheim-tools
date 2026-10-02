@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { EMOJI_CATEGORIES } from './emoji';
+import { EMOJI_CATEGORIES } from '../emoji';
 
 describe('EMOJI_CATEGORIES', () => {
     it('has at least one category, each with a label and at least one emoji', () => {

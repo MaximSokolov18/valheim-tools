@@ -3,8 +3,11 @@
 import { Popover } from '@base-ui/react/popover';
 import { useSignEditor } from '../model';
 import { EMOJI_CATEGORIES, insertEmoji } from '../lib';
+import { useFontPreload } from './use-font-preload';
 
 const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();
+
+const EMOJI_TEXT = EMOJI_CATEGORIES.flatMap((category) => category.emoji.map((option) => option.char)).join('');
 
 /**
  * Emoji picker for the toolbar: a categorized grid of default emoji (see
@@ -15,6 +18,7 @@ const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();
  */
 export const EmojiPicker = () => {
     const editor = useSignEditor();
+    useFontPreload('--font-noto-emoji', EMOJI_TEXT);
 
     const handlePick = (char: string) => {
         if (!editor) return;

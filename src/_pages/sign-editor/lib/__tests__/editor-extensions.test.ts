@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
+import { signEditorExtensions } from '../editor-extensions';
 
 const makeEditor = (content = '<p></p>') =>
     new Editor({ extensions: signEditorExtensions, content });

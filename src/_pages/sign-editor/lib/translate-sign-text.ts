@@ -116,8 +116,11 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
  * Unity rich text has no cheap escape mechanism, so this is a deliberate
  * power-user escape hatch rather than an oversight.
  */
-export const translateSignText = (editor: Editor): string => {
-    const paragraphs = editor.getJSON().content ?? [];
+export const translateSignText = (editor: Editor): string => translateSignDoc(editor.getJSON());
+
+/** Same as `translateSignText`, for a document JSON (e.g. a not-yet-applied transaction's doc). */
+export const translateSignDoc = (doc: JSONContent): string => {
+    const paragraphs = doc.content ?? [];
     const lastContentfulParagraph = [...paragraphs].reverse().find((paragraph) => (paragraph.content?.length ?? 0) > 0);
 
     return paragraphs

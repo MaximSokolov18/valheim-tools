@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { Editor } from '@tiptap/core';
-import { signEditorExtensions } from './editor-extensions';
-import { showSelectionHighlight, hideSelectionHighlight } from './selection-highlight';
+import { signEditorExtensions } from '../editor-extensions';
+import { showSelectionHighlight, hideSelectionHighlight } from '../selection-highlight';
 
 const makeEditor = (content: string) => new Editor({ extensions: signEditorExtensions, content });
 

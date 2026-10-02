@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest';
 import { render, act, fireEvent } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
 import { EditorContext } from '@tiptap/react';
-import { signEditorExtensions, GAME_COLOR_FILTER_ID, GAME_COLOR_MATRIX_VALUES } from '../lib';
-import { Board } from './board';
-import { BORDER_ID, TEXT_AREA_ID } from './constants';
+import { signEditorExtensions, GAME_COLOR_FILTER_ID, GAME_COLOR_MATRIX_VALUES } from '../../lib';
+import { Board } from '../board';
+import { BORDER_ID, TEXT_AREA_ID } from '../constants';
 
 // jsdom has no layout, so ProseMirror's own mousedown handler (which calls
 // `posAtCoords` -> `elementFromPoint`) needs a stub to avoid throwing.

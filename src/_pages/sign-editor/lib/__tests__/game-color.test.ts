@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { toGameColor, GAME_COLOR_MATRIX_VALUES, GAME_COLOR_FILTER, GAME_COLOR_FILTER_ID } from './game-color';
+import { toGameColor, GAME_COLOR_MATRIX_VALUES, GAME_COLOR_FILTER, GAME_COLOR_FILTER_ID } from '../game-color';
 
 describe('toGameColor', () => {
     it('darkens and shifts a calibration-reference purple', () => {

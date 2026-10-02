@@ -1,9 +1,12 @@
 'use client';
 
-import { type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { EditorContext, useCurrentEditor, useEditor } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
-import { signEditorExtensions } from '../lib';
+import { createSignEditorExtensions, SIGN_CHAR_LIMIT } from '../lib';
+import { Toaster, toastManager } from '../../../../components/ui/toast';
+
+const LIMIT_TOAST_ID = 'sign-char-limit';
 
 /**
  * Creates the one editor instance for the sign editor and shares it through
@@ -12,8 +15,23 @@ import { signEditorExtensions } from '../lib';
  * avoid a hydration mismatch.
  */
 export const SignEditorProvider = ({ children }: { children: ReactNode }) => {
+    const extensions = useMemo(
+        () =>
+            createSignEditorExtensions(() => {
+                // fixed id: re-adding replaces the toast so repeated blocked keystrokes don't stack
+                toastManager.close(LIMIT_TOAST_ID);
+                toastManager.add({
+                    id: LIMIT_TOAST_ID,
+                    type: 'error',
+                    title: 'Character limit reached',
+                    description: `Valheim signs hold at most ${SIGN_CHAR_LIMIT} characters (formatting tags count too).`,
+                });
+            }),
+        [],
+    );
+
     const editor = useEditor({
-        extensions: signEditorExtensions,
+        extensions,
         content: '',
         immediatelyRender: false,
         editorProps: {
@@ -40,7 +58,12 @@ export const SignEditorProvider = ({ children }: { children: ReactNode }) => {
         },
     });
 
-    return <EditorContext.Provider value={{ editor }}>{children}</EditorContext.Provider>;
+    return (
+        <EditorContext.Provider value={{ editor }}>
+            {children}
+            <Toaster />
+        </EditorContext.Provider>
+    );
 };
 
 /** The shared sign-editor instance; `null` until the first client render. */

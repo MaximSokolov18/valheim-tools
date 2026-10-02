@@ -1,4 +1,5 @@
-export { signEditorExtensions } from './editor-extensions';
+export { signEditorExtensions, createSignEditorExtensions } from './editor-extensions';
+export { SignLengthLimit } from './sign-length-limit';
 export {
     toggleBold,
     setFontSize,
@@ -32,6 +33,6 @@ export { hexToHsv, hsvToHex } from './hsv-color';
 export type { Hsv } from './hsv-color';
 export { toGameColor, GAME_COLOR_FILTER, GAME_COLOR_FILTER_ID, GAME_COLOR_MATRIX_VALUES } from './game-color';
 export { showSelectionHighlight, hideSelectionHighlight } from './selection-highlight';
-export { translateSignText, SIGN_CHAR_LIMIT } from './translate-sign-text';
+export { translateSignText, translateSignDoc, SIGN_CHAR_LIMIT } from './translate-sign-text';
 export { EMOJI_CATEGORIES } from './emoji';
 export type { EmojiOption, EmojiCategory } from './emoji';
