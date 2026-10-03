@@ -5,8 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-norse), serif;
-    --font-sans: var(--font-sans);
+    --font-heading: var(--font-newsreader), Georgia, serif;
+    --font-serif: var(--font-newsreader), Georgia, serif;
+    --font-sans: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+    --font-sign: var(--font-norse), var(--font-noto-emoji);
+    --color-brand-text: var(--brand-text);
+    --color-moss: var(--moss);
+    --color-stage: var(--stage);
+    --color-on-stage: var(--on-stage);
+    --shadow-board: var(--shadow-board);
+    --shadow-panel: var(--shadow-panel);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,83 +61,102 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Viking Tools design system: Birch (light) and Peat (dark).
+ * The shadcn variable names are kept, so every component picks the palette up.
+ * Mead gold (primary) marks the one primary action per view.
+ */
 :root {
-    --background: #e4e5f1;
-    --foreground: #484b6a;
-    --card: #fafafa;
-    --card-foreground: #484b6a;
-    --popover: #fafafa;
-    --popover-foreground: #484b6a;
-    --primary: #484b6a;
-    --primary-foreground: #fafafa;
-    --secondary: #d2d3db;
-    --secondary-foreground: #484b6a;
-    --muted: #d2d3db;
-    --muted-foreground: #6e7088;
-    --accent: #d2d3db;
-    --accent-foreground: #484b6a;
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: #9394a5;
-    --input: #9394a5;
-    --ring: #484b6a;
-    --chart-1: oklch(0.871 0.006 286.286);
-    --chart-2: oklch(0.552 0.016 285.938);
-    --chart-3: oklch(0.442 0.017 285.786);
-    --chart-4: oklch(0.37 0.013 285.805);
-    --chart-5: oklch(0.274 0.006 286.033);
-    --radius: 0.625rem;
-    --control: #d2d3db;
-    --control-foreground: #484b6a;
-    --control-hover: #b3b4c0;
-    --control-active: #484b6a;
-    --control-active-foreground: #fafafa;
-    --sidebar: #e4e5f1;
-    --sidebar-foreground: #484b6a;
-    --sidebar-primary: #484b6a;
-    --sidebar-primary-foreground: #fafafa;
-    --sidebar-accent: #d2d3db;
-    --sidebar-accent-foreground: #484b6a;
-    --sidebar-border: #9394a5;
-    --sidebar-ring: #484b6a;
+    --background: #f5f2ec;
+    --foreground: #1d1a16;
+    --card: #fffdf9;
+    --card-foreground: #1d1a16;
+    --popover: #fffdf9;
+    --popover-foreground: #1d1a16;
+    --primary: #e8a90c;
+    --primary-foreground: #1d1500;
+    --secondary: #ece8e0;
+    --secondary-foreground: #1d1a16;
+    --muted: #ece8e0;
+    --muted-foreground: #5e574d;
+    --accent: #f6ead0;
+    --accent-foreground: #1d1a16;
+    --destructive: #a8281b;
+    --border: #e2ddd3;
+    --input: #8a8174;
+    --ring: #1d1a16;
+    --chart-1: #e8a90c;
+    --chart-2: #4d6638;
+    --chart-3: #7a4f00;
+    --chart-4: #8a8174;
+    --chart-5: #1d1a16;
+    --radius: 0.75rem;
+    --control: #ece8e0;
+    --control-foreground: #1d1a16;
+    --control-hover: #e2ddd3;
+    --control-active: #e8a90c;
+    --control-active-foreground: #1d1500;
+    --sidebar: #fffdf9;
+    --sidebar-foreground: #1d1a16;
+    --sidebar-primary: #e8a90c;
+    --sidebar-primary-foreground: #1d1500;
+    --sidebar-accent: #f6ead0;
+    --sidebar-accent-foreground: #1d1a16;
+    --sidebar-border: #e2ddd3;
+    --sidebar-ring: #1d1a16;
+    --brand-text: #7a4f00;
+    --moss: #4d6638;
+    --stage: #1d1a16;
+    --on-stage: #f2ede4;
+    --shadow-panel: 0 1px 2px rgba(21, 23, 43, 0.06), 0 8px 24px rgba(21, 23, 43, 0.06);
+    --shadow-board: 0 24px 48px rgba(94, 58, 28, 0.22), 0 4px 10px rgba(94, 58, 28, 0.18);
+    --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .dark {
-    --background: oklch(0.141 0.005 285.823);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.21 0.006 285.885);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.21 0.006 285.885);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.92 0.004 286.32);
-    --primary-foreground: oklch(0.21 0.006 285.885);
-    --secondary: oklch(0.274 0.006 286.033);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.274 0.006 286.033);
-    --muted-foreground: oklch(0.705 0.015 286.067);
-    --accent: oklch(0.274 0.006 286.033);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.552 0.016 285.938);
-    --chart-1: oklch(0.871 0.006 286.286);
-    --chart-2: oklch(0.552 0.016 285.938);
-    --chart-3: oklch(0.442 0.017 285.786);
-    --chart-4: oklch(0.37 0.013 285.805);
-    --chart-5: oklch(0.274 0.006 286.033);
-    --control: oklch(0.32 0.006 285.885);
-    --control-foreground: oklch(0.985 0 0);
-    --control-hover: oklch(0.4 0.006 285.885);
-    --control-active: oklch(0.92 0.004 286.32);
-    --control-active-foreground: oklch(0.21 0.006 285.885);
-    --sidebar: oklch(0.21 0.006 285.885);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.274 0.006 286.033);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.552 0.016 285.938);
+    --background: #12110f;
+    --foreground: #f2ede4;
+    --card: #1b1916;
+    --card-foreground: #f2ede4;
+    --popover: #1b1916;
+    --popover-foreground: #f2ede4;
+    --primary: #f6c445;
+    --primary-foreground: #1d1500;
+    --secondary: #24211d;
+    --secondary-foreground: #f2ede4;
+    --muted: #0c0b0a;
+    --muted-foreground: #a9a194;
+    --accent: #2e2410;
+    --accent-foreground: #f2ede4;
+    --destructive: #ff8a7a;
+    --border: #2e2a25;
+    --input: #6f685d;
+    --ring: #f2ede4;
+    --chart-1: #f6c445;
+    --chart-2: #a8bf8c;
+    --chart-3: #f8d16a;
+    --chart-4: #6f685d;
+    --chart-5: #f2ede4;
+    --control: #26231f;
+    --control-foreground: #f2ede4;
+    --control-hover: #2e2a25;
+    --control-active: #f6c445;
+    --control-active-foreground: #1d1500;
+    --sidebar: #1b1916;
+    --sidebar-foreground: #f2ede4;
+    --sidebar-primary: #f6c445;
+    --sidebar-primary-foreground: #1d1500;
+    --sidebar-accent: #2e2410;
+    --sidebar-accent-foreground: #f2ede4;
+    --sidebar-border: #2e2a25;
+    --sidebar-ring: #f2ede4;
+    --brand-text: #f6c445;
+    --moss: #a8bf8c;
+    --stage: #0b0a09;
+    --on-stage: #f2ede4;
+    --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+    --shadow-board: 0 24px 56px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4);
+    --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 @layer base {
@@ -137,10 +165,28 @@
     }
   body {
     @apply bg-background text-foreground;
+    /* Matte paper grain baked into the page colour, like the painted illustrations. */
+    background-image: var(--paper-grain);
+    overflow-x: clip;
     }
   html {
     @apply font-sans;
     }
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 40%, transparent);
+    }
+}
+
+/*
+ * Theme switch crossfade: the toggle adds this class for ~1.4s so every
+ * colour eases into the other theme while the hero sky turns day <-> night.
+ */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+    transition: background-color 1.2s ease, color 1.2s ease, border-color 1.2s ease, fill 1.2s ease,
+        stroke 1.2s ease, box-shadow 1.2s ease !important;
 }
 
 @layer base {
@@ -201,7 +247,7 @@
 
 @layer components {
     .font-body {
-        font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        font-family: var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
     }
 }
 

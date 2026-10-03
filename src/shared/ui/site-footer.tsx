@@ -3,43 +3,43 @@ import { SITE } from '../config/site';
 
 export function SiteFooter() {
     return (
-        <footer className="font-body border-t border-border bg-card text-base text-muted-foreground">
-            <div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-8">
+        <footer className="font-body mt-16 border-t border-border bg-card/60 text-[0.75rem] text-muted-foreground">
+            <div className="mx-auto grid max-w-5xl gap-x-12 gap-y-4 px-4 py-10 sm:px-6 md:grid-cols-[auto_auto_1fr] md:items-start">
                 <nav aria-label="Site">
-                    <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                    <ul className="flex flex-wrap gap-x-6 gap-y-2 font-medium text-foreground">
                         <li>
-                            <Link href="/" className="underline-offset-4 hover:underline">
+                            <Link href="/" className="underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm">
                                 Home
                             </Link>
                         </li>
                         <li>
-                            <Link href="/sign-editor" className="underline-offset-4 hover:underline">
+                            <Link href="/sign-editor" className="underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm">
                                 Sign Editor
                             </Link>
                         </li>
                         <li>
-                            <Link href="/guides/sign-formatting" className="underline-offset-4 hover:underline">
+                            <Link href="/guides/sign-formatting" className="underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm">
                                 Sign Tag Guide
                             </Link>
                         </li>
                     </ul>
                 </nav>
                 <nav aria-label="Legal">
-                    <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                    <ul className="flex flex-wrap gap-x-6 gap-y-2 font-medium text-foreground">
                         <li>
-                            <Link href="/privacy" className="underline-offset-4 hover:underline">
+                            <Link href="/privacy" className="underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm">
                                 Privacy Policy
                             </Link>
                         </li>
                         <li>
-                            <Link href="/terms" className="underline-offset-4 hover:underline">
+                            <Link href="/terms" className="underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm">
                                 Terms of Use
                             </Link>
                         </li>
                     </ul>
                 </nav>
-                <p>{SITE.disclaimer}</p>
-                <p>
+                <p className="max-w-xl md:col-span-3 md:border-t md:border-border md:pt-4">{SITE.disclaimer}</p>
+                <p className="md:col-span-3">
                     &copy; {new Date().getFullYear()} {SITE.name}
                 </p>
             </div>

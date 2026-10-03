@@ -33,9 +33,9 @@ export const CopySignPanel = () => {
     };
 
     return (
-        <div className="flex w-full max-w-250 flex-col gap-2 rounded-lg border p-3">
+        <div className="font-body flex w-full max-w-250 flex-col gap-2 rounded-xl border border-border bg-card/90 p-3 shadow-[var(--shadow-panel)] backdrop-blur-md">
             <div className="flex items-center justify-between">
-                <span className="text-sm font-bold">Sign text</span>
+                <span className="text-[0.65rem] font-semibold tracking-[0.08em] text-muted-foreground uppercase">Sign text</span>
                 <span
                     className={cn(
                         'text-xs tabular-nums',
@@ -45,7 +45,7 @@ export const CopySignPanel = () => {
                     {signText.length}/{SIGN_CHAR_LIMIT}
                 </span>
             </div>
-            <pre className="min-h-10 w-full whitespace-pre-wrap break-words rounded-md border bg-muted p-2 text-sm text-foreground">
+            <pre className="min-h-10 w-full whitespace-pre-wrap break-words rounded-lg border border-border bg-muted px-3 py-2 font-mono text-[0.75rem] text-foreground">
                 {signText}
             </pre>
             <button
@@ -53,8 +53,9 @@ export const CopySignPanel = () => {
                 onClick={handleCopy}
                 disabled={signText.length === 0}
                 className={cn(
-                    'flex items-center justify-center gap-1.5 self-end rounded-md px-3 py-1.5 text-xs font-bold',
-                    'bg-control text-control-foreground transition-colors hover:bg-control-hover',
+                    'flex items-center justify-center gap-1.5 self-end rounded-lg px-4 py-1.5 text-xs font-semibold',
+                    'bg-primary text-primary-foreground shadow-sm transition-[filter] hover:brightness-95',
+                    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                     'disabled:opacity-50 disabled:pointer-events-none',
                 )}
             >

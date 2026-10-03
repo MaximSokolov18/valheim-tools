@@ -2,8 +2,14 @@ import Link from 'next/link';
 
 export function SignEditorInfo() {
     return (
-        <section aria-labelledby="about-sign-editor" className="font-body mx-auto max-w-3xl px-4 py-12">
-            <h2 id="about-sign-editor" className="font-heading text-3xl">
+        <section
+            aria-labelledby="about-sign-editor"
+            className="mx-auto max-w-3xl px-4 py-16 font-heading text-[1.02rem] leading-[1.7] [&_a]:underline [&_a]:decoration-foreground/35 [&_a]:underline-offset-4 hover:[&_a]:decoration-foreground [&_p]:mt-4"
+        >
+            <h2
+                id="about-sign-editor"
+                className="border-b-2 border-foreground pb-3 text-[1.9rem] font-medium leading-tight tracking-[-0.015em]"
+            >
                 About the Sign Editor
             </h2>
             <p className="mt-3">

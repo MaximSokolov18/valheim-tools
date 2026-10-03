@@ -20,7 +20,7 @@ import { SpriteOverlay } from './sprite-overlay';
  */
 const CLICK_DRAG_THRESHOLD_PX = 5;
 
-const BOARD_IMAGE = '/images/board.webp';
+const BOARD_IMAGE = '/images/boards/board-dark.webp';
 
 /**
  * Board artwork. It's an <img> (not a CSS background) so the browser fetches it
@@ -51,7 +51,7 @@ const BoardArtwork = ({ onReady }: { onReady: () => void }) => {
             decoding="async"
             onLoad={onReady}
             onError={onReady}
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none select-none drop-shadow-[0_22px_26px_rgba(40,22,8,0.45)]"
         />
     );
 };

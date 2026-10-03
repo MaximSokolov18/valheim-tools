@@ -5,7 +5,7 @@ import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';
 import { TAG_ROWS } from '../model/tag-data';
 
-const h2 = 'font-heading mt-10 text-3xl';
+const h2 = 'font-heading mt-14 scroll-mt-6 text-[1.7rem] font-medium leading-tight tracking-[-0.01em] sm:text-[1.9rem]';
 
 const GUIDE_PATH = '/guides/sign-formatting';
 const GUIDE_UPDATED = ROUTES.find((route) => route.path === GUIDE_PATH)?.lastModified ?? '2026-10-02';
@@ -31,17 +31,30 @@ export function SignGuidePage() {
                 ])}
             />
 
-            <article className="max-w-3xl">
-                <h1 className="font-heading text-4xl sm:text-5xl">Valheim Sign Tag Guide</h1>
-                <p className="mt-2 text-sm">
-                    Last updated <time dateTime={GUIDE_UPDATED}>{GUIDE_UPDATED}</time>
-                </p>
-                <p className="mt-4 text-lg">
+            <article className="mx-auto max-w-3xl font-heading text-[1.02rem] leading-[1.7] [&_a]:underline [&_a]:decoration-foreground/35 [&_a]:underline-offset-4 hover:[&_a]:decoration-foreground [&_code]:rounded-md [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.8em] [&_code]:text-brand-text [&_li]:marker:text-brand-text">
+                <div className="flex items-end justify-between gap-6 border-b-2 border-foreground pb-5">
+                    <div>
+                        <h1 className="text-[2.6rem] leading-[1.02] font-normal tracking-[-0.025em] sm:text-[3.4rem]">
+                            Valheim Sign Tag Guide
+                        </h1>
+                        <p className="font-body mt-3 text-[0.75rem] text-muted-foreground">
+                            Last updated <time dateTime={GUIDE_UPDATED}>{GUIDE_UPDATED}</time>
+                        </p>
+                    </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                        src="/images/spots/signpost.webp"
+                        alt=""
+                        aria-hidden="true"
+                        className="-mb-3 hidden w-24 shrink-0 mix-blend-multiply sm:block dark:mix-blend-normal dark:opacity-90"
+                    />
+                </div>
+                <p className="mt-8 text-[1.2rem] leading-relaxed">
                     A Valheim sign holds 50 characters, and every character of a formatting tag counts towards that
                     limit. Colour tags such as <code>&lt;#ff0&gt;</code> (6 characters) are far cheaper than{' '}
                     <code>&lt;color=yellow&gt;</code> (14) and look identical.
                 </p>
-                <p className="mt-4 text-lg">
+                <p className="mt-4 text-[1.2rem] leading-relaxed text-foreground/85">
                     Signs in Valheim understand rich-text tags for colour, size, spacing and more. This guide lists the
                     tags we have tested, what each one costs and the quirks worth knowing. Prefer to experiment? Open
                     the{' '}
@@ -50,7 +63,7 @@ export function SignGuidePage() {
                     </Link>
                     .
                 </p>
-                <p className="mt-4 rounded-md border border-border bg-card p-4">
+                <p className="font-body mt-8 rounded-xl border border-border border-l-4 border-l-primary bg-card p-5 text-[0.8rem] leading-relaxed text-muted-foreground shadow-[var(--shadow-panel)]">
                     These notes come from building signs in the game and watching what happened. They are not official
                     documentation, they may be incomplete and a game patch can make them out of date. If a sign behaves
                     differently from what is written here, trust the sign.
@@ -59,7 +72,7 @@ export function SignGuidePage() {
                 <h2 id="character-limit" className={h2}>
                     The 50-character budget
                 </h2>
-                <p className="mt-3">
+                <p className="mt-4">
                     A sign holds 50 characters, and every character of every tag counts towards that total.{' '}
                     <code>&lt;color=yellow&gt;</code> uses 14 characters, while <code>&lt;#ff0&gt;</code> uses 6 and
                     looks identical. Choosing the shortest tag that does the job is the main skill of sign design.
@@ -72,19 +85,19 @@ export function SignGuidePage() {
                     role="region"
                     aria-label="Sign tag reference table"
                     tabIndex={0}
-                    className="mt-3 overflow-x-auto rounded-md border border-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="font-body mt-5 overflow-x-auto rounded-xl border border-border bg-card shadow-[var(--shadow-panel)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
-                    <table className="w-full min-w-[40rem] border-collapse text-left">
+                    <table className="w-full min-w-[40rem] border-collapse text-left text-[0.8rem]">
                         <caption className="sr-only">Each tag, what it does and how many characters it uses</caption>
-                        <thead className="bg-secondary text-secondary-foreground">
+                        <thead className="bg-secondary text-[0.7rem] tracking-[0.06em] text-muted-foreground uppercase">
                             <tr>
-                                <th scope="col" className="px-3 py-2">
+                                <th scope="col" className="px-4 py-3">
                                     Tag
                                 </th>
-                                <th scope="col" className="px-3 py-2">
+                                <th scope="col" className="px-4 py-3">
                                     What it does
                                 </th>
-                                <th scope="col" className="px-3 py-2">
+                                <th scope="col" className="px-4 py-3">
                                     Cost
                                 </th>
                             </tr>
@@ -92,11 +105,11 @@ export function SignGuidePage() {
                         <tbody>
                             {TAG_ROWS.map((row) => (
                                 <tr key={row.example} className="border-t border-border align-top">
-                                    <th scope="row" className="px-3 py-2 font-normal">
+                                    <th scope="row" className="px-4 py-3 font-normal">
                                         <code>{row.example}</code>
                                     </th>
-                                    <td className="px-3 py-2">{row.effect}</td>
-                                    <td className="px-3 py-2">{row.cost}</td>
+                                    <td className="px-4 py-3">{row.effect}</td>
+                                    <td className="px-4 py-3">{row.cost}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -106,7 +119,7 @@ export function SignGuidePage() {
                 <h2 id="colour" className={h2}>
                     Colour and the order of tags
                 </h2>
-                <ul className="mt-3 list-disc space-y-2 pl-6">
+                <ul className="mt-4 list-disc space-y-3 pl-6">
                     <li>Text with no colour tag is black.</li>
                     <li>
                         Where both digits of a hex pair match, you can drop one: <code>&lt;#ff66ff&gt;</code> becomes{' '}
@@ -127,7 +140,7 @@ export function SignGuidePage() {
                 <h2 id="size" className={h2}>
                     Size and automatic fitting
                 </h2>
-                <p className="mt-3">
+                <p className="mt-4">
                     Without a size tag the game fits text to the board. A single character lands near size 8 and every
                     extra character steps it down, so the same sentence is larger on one line than split over two. A{' '}
                     <code>&lt;size&gt;</code> tag is not affected by this fitting. In our measurements sizes 5, 7 and 9
@@ -138,7 +151,7 @@ export function SignGuidePage() {
                 <h2 id="letters" className={h2}>
                     Letters and fonts
                 </h2>
-                <ul className="mt-3 list-disc space-y-2 pl-6">
+                <ul className="mt-4 list-disc space-y-3 pl-6">
                     <li>
                         Signs use the Norsebold font, the only cut available, so <code>&lt;b&gt;</code> changes nothing.
                     </li>
@@ -161,7 +174,7 @@ export function SignGuidePage() {
                 <h2 id="emoji" className={h2}>
                     Emoji
                 </h2>
-                <p className="mt-3">
+                <p className="mt-4">
                     Emoji come from a Noto Emoji font that the game ships, so they look the same for every player. They
                     are single-colour and take whichever colour tag is active. The font covers emoji up to Emoji 15.0
                     (2022); newer ones show as a box. Emoji built from several parts (skin tones, joined sequences,
@@ -172,13 +185,13 @@ export function SignGuidePage() {
                 <h2 id="edit-box" className={h2}>
                     The edit box applies tags live
                 </h2>
-                <p className="mt-3">
+                <p className="mt-4">
                     While you type, the game&apos;s edit box already applies your tags instead of showing them as raw
                     text. Text that is very small or coloured close to the plank can look as if it vanished, though
                     usually part of it stays visible. Confirm the sign to see the finished result.
                 </p>
 
-                <p className="mt-10">
+                <p className="mt-14 border-t border-border pt-6">
                     Ready to try it? Open the{' '}
                     <Link href="/sign-editor" className="underline underline-offset-4">
                         Sign Editor
