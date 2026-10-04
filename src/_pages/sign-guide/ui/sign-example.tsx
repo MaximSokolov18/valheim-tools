@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Card, CardContent } from '../../../../components/ui/card';
-import { CharCount } from '../../../../components/char-count';
+import { CharCount } from '../../../shared/ui/char-count';
 import { SIGN_CHAR_LIMIT } from '../../sign-editor/lib/translate-sign-text';
 import { SignMarkup } from './sign-markup';
 import { SignPreview } from './sign-preview';

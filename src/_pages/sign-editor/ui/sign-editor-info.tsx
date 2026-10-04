@@ -1,4 +1,4 @@
-import { TextLink } from '../../../../components/text-link';
+import { TextLink } from '../../../shared/ui/text-link';
 
 export function SignEditorInfo() {
     return (

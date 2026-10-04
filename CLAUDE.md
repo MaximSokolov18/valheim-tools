@@ -4,31 +4,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
-## Project state
+## Project
 
-This is an early-stage Next.js 16 (App Router) project. `app/page.tsx` and `app/layout.tsx` are currently
-placeholder/near-empty — there is no meaningful application code yet. A legacy `src/` directory (Pages-Router-era
-components, a sign-editor page, custom fonts, shadcn-style `src/components/ui/`) is being removed in favor of the
-root-level `app/` directory; don't resurrect patterns from `src/` when it still shows as deleted in `git status`.
+Viking Tools: free browser tools for Valheim players (sign editor, sign tag guide, legal pages). It is a
+fully static Next.js 16 (App Router) site: `output: 'export'` builds to `out/`, which is hosted on Firebase
+Hosting (see `docs/deployment-guide.md`). No server features: no route handlers reading requests, middleware,
+server actions, ISR, or `cookies()`/`headers()`. There are no cookies, ads, analytics or consent layer; do not
+re-add them unprompted.
 
 ## Commands
 
-- `npm run dev` — start the dev server (Turbopack, per Next 16 default)
-- `npm run build` — production build
-- `npm run start` — run the production build
+- `npm run dev` — dev server (Turbopack)
+- `npm run build` — static export into `out/`
 - `npm run lint` — ESLint (flat config via `eslint-config-next`)
+- `npm run test` — Vitest once (`npm run test:watch` to watch). Tests are in `src/**/*.test.{ts,tsx}`
+- `npx tsc --noEmit` — type check
 
-There is no test runner configured in this repo yet.
+CI (`.github/workflows/`) runs lint, tests and build on every push/PR and deploys `main` to Firebase.
 
 ## Architecture
 
-- **App Router at the repository root**: routes live in `app/`, not `src/app/`. `tsconfig.json` maps `@/*` to the
-  repo root (not `./src/*`), so new shared modules (components, lib) should be added as top-level directories
-  (e.g. `app/`, `components/`, `lib/`) rather than under `src/`.
-- **Styling**: Tailwind CSS v4 via the `@tailwindcss/postcss` plugin; `app/globals.css` is just `@import "tailwindcss"`
-  with no custom theme layer yet.
-- **Fonts**: `app/layout.tsx` loads Geist Sans/Mono through `next/font/google` and exposes them as CSS variables
-  (`--font-geist-sans`, `--font-geist-mono`) on the `<html>` element.
+The project follows Feature-Sliced Design (see `.claude/skills/feature-sliced-design`), adapted to Next.js:
+
+- **`app/`** — Next.js routes only (thin `page.tsx` files that set metadata and render a page from `src/_pages`),
+  plus `layout.tsx`, `globals.css`, `manifest.ts`, `robots.ts`, `sitemap.ts`, icon and social-image routes, and
+  local fonts in `app/fonts/`.
+- **`src/_pages/<page>/`** — one slice per page (`home`, `sign-editor`, `sign-guide`, `legal`). Segments:
+  `ui/`, `model/`, `lib/`, with a public `index.ts`. Tests live next to the code (`__tests__/` or `*.test.ts(x)`).
+  The folder is `_pages` (not `pages`) so Next does not treat it as the Pages Router.
+- **`src/shared/`** — code reused across pages: `config/` (site constants, theme, image paths),
+  `seo/` (metadata, JSON-LD, sitemap helpers), `ui/` (reusable UI pieces: header, footer, `CopyButton`, `TextLink`,
+  `Note`, `Spot`, `CharCount`, ...).
+- **`components/ui/`** — the shadcn UI kit **only** (`button`, `card`, `toast`, `toggle`, ...). Nothing else
+  goes in `components/`. `lib/utils.ts` (repo root) holds `cn`, used by the kit and by `src/` code.
+- **`public/`** — static images (`images/`), PWA icons (`icons/`), `llms.txt`.
+
+Imports flow downward only: `app` → `_pages` → `shared` (and the kit). A page slice never imports another page slice.
+
+### Import rules
+
+- `@/*` maps to `./src/*` (not the repo root). Use it from `app/`.
+- Inside `src/` and in tests use relative imports. Bare `baseUrl`-style imports (`lib/utils`, `src/...`) are not
+  allowed: they break Vitest.
+- Kit files import `cn` as `../../lib/utils`.
 
 ## UI components
 
@@ -36,17 +54,28 @@ Use the UI kit first, custom second. The kit is shadcn (`components.json`, style
 `@base-ui/react`) and lives in `components/ui/`. For any button, toggle, menu, dialog, input, etc., check
 `components/ui/` for an existing component; if missing, add it with `npx shadcn@latest add <name>` (then move the
 generated file from `src/components/ui/` to `components/ui/` and make its `cn` import `../../lib/utils`).
-Only build a custom component when the kit has no suitable one, and style it with the existing theme tokens
+Only build a custom component when the kit has no suitable one, put it in `src/shared/ui/` (if it is reused by
+several pages) or in the page's own `ui/` segment, and style it with the existing theme tokens
 (`bg-control`, `text-control-foreground`, ...).
+
+## Styling and fonts
+
+- Tailwind CSS v4 via `@tailwindcss/postcss`; theme tokens (Birch light / Peat dark, mead-gold primary) are in
+  `app/globals.css`. The root font size is 20px (`text-xl` on `<html>`), but media queries in rem still use the
+  browser's 16px, so Tailwind's `md` is 768px.
+- Fonts are self-hosted from `app/fonts/` through `next/font/local` (Norse, Geist, Geist Mono, Newsreader), plus
+  Noto Emoji from `next/font/google`. Norse and Geist Mono are not preloaded; the sign editor warms them itself.
 
 ## Working with this fork of Next.js
 
-Per `AGENTS.md`, the installed `next` package (v16.3.0) has behavior that diverges from training data. Before
-writing App Router code, check the relevant guide under `node_modules/next/dist/docs/` (`01-app/`, `02-pages/`,
+Per `AGENTS.md`, the installed `next` package has behavior that diverges from training data. Before writing
+App Router code, check the relevant guide under `node_modules/next/dist/docs/` (`01-app/`, `02-pages/`,
 `03-architecture/`, `04-community/`) rather than assuming familiar Next.js APIs/conventions still apply.
 
 The `AGENTS.md` block itself is regenerated by `next dev` (see `node_modules/next/dist/server/lib/generate-agent-files.js`)
 — if it shows up as a diff, that's expected; commit it as-is rather than editing around it.
 
 ## Git workflow rules
-- Don't commit changes, it will do a developer
+
+- Don't commit changes, the developer does it.
+- The project commits directly to `main` (no feature branches).

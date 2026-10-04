@@ -1,7 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { cn } from '../lib';
+import { cn } from '../../../lib/utils';
 import { Toggle } from '../../../components/ui/toggle';
 import { THEME_STORAGE_KEY, THEME_TRANSITION_MS } from '../config/theme';
 

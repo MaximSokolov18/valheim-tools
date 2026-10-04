@@ -14,12 +14,12 @@ export const renderSocialImage = () =>
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    background: '#484b6a',
-                    color: '#fafafa',
+                    background: '#12110f',
+                    color: '#e8a90c',
                 }}
             >
                 <div style={{ fontSize: 120, fontWeight: 700 }}>{SITE.name}</div>
-                <div style={{ fontSize: 44, marginTop: 24, color: '#d2d3db' }}>
+                <div style={{ fontSize: 44, marginTop: 24, color: '#f5f2ec' }}>
                     Free sign editor and tools for Valheim players
                 </div>
             </div>

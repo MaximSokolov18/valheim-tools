@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from 'next/font/local'
 import { Noto_Emoji } from 'next/font/google'
 import "./globals.css";
-import {cn} from "lib/utils";
+import { cn } from "../lib/utils";
 import { SITE } from "@/shared/config/site";
 import { SkipLink } from "@/shared/ui/skip-link";
 import { THEME_STORAGE_KEY } from "@/shared/config/theme";
@@ -10,32 +10,35 @@ import { THEME_STORAGE_KEY } from "@/shared/config/theme";
 
 const norse = localFont({
   src: [
-    { path: '../public/fonts/norse/Norse.otf', weight: '400', style: 'normal' },
-    { path: '../public/fonts/norse/Norsebold.otf', weight: '700', style: 'normal' },
+    { path: './fonts/norse/Norse.otf', weight: '400', style: 'normal' },
+    { path: './fonts/norse/Norsebold.otf', weight: '700', style: 'normal' },
   ],
   variable: '--font-norse',
   display: 'swap',
+  // Only the editor and sign previews draw it (they preload it themselves); skip the preload elsewhere.
+  preload: false,
 })
 
 // Interface and reading fonts of the Viking Tools design system, bundled locally (SIL OFL).
 const geist = localFont({
-  src: '../public/fonts/geist/Geist-Variable.woff2',
+  src: './fonts/geist/Geist-Variable.woff2',
   weight: '100 900',
   variable: '--font-geist',
   display: 'swap',
 })
 
 const geistMono = localFont({
-  src: '../public/fonts/geist/GeistMono-Variable.woff2',
+  src: './fonts/geist/GeistMono-Variable.woff2',
   weight: '100 900',
   variable: '--font-geist-mono',
   display: 'swap',
+  preload: false,
 })
 
 const newsreader = localFont({
   src: [
-    { path: '../public/fonts/newsreader/Newsreader-Variable.woff2', weight: '200 800', style: 'normal' },
-    { path: '../public/fonts/newsreader/Newsreader-Italic-Variable.woff2', weight: '200 800', style: 'italic' },
+    { path: './fonts/newsreader/Newsreader-Variable.woff2', weight: '200 800', style: 'normal' },
+    { path: './fonts/newsreader/Newsreader-Italic-Variable.woff2', weight: '200 800', style: 'italic' },
   ],
   variable: '--font-newsreader',
   display: 'swap',

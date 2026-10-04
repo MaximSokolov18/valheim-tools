@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { cn } from '../../../shared/lib';
+import { cn } from '../../../../lib/utils';
 import { IMAGES } from '../../../shared/config/images';
 import { buttonVariants } from '../../../../components/ui/button';
 import { Card, CardContent } from '../../../../components/ui/card';
-import { Spot, type SpotName } from '../../../../components/spot';
-import { TextLink } from '../../../../components/text-link';
+import { Spot, type SpotName } from '../../../shared/ui/spot';
+import { TextLink } from '../../../shared/ui/text-link';
 import { websiteJsonLd } from '../../../shared/seo/json-ld';
 import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';

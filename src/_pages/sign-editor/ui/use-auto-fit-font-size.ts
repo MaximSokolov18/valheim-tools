@@ -8,7 +8,7 @@ const AUTO_FIT_MIN_FONT_SIZE = 8;
 
 /**
  * Keeps `containerRef`'s font size at the largest value that still fits its own box,
- * recomputing on every editor edit and whenever the container is resized.
+ * recomputing on every editor edit, whenever the container is resized and after web fonts load.
  */
 export const useAutoFitFontSize = (
     editor: Editor | null,
@@ -41,9 +41,16 @@ export const useAutoFitFontSize = (
         const observer = new ResizeObserver(applyFit);
         observer.observe(container);
 
+        // Web fonts swap in after first paint and change glyph widths without
+        // resizing the (fixed-size) container, so refit once they have loaded.
+        const fonts = document.fonts;
+        fonts?.ready.then(applyFit).catch(() => {});
+        fonts?.addEventListener?.('loadingdone', applyFit);
+
         return () => {
             editor.off('update', applyFit);
             observer.disconnect();
+            fonts?.removeEventListener?.('loadingdone', applyFit);
         };
     }, [editor, containerRef]);
 };

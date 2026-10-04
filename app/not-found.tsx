@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { TextLink } from "../components/text-link";
+import { TextLink } from "@/shared/ui/text-link";
 import { SiteShell } from "@/shared/ui/site-shell";
 
 export const metadata: Metadata = {

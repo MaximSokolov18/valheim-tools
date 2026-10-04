@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { preload } from 'react-dom';
-import { cn } from '../../../../shared/lib';
+import { cn } from '../../../../../lib/utils';
 import { IMAGES } from '../../../../shared/config/images';
 import { mountFjordScene, type FjordSceneOptions } from './mount-fjord-scene';
 

@@ -40,7 +40,7 @@ export function SiteFooter() {
                 </nav>
                 <p className="max-w-xl md:col-span-3 md:border-t md:border-border md:pt-4">{SITE.disclaimer}</p>
                 <p className="md:col-span-3">
-                    &copy; {new Date().getFullYear()} {SITE.name}
+                    &copy; {SITE.copyrightYear} {SITE.name}
                 </p>
             </div>
         </footer>

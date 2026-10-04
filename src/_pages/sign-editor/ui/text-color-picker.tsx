@@ -72,20 +72,24 @@ export const TextColorPicker = () => {
         previewBaselineRef.current = undefined;
     };
 
+    // `nextHsv` is passed by the square/hue drags. Hex can't carry the hue of a
+    // gray or black color, so rebuilding HSV from it would snap the hue slider
+    // back to 0 mid-drag; only external colors (presets, typed hex) go through hexToHsv.
+
     /** Live-preview `hex` on the selection without creating an undo step. */
-    const previewColor = (hex: string) => {
+    const previewColor = (hex: string, nextHsv?: Hsv) => {
         if (!editor) return;
         beginPreview();
         setTextColorTransient(editor, hex);
         setDraft(hex);
-        setHsv(hexToHsv(hex));
+        setHsv(nextHsv ?? hexToHsv(hex));
     };
 
-    const applyColor = (hex: string) => {
+    const applyColor = (hex: string, nextHsv?: Hsv) => {
         if (!editor) return;
         setTextColor(editor, hex);
         setDraft(hex);
-        setHsv(hexToHsv(hex));
+        setHsv(nextHsv ?? hexToHsv(hex));
     };
 
     /**
@@ -95,10 +99,10 @@ export const TextColorPicker = () => {
      * keystrokes in the hex input) into a single undo step from the
      * pre-preview color to the one the user landed on.
      */
-    const commitColor = (hex: string) => {
+    const commitColor = (hex: string, nextHsv?: Hsv) => {
         if (!editor) return;
         rollBackPreview();
-        applyColor(hex);
+        applyColor(hex, nextHsv);
     };
 
     // The hex input needs real DOM focus to be typeable, which collapses the
@@ -116,7 +120,7 @@ export const TextColorPicker = () => {
             // invalid, so this never commits garbage. A no-op (nothing to
             // roll back) once a commit path already ran first.
             if (previewBaselineRef.current !== undefined) {
-                commitColor(hsvToHex(hsv));
+                commitColor(hsvToHex(hsv), hsv);
             }
             hideSelectionHighlight(editor);
         }
@@ -154,14 +158,16 @@ export const TextColorPicker = () => {
         const rect = squareRef.current.getBoundingClientRect();
         const s = clamp01((event.clientX - rect.left) / rect.width) * 100;
         const v = (1 - clamp01((event.clientY - rect.top) / rect.height)) * 100;
-        previewColor(hsvToHex({ h: hsv.h, s, v }));
+        const next = { h: hsv.h, s, v };
+        previewColor(hsvToHex(next), next);
     };
 
     const updateFromHue = (event: ReactPointerEvent<HTMLDivElement>) => {
         if (!editor || !hueRef.current || !isDragging(event)) return;
         const rect = hueRef.current.getBoundingClientRect();
         const h = clamp01((event.clientX - rect.left) / rect.width) * 360;
-        previewColor(hsvToHex({ h, s: hsv.s, v: hsv.v }));
+        const next = { h, s: hsv.s, v: hsv.v };
+        previewColor(hsvToHex(next), next);
     };
 
     const startSquareDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -175,7 +181,7 @@ export const TextColorPicker = () => {
     };
 
     const endDrag = () => {
-        commitColor(hsvToHex(hsv));
+        commitColor(hsvToHex(hsv), hsv);
     };
 
     const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();

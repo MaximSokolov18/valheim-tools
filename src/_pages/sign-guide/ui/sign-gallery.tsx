@@ -1,6 +1,6 @@
 import { Card, CardContent } from '../../../../components/ui/card';
-import { CharCount } from '../../../../components/char-count';
-import { CopyButton } from '../../../../components/copy-button';
+import { CharCount } from '../../../shared/ui/char-count';
+import { CopyButton } from '../../../shared/ui/copy-button';
 import { SIGN_CHAR_LIMIT } from '../../sign-editor/lib/translate-sign-text';
 import { GALLERY_SIGNS } from '../model/sign-gallery';
 import { SignMarkup } from './sign-markup';

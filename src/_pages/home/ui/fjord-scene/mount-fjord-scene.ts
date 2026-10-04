@@ -42,9 +42,10 @@ const UNIFORMS = [
 
 /**
  * Below this width the scene is a band under the hero copy: no paper wash, ship
- * centred. Matches Tailwind's `md` breakpoint (48rem) at the site's 20px root size.
+ * centred. Same query as Tailwind's `md` breakpoint; media queries in rem use the
+ * browser's 16px initial size, not the page's 20px root, so this is 768px.
  */
-const NARROW_PX = 960;
+const WIDE_QUERY = '(min-width: 48rem)';
 const HALF_TURN = Math.PI;
 /** Wheel angle with the sun up; night is half a turn further on. */
 const DAY_ANGLE = Math.PI / 2 - 0.25;
@@ -141,6 +142,10 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
             ready |= 1 << i;
             reveal();
         };
+        // A layer that never loads would leave the hero empty, so show the static painting instead.
+        img.onerror = () => {
+            if (!destroyed) host.dataset.fallback = 'true';
+        };
         img.src = opts[name];
         images.push(img);
     });
@@ -188,9 +193,11 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
     let mx = 0.6, my = 0.5, smx = 0.6, smy = 0.5, t = 0, boost = 0, ri = 0;
     let lastRipple: [number, number] | null = null;
     const ripples: Ripple[] = Array.from({ length: 6 }, (): Ripple => [0, 0, -10, 0]);
+    const rippleData = new Float32Array(ripples.length * 4);
     const waterline = opts.waterline ?? 0.2;
     const horizon = opts.horizon ?? 0.3;
-    const narrow = () => host.clientWidth < NARROW_PX;
+    const wide = window.matchMedia?.(WIDE_QUERY);
+    const narrow = () => (wide ? !wide.matches : host.clientWidth < 768);
     const addRipple = (x: number, y: number, s: number) => {
         ripples[ri] = [x, y, t, s];
         ri = (ri + 1) % ripples.length;
@@ -280,7 +287,8 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
         g.uniform3f(U.uPaper, paper[0], paper[1], paper[2]);
         g.uniform3f(U.uShipPos, shipX, waterline + bob, nar ? 0.6 : (opts.shipW ?? 0.3));
         g.uniform1f(U.uTilt, Math.sin(t * 0.8) * 0.018 - shipV * 0.6);
-        g.uniform4fv(U.uRip, new Float32Array(ripples.flat()));
+        ripples.forEach((ripple, i) => rippleData.set(ripple, i * 4));
+        g.uniform4fv(U.uRip, rippleData);
         g.drawArrays(g.TRIANGLE_STRIP, 0, 4);
         if (running) raf = requestAnimationFrame(() => frame());
     }
@@ -336,7 +344,10 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
             track.removeEventListener('pointermove', onMove);
             track.removeEventListener('pointerdown', onDown);
             track.removeEventListener('pointerleave', onLeave);
-            images.forEach((img) => (img.onload = null));
+            images.forEach((img) => {
+                img.onload = null;
+                img.onerror = null;
+            });
             canvas.remove();
             delete host.dataset.live;
             g.getExtension('WEBGL_lose_context')?.loseContext();

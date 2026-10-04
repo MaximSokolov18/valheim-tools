@@ -4,9 +4,9 @@ import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';
 import { TAG_ROWS } from '../model/tag-data';
 import { Card } from '../../../../components/ui/card';
-import { Note } from '../../../../components/note';
-import { Spot } from '../../../../components/spot';
-import { TextLink } from '../../../../components/text-link';
+import { Note } from '../../../shared/ui/note';
+import { Spot } from '../../../shared/ui/spot';
+import { TextLink } from '../../../shared/ui/text-link';
 import { SignExample } from './sign-example';
 import { SignGallery } from './sign-gallery';
 

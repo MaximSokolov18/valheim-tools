@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react';
 import Link from 'next/link';
-import { cn } from '../lib/utils';
+import { cn } from '../../../lib/utils';
 
 /** Inline link in running text: ink with a soft underline that darkens on hover. */
 export function TextLink({ className, ...props }: ComponentProps<typeof Link>) {

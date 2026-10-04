@@ -2,8 +2,8 @@
 
 import { useState, type ComponentProps } from 'react';
 import { Check, Copy } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Button } from './ui/button';
+import { cn } from '../../../lib/utils';
+import { Button } from '../../../components/ui/button';
 
 /** How long the button shows "Copied" before reverting. */
 const COPIED_RESET_MS = 1500;

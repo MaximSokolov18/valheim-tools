@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { cn } from '../lib/utils';
+import { cn } from '../../../lib/utils';
 
 const VARIANTS = {
     tip: { label: 'Tip', tone: 'text-brand-text', rule: 'border-foreground' },

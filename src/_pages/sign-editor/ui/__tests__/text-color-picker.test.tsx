@@ -195,6 +195,23 @@ describe('TextColorPicker', () => {
         expect(editor.getHTML()).toBe('<p><span style="color: rgb(0, 255, 0);">hello</span></p>');
     });
 
+    it('keeps the hue slider where it was dragged even while the color is black', async () => {
+        const user = userEvent.setup();
+        const editor = renderWithEditor('<p>hello</p>');
+        act(() => {
+            editor.commands.setTextSelection({ from: 1, to: 6 });
+        });
+
+        await user.click(trigger());
+        const hue = screen.getByLabelText('Hue');
+        stubRect(hue);
+        // Black has no hue in hex form, so the thumb must not snap back to 0.
+        fireEvent.pointerDown(hue, { pointerId: 1, buttons: 1, clientX: 50, clientY: 0 });
+        fireEvent.pointerUp(hue, { pointerId: 1 });
+
+        expect((hue.firstElementChild as HTMLElement).style.left).toBe('50%');
+    });
+
     it('collapses a whole drag into a single undo step', async () => {
         const user = userEvent.setup();
         const editor = renderWithEditor('<p>hello</p>');

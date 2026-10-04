@@ -36,4 +36,11 @@ describe('SignLengthLimit', () => {
         editor.commands.setColor('#ff0000');
         expect(onLimitReached).toHaveBeenCalled();
     });
+
+    it('does not count the emoji presentation selector that is stripped after the edit', () => {
+        const { editor, onLimitReached } = makeEditor(`<p>${'a'.repeat(SIGN_CHAR_LIMIT - 1)}</p>`);
+        editor.commands.insertContent('\u2764\uFE0F');
+        expect(onLimitReached).not.toHaveBeenCalled();
+        expect(editor.getText()).toHaveLength(SIGN_CHAR_LIMIT);
+    });
 });

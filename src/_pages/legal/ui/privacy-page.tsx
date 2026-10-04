@@ -24,7 +24,11 @@ export function PrivacyPage() {
                     sent to us.
                 </li>
                 <li>
-                    <strong>Hosting data.</strong> The site is hosted on Firebase Hosting (Google). Like any web
+                    <strong>Hosting data.</strong> The site is hosted on Firebase Hosting (Google Cloud), which acts as our processor under{' '}
+                    <a href="https://cloud.google.com/terms/data-processing-addendum" rel="noopener noreferrer">
+                        Google&apos;s data processing terms
+                    </a>
+                    . Like any web
                     server, it processes technical data such as your IP address, browser type and the time and address
                     of each request in order to deliver and secure the site. Legal basis: our legitimate interest in
                     running a secure website (Art. 6(1)(f) GDPR).

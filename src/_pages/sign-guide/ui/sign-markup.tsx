@@ -1,4 +1,4 @@
-import { cn } from '../../../shared/lib';
+import { cn } from '../../../../lib/utils';
 
 /** Splits markup into tags/escapes and plain text, so tags can be tinted. */
 const TOKEN = /(<[^>]*>|\\[nvrt])/;

@@ -15,7 +15,9 @@ export const SITE = {
     disclaimer:
         'Viking Tools is an unofficial fan-made project. It is not affiliated with, endorsed by or sponsored by Iron Gate AB or Coffee Stain Publishing. Valheim and related names are trademarks of their respective owners.',
     socialImageAlt: 'Viking Tools: free sign editor and tools for Valheim players',
-    legalUpdated: '3 October 2026',
+    /** Year the site was first published. Fixed on purpose: a static export would freeze `new Date()` at build time. */
+    copyrightYear: '2026',
+    legalUpdated: '4 October 2026',
     operator: {
         name: 'Maksym Sokolov',
         country: 'Spain',

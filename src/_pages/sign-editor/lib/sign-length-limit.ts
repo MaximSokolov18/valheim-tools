@@ -2,6 +2,11 @@ import { Extension } from '@tiptap/core';
 import { Plugin } from '@tiptap/pm/state';
 import { translateSignDoc, SIGN_CHAR_LIMIT } from './translate-sign-text';
 
+/** Removed from the document by StripEmojiPresentation right after each edit, so it must not count. */
+const EMOJI_PRESENTATION_SELECTOR = /\uFE0F/g;
+const signLength = (doc: Parameters<typeof translateSignDoc>[0]): number =>
+    translateSignDoc(doc).replace(EMOJI_PRESENTATION_SELECTOR, '').length;
+
 export interface SignLengthLimitOptions {
     /** Called each time an edit is rejected for pushing the sign past `SIGN_CHAR_LIMIT`. */
     onLimitReached?: () => void;
@@ -27,9 +32,9 @@ export const SignLengthLimit = Extension.create<SignLengthLimitOptions>({
             new Plugin({
                 filterTransaction(tr, state) {
                     if (!tr.docChanged) return true;
-                    const nextLength = translateSignDoc(tr.doc.toJSON()).length;
+                    const nextLength = signLength(tr.doc.toJSON());
                     if (nextLength <= SIGN_CHAR_LIMIT) return true;
-                    if (nextLength <= translateSignDoc(state.doc.toJSON()).length) return true;
+                    if (nextLength <= signLength(state.doc.toJSON())) return true;
                     options.onLimitReached?.();
                     return false;
                 },
