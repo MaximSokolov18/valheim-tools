@@ -207,10 +207,16 @@ html.theme-transition *::after {
 
     .tiptap p.is-editor-empty:first-child::before {
         content: attr(data-placeholder);
+        /* One centered line in the middle of the sign, at a fixed size (not the auto-fit one, which is huge when empty). */
         position: absolute;
         left: 0;
         right: 0;
-        height: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        text-align: center;
+        white-space: nowrap;
+        font-size: calc(var(--sign-unit, 30px) * 1.8);
+        line-height: 1.1;
         pointer-events: none;
         color: color-mix(in oklab, currentColor 45%, transparent);
     }
@@ -238,6 +244,10 @@ html.theme-transition *::after {
 }
 
 /*
+ * The game only wraps at spaces / explicit newlines, never mid-word — unless shrinking the
+ * unsized text cannot make the line fit (e.g. big `<size>` glyphs wider than the sign), where it
+ * breaks the line between characters. The auto-fit hook sets `data-break` on the text area then.
+ *
  * The game only wraps at spaces / explicit newlines, never mid-word.
  * ProseMirror injects an unlayered `.ProseMirror { word-wrap: break-word }`, and
  * unlayered styles beat anything inside @layer, so this rule lives outside the
@@ -247,6 +257,11 @@ html.theme-transition *::after {
     overflow-wrap: normal;
     word-wrap: normal;
     word-break: normal;
+}
+
+[data-break] .tiptap.ProseMirror {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 @layer components {

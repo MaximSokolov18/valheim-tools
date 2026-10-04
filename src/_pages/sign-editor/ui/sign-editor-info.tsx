@@ -1,3 +1,4 @@
+import { Note } from '../../../shared/ui/note';
 import { TextLink } from '../../../shared/ui/text-link';
 
 export function SignEditorInfo() {
@@ -16,6 +17,13 @@ export function SignEditorInfo() {
                 Type your sign text, add colors and emoji from the toolbar, and watch it appear on the sign board.
                 When it looks right, copy the finished text and paste it into a sign in Valheim.
             </p>
+            <Note variant="watch">
+                <strong>The preview follows the game, not your screen.</strong> Colors are shown as Valheim
+                renders them on the sign, in its lighting and shading, so they look a little darker and duller than
+                the picker swatch. Text is centered, lines wrap only at spaces, and unsized text shrinks to fit the
+                board just as it does in the game. If something looks different from what you expected, that is
+                usually the game&apos;s sign rules at work.
+            </Note>
             <p className="mt-3">
                 Formatting tags count towards the game&apos;s limit of 50 characters per sign. The{' '}
                 <TextLink href="/guides/sign-formatting">

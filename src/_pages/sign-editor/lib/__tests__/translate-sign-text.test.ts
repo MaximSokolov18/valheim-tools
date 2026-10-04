@@ -63,16 +63,16 @@ describe('translateSignText', () => {
     it('wraps an explicit font size in a size tag', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        setFontSize(editor, 40);
-        expect(translateSignText(editor)).toBe('<size=40>hello');
+        setFontSize(editor, 10);
+        expect(translateSignText(editor)).toBe('<size=10>hello');
     });
 
     it('nests size inside color when a run has both', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
         setTextColor(editor, '#ff0000');
-        setFontSize(editor, 40);
-        expect(translateSignText(editor)).toBe('<#f00><size=40>hello');
+        setFontSize(editor, 10);
+        expect(translateSignText(editor)).toBe('<#f00><size=10>hello');
     });
 
     it('only wraps the styled run, leaving the rest of the text plain', () => {

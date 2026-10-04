@@ -44,3 +44,10 @@ describe('Toolbar format buttons', () => {
         expect(screen.getByRole('button', { name: 'Italic' })).toHaveAttribute('aria-pressed', 'true');
     });
 });
+
+describe('Toolbar font size', () => {
+    it('renders the font size control', () => {
+        renderWithEditor('<p>hello</p>');
+        expect(screen.getByRole('button', { name: /^Font size/ })).toBeInTheDocument();
+    });
+});

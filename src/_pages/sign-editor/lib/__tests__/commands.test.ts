@@ -73,36 +73,36 @@ describe('setFontSize', () => {
     it('wraps a plain selection in a sized span', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        setFontSize(editor, 40);
-        expect(editor.getHTML()).toBe('<p><span style="font-size: 40px;">hello</span></p>');
+        setFontSize(editor, 10);
+        expect(editor.getHTML()).toBe('<p><span style="--sign-size: 10; font-size: calc(10 * var(--sign-unit)); line-height: 1.1;">hello</span></p>');
     });
 
     it('replaces the size when the selection already has one', () => {
-        const editor = makeEditor('<p><span style="font-size: 40px">hello</span></p>');
+        const editor = makeEditor('<p><span style="--sign-size: 10">hello</span></p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        setFontSize(editor, 48);
-        expect(editor.getHTML()).toBe('<p><span style="font-size: 48px;">hello</span></p>');
+        setFontSize(editor, 12);
+        expect(editor.getHTML()).toBe('<p><span style="--sign-size: 12; font-size: calc(12 * var(--sign-unit)); line-height: 1.1;">hello</span></p>');
     });
 
     it('clamps out-of-range values', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        setFontSize(editor, 999);
-        expect(editor.getHTML()).toBe('<p><span style="font-size: 128px;">hello</span></p>');
+        setFontSize(editor, 99999);
+        expect(editor.getHTML()).toBe('<p><span style="--sign-size: 9000; font-size: calc(9000 * var(--sign-unit)); line-height: 1.1;">hello</span></p>');
     });
 
     it('arms the size at a collapsed caret for the next typed text', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 6, to: 6 });
-        setFontSize(editor, 40);
+        setFontSize(editor, 10);
         editor.view.dispatch(editor.state.tr.insertText('X'));
-        expect(editor.getHTML()).toContain('<span style="font-size: 40px;">X</span>');
+        expect(editor.getHTML()).toContain('<span style="--sign-size: 10; font-size: calc(10 * var(--sign-unit)); line-height: 1.1;">X</span>');
     });
 
     it('disarms the size when the caret moves before any typing', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 6, to: 6 });
-        setFontSize(editor, 40);
+        setFontSize(editor, 10);
 
         editor.commands.setTextSelection({ from: 1, to: 1 });
         expect(resolveActiveFontSize(editor)).toBeNull();
@@ -115,17 +115,17 @@ describe('setFontSize', () => {
     it('is reverted by undo and re-applied by redo', () => {
         const editor = makeEditor('<p>hello</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
-        setFontSize(editor, 40);
+        setFontSize(editor, 10);
         editor.commands.undo();
         expect(editor.getHTML()).toBe('<p>hello</p>');
         editor.commands.redo();
-        expect(editor.getHTML()).toBe('<p><span style="font-size: 40px;">hello</span></p>');
+        expect(editor.getHTML()).toBe('<p><span style="--sign-size: 10; font-size: calc(10 * var(--sign-unit)); line-height: 1.1;">hello</span></p>');
     });
 });
 
 describe('clearFontSize', () => {
     it('removes the size and leaves no empty span', () => {
-        const editor = makeEditor('<p><span style="font-size: 40px">hello</span></p>');
+        const editor = makeEditor('<p><span style="--sign-size: 10">hello</span></p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
         clearFontSize(editor);
         expect(editor.getHTML()).toBe('<p>hello</p>');

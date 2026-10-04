@@ -14,9 +14,9 @@ import {
 } from '../lib';
 
 /**
- * Word-style font-size control for the toolbar. The trigger shows the size that
+ * Valheim `<size>` control for the toolbar. The trigger shows the size that
  * covers the whole selection (blank when sizes are mixed, per `resolveActiveFontSize`).
- * The popover holds a free px input (applied on Enter, clamped by `setFontSize`),
+ * The popover holds a free size input (applied on Enter, clamped by `setFontSize`),
  * a "Normal" entry that removes the size, and the preset ladder. Like the Bold
  * button it prevents mousedown default so opening it does not collapse the
  * editor selection.
@@ -68,7 +68,7 @@ export const FontSizeSelect = () => {
             <Popover.Trigger
                 aria-label={activeSize == null ? 'Font size' : `Font size: ${activeSize}`}
                 onMouseDown={preventFocusSteal}
-                className="flex items-center gap-1 h-7 min-w-14 rounded-[calc(var(--radius-md)-2px)] px-2 text-xs font-bold outline-hidden select-none hover:bg-muted aria-expanded:bg-muted"
+                className="flex items-center justify-center gap-1 h-7 min-w-14 rounded-[calc(var(--radius-md)-2px)] px-2 text-xs font-bold outline-hidden select-none bg-control text-control-foreground transition-colors hover:bg-control-hover aria-expanded:bg-control-active aria-expanded:text-control-active-foreground"
             >
                 <span className="min-w-4 text-center tabular-nums">{activeSize ?? '–'}</span>
                 <ChevronDown className="size-3" aria-hidden />
@@ -97,7 +97,7 @@ export const FontSizeSelect = () => {
                             onMouseDown={preventFocusSteal}
                             onClick={applyNormal}
                             aria-pressed={activeSize == null}
-                            className="rounded-sm px-2 py-1 text-left hover:bg-muted aria-pressed:bg-primary/90 aria-pressed:text-primary-foreground"
+                            className="rounded-sm px-2 py-1 text-left outline-hidden hover:bg-control-hover aria-pressed:bg-control-active aria-pressed:text-control-active-foreground"
                         >
                             Normal
                         </button>
@@ -108,7 +108,7 @@ export const FontSizeSelect = () => {
                                 onMouseDown={preventFocusSteal}
                                 onClick={() => applyPreset(preset)}
                                 aria-pressed={activeSize === preset}
-                                className="rounded-sm px-2 py-1 text-left tabular-nums hover:bg-muted aria-pressed:bg-primary/90 aria-pressed:text-primary-foreground"
+                                className="rounded-sm px-2 py-1 text-left tabular-nums outline-hidden hover:bg-control-hover aria-pressed:bg-control-active aria-pressed:text-control-active-foreground"
                             >
                                 {preset}
                             </button>

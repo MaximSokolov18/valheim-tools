@@ -1,4 +1,6 @@
 export { signEditorExtensions, createSignEditorExtensions } from './editor-extensions';
+export { SizedLines } from './sized-lines';
+export { LineShifts, setLineShifts, measureLineShifts } from './line-shifts';
 export { SignLengthLimit } from './sign-length-limit';
 export {
     toggleBold,
@@ -21,7 +23,14 @@ export { resolveClickSelection } from './resolve-click-selection';
 export { computeAutoFitFontSize } from './auto-fit-font-size';
 export type { FontSizeFitCheck } from './auto-fit-font-size';
 export {
-    BASE_FONT_SIZE,
+    AUTO_FIT_SIZE,
+    MIN_AUTO_FIT_SIZE,
+    STAGE_WIDTH,
+    STAGE_TEXT_AREA_WIDTH,
+    SIZE_UNIT_PX,
+    SIZE_UNIT_VAR,
+    SIZE_VALUE_VAR,
+    sizeToCss,
     MIN_FONT_SIZE,
     MAX_FONT_SIZE,
     FONT_SIZE_PRESETS,

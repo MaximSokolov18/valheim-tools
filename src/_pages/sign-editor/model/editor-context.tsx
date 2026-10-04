@@ -36,8 +36,8 @@ export const SignEditorProvider = ({ children }: { children: ReactNode }) => {
         immediatelyRender: false,
         editorProps: {
             attributes: {
-                // Font size is set dynamically by useAutoFitFontSize (ui/use-auto-fit-font-size.ts).
-                class: 'text-center [font-family:var(--font-norse),var(--font-noto-emoji)]',
+                // Base (auto-fit) font size is set dynamically by useAutoFitFontSize (ui/use-auto-fit-font-size.ts).
+                class: 'text-center leading-[1.1] [font-family:var(--font-norse),var(--font-noto-emoji)]',
             },
             // Mousedown-and-drag starting on top of an existing selection is the
             // browser's cue for a native "drag this selection" gesture rather than

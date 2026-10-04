@@ -8,6 +8,9 @@ import { SelectionHighlight } from './selection-highlight';
 import { StripEmojiPresentation } from './strip-emoji-presentation';
 import { SignLengthLimit } from './sign-length-limit';
 import { Sprite } from './sprite-node';
+import { SizedLines } from './sized-lines';
+import { LineShifts } from './line-shifts';
+import { SIZE_VALUE_VAR, parseFontSize, sizeToCss } from './font-size';
 
 /**
  * The extension set for the sign editor.
@@ -47,6 +50,35 @@ const SignHighlight = BackgroundColor.extend({
     },
 });
 
+/**
+ * Same `fontSize` attribute as TipTap's `FontSize`, but holding a Valheim
+ * `<size>` number, rendered as a `--sign-size` variable plus a font-size scaled
+ * by the board (`--sign-unit`, set by the auto-fit hook) so sized text keeps its
+ * absolute game proportions at any board width.
+ */
+const SignFontSize = FontSize.extend({
+    addGlobalAttributes() {
+        return [
+            {
+                types: this.options.types,
+                attributes: {
+                    fontSize: {
+                        default: null,
+                        parseHTML: (element) => {
+                            const raw = element.style.getPropertyValue(SIZE_VALUE_VAR).trim();
+                            return parseFontSize(raw) == null ? null : raw;
+                        },
+                        renderHTML: (attributes) =>
+                            attributes.fontSize
+                                ? { style: `${SIZE_VALUE_VAR}: ${attributes.fontSize}; font-size: ${sizeToCss(Number(attributes.fontSize))}; line-height: 1.1` }
+                                : {},
+                    },
+                },
+            },
+        ];
+    },
+});
+
 export const createSignEditorExtensions = (onLimitReached?: () => void): Extensions => [
     StarterKit.configure({
         blockquote: false,
@@ -64,7 +96,9 @@ export const createSignEditorExtensions = (onLimitReached?: () => void): Extensi
     Subscript,
     Superscript,
     TextStyle,
-    FontSize,
+    SignFontSize,
+    SizedLines,
+    LineShifts,
     Color,
     SignHighlight,
     Placeholder.configure({ placeholder: 'Carve your rune…' }),

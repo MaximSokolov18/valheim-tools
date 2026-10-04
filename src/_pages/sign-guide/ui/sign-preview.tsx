@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { computeAutoFitFontSize } from '../../sign-editor/lib/auto-fit-font-size';
+import { MIN_AUTO_FIT_SIZE } from '../../sign-editor/lib/font-size';
 import { GAME_COLOR_MATRIX_VALUES } from '../../sign-editor/lib/game-color';
 import { IMAGES } from '../../../shared/config/images';
 import { parseSignMarkup, type SignLine, type SignRun } from '../lib/parse-sign-markup';
@@ -9,7 +10,7 @@ import { parseSignMarkup, type SignLine, type SignRun } from '../lib/parse-sign-
 /*
  * Same stage as the editor's board (see sign-editor/ui/board.tsx): a 2:1 box at
  * its max-w-250 size (62.5rem = 1250px at the site's 20px root), and a text area
- * 62% x 80% with a 30px inset. The preview is laid out at that size and scaled
+ * 66% x 80% with a 30px vertical inset. The preview is laid out at that size and scaled
  * down, so it wraps and fits exactly like the editor.
  */
 const STAGE_W = 1250;
@@ -21,9 +22,10 @@ const CAP_HEIGHT = 0.735;
 const SIZE_UNIT = STAGE_H / (14 * CAP_HEIGHT);
 /** Unsized text auto-fits, and the guide notes a single character lands near size 8. */
 const AUTO_FIT_MAX = Math.round(8 * SIZE_UNIT);
-const AUTO_FIT_MIN = 8;
-/** The editor's board inherits the page's `text-xl` line height (1.75rem / 1.25rem); match it, not the article's. */
-const EDITOR_LINE_HEIGHT = 1.4;
+/** The editor's floor too: what the game leaves unsized text at when sized text takes all the room. */
+const AUTO_FIT_MIN = Math.round(MIN_AUTO_FIT_SIZE * SIZE_UNIT);
+/** Norse's natural line height, which the game's sign text uses (the editor sets the same value). */
+const EDITOR_LINE_HEIGHT = 1.1;
 /** Longest the preview waits for the sign fonts before showing anyway. */
 const FONT_WAIT_MS = 2500;
 
@@ -147,15 +149,31 @@ export function SignPreview({
         const area = areaRef.current;
         if (!frame || !area) return;
         const fit = () => {
-            const size = computeAutoFitFontSize({
-                min: AUTO_FIT_MIN,
-                max: AUTO_FIT_MAX,
-                fits: (px) => {
-                    area.style.fontSize = `${px}px`;
-                    return area.scrollWidth <= area.clientWidth && area.scrollHeight <= area.clientHeight;
-                },
-            });
+            const search = () =>
+                computeAutoFitFontSize({
+                    min: AUTO_FIT_MIN,
+                    max: AUTO_FIT_MAX,
+                    fits: (px) => {
+                        area.style.fontSize = `${px}px`;
+                        return area.scrollWidth <= area.clientWidth && area.scrollHeight <= area.clientHeight;
+                    },
+                });
+            // Same as the editor: lines break only at spaces, unless even the smallest unsized text leaves a
+            // line too wide (big sized glyphs), where the game breaks it between characters.
+            area.style.overflowWrap = 'normal';
+            let size = search();
             area.style.fontSize = `${size}px`;
+            if (area.scrollWidth > area.clientWidth) {
+                area.style.overflowWrap = 'break-word';
+                size = search();
+            }
+            area.style.fontSize = `${size}px`;
+            // A line wider than the box overflows only to the right; center it on the sign like the game does.
+            area.querySelectorAll('p').forEach((line) => {
+                line.style.transform = '';
+                const excess = line.scrollWidth - line.clientWidth;
+                if (excess > 0) line.style.transform = `translateX(${-excess / 2}px)`;
+            });
         };
         const measure = () => setScale(frame.clientWidth / STAGE_W);
         fit();
@@ -196,9 +214,9 @@ export function SignPreview({
                     ref={areaRef}
                     className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col justify-center overflow-hidden text-center [font-family:var(--font-norse),var(--font-noto-emoji)]"
                     style={{
-                        width: STAGE_W * 0.62,
+                        width: STAGE_W * 0.66,
                         height: STAGE_H * 0.8,
-                        padding: 30,
+                        padding: '30px 0',
                         fontSize: AUTO_FIT_MAX,
                         lineHeight: EDITOR_LINE_HEIGHT,
                         filter: `url(#${filterId})`,
@@ -209,7 +227,7 @@ export function SignPreview({
                         {lines.map((line, i) => (
                             <p
                                 key={i}
-                                className="m-0 [overflow-wrap:normal] [word-break:normal] whitespace-pre-wrap"
+                                className="m-0 [word-break:normal] whitespace-pre-wrap"
                                 style={{ textAlign: line.align, fontSize: lineFontSize(line) }}
                             >
                                 {line.runs.length ? line.runs.map((run, j) => <Run key={j} run={run} />) : ' '}

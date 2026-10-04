@@ -40,25 +40,43 @@ const Harness = ({ editor, state }: { editor: Editor; state: { overflowAt: numbe
 };
 
 describe('useAutoFitFontSize', () => {
+    it('publishes the px-per-size-unit scale and never fits past size 8', () => {
+        const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
+        const { container } = render(<Harness editor={editor} state={{ overflowAt: 10_000 }} />);
+        const el = container.firstChild as HTMLElement;
+        const unit = parseFloat(el.style.getPropertyValue('--sign-unit'));
+        expect(unit).toBeGreaterThan(0);
+        expect(parseFloat(el.style.fontSize)).toBe(Math.round(8 * unit));
+    });
+
     it('sizes the container to the largest font size that fits on mount', () => {
         const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
-        const state = { overflowAt: 60 };
+        const state = { overflowAt: 300 };
         const { container } = render(<Harness editor={editor} state={state} />);
 
-        expect((container.firstChild as HTMLElement).style.fontSize).toBe('60px');
+        expect((container.firstChild as HTMLElement).style.fontSize).toBe('300px');
     });
 
     it('shrinks the font size when the editor content changes and overflows more', () => {
         const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
-        const state = { overflowAt: 60 };
+        const state = { overflowAt: 300 };
         const { container } = render(<Harness editor={editor} state={state} />);
-        expect((container.firstChild as HTMLElement).style.fontSize).toBe('60px');
+        expect((container.firstChild as HTMLElement).style.fontSize).toBe('300px');
 
-        state.overflowAt = 20;
+        state.overflowAt = 200;
         act(() => {
             editor.commands.insertContent(' there, much more text now');
         });
 
-        expect((container.firstChild as HTMLElement).style.fontSize).toBe('20px');
+        expect((container.firstChild as HTMLElement).style.fontSize).toBe('200px');
+    });
+
+    it('never shrinks unsized text below the size the game leaves it at, even when nothing fits', () => {
+        const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
+        const { container } = render(<Harness editor={editor} state={{ overflowAt: 0 }} />);
+        const el = container.firstChild as HTMLElement;
+        const unit = parseFloat(el.style.getPropertyValue('--sign-unit'));
+
+        expect(parseFloat(el.style.fontSize)).toBe(Math.round(2 * unit));
     });
 });

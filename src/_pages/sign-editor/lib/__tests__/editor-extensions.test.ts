@@ -74,3 +74,17 @@ describe('signEditorExtensions', () => {
         expect(editor.getText()).toBe('a\u{1F6E1}b');
     });
 });
+
+describe('pasted font sizes', () => {
+    it('keeps a valid --sign-size and drops junk or old pixel sizes', () => {
+        const editor = new Editor({
+            extensions: signEditorExtensions,
+            content: '<p><span style="--sign-size: 9">a</span><span style="--sign-size: foo">b</span><span style="font-size: 32px">c</span></p>',
+        });
+        const sizes: unknown[] = [];
+        editor.state.doc.descendants((node) => {
+            if (node.isText) sizes.push(node.marks.find((m) => m.type.name === 'textStyle')?.attrs.fontSize ?? null);
+        });
+        expect(sizes).toEqual(['9', null]); // the junk and old-pixel runs merge into one unsized node
+    });
+});
