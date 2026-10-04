@@ -27,9 +27,10 @@ describe('PrivacyPage', () => {
         expect(screen.getAllByText(new RegExp(SITE.operator.contactEmail.replace(/[[\]]/g, '\\$&'))).length).toBeGreaterThan(0);
     });
 
-    it('states that there are no cookies, analytics or advertising', () => {
+    it('states that there are no cookies, analytics or advertising, and discloses the theme preference', () => {
         render(<PrivacyPage />);
-        expect(screen.getByText(/does not set cookies or use analytics, advertising or tracking/i)).toBeInTheDocument();
+        expect(screen.getByText(/does not set cookies, run analytics or show advertising/i)).toBeInTheDocument();
+        expect(screen.getByText(/light or dark theme choice/i)).toBeInTheDocument();
     });
 
     it('explains the data-subject rights and the right to complain', () => {

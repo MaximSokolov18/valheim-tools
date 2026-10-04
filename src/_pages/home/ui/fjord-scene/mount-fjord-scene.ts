@@ -48,7 +48,7 @@ const NARROW_PX = 960;
 const HALF_TURN = Math.PI;
 /** Wheel angle with the sun up; night is half a turn further on. */
 const DAY_ANGLE = Math.PI / 2 - 0.25;
-/** Matches the page's colour crossfade (globals.css, html.theme-transition). */
+/** Matches the page's color crossfade (globals.css, html.theme-transition). */
 const PAPER_FADE_MS = 1600;
 
 const isDark = () => document.documentElement.classList.contains('dark');
@@ -80,6 +80,9 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
     const track = opts.track;
     canvas.setAttribute('aria-hidden', 'true');
     canvas.className = 'absolute inset-0 block h-full w-full';
+    // Fades in once the first frame is drawn, instead of popping in.
+    canvas.style.opacity = '0';
+    if (!reduce) canvas.style.transition = 'opacity 700ms ease';
 
     const compile = (type: number, src: string) => {
         const s = g.createShader(type);
@@ -146,6 +149,9 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
         if (!canvas.parentNode) host.appendChild(canvas);
         host.dataset.live = 'true';
         frame(0);
+        requestAnimationFrame(() => {
+            canvas.style.opacity = '1';
+        });
         wake();
     }
 
@@ -247,7 +253,7 @@ export function mountFjordScene(host: HTMLElement, opts: FjordSceneOptions): Fjo
         const dt = dtIn ?? Math.min(0.05, now - (last || now));
         last = now;
         t += dt;
-        // Wall-clock, not frame time: the sky keeps pace with the page's colour fade even on slow GPUs.
+        // Wall-clock, not frame time: the sky keeps pace with the page's color fade even on slow GPUs.
         if (angT < 1) angT = Math.min(1, (now * 1000 - angStart) / (1000 * (opts.cycleSeconds ?? 4.2)));
         if (paperDirty) {
             paper = bodyPaper(paper);

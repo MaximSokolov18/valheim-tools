@@ -66,7 +66,7 @@ export const viewport: Viewport = {
 
 /**
  * Applies the saved theme (or the system preference) before first paint, so the
- * page never flashes the wrong colours. See ThemeToggle for the switch itself.
+ * page never flashes the wrong colors. See ThemeToggle for the switch itself.
  */
 const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}})()`;
 

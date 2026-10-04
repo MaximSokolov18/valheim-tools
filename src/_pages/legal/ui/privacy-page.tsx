@@ -7,8 +7,8 @@ export function PrivacyPage() {
     return (
         <LegalPage title="Privacy Policy">
             <p>
-                This policy explains what personal data {SITE.name} (&quot;we&quot;) handles when you use{' '}
-                {SITE.url.replace('https://', '')}, why, and what rights you have.
+                This policy explains what personal data {SITE.name} (&quot;we&quot;) handles when you visit{' '}
+                {SITE.url.replace('https://', '')}, why we handle it and what rights you have.
             </p>
 
             <h2>1. Who is responsible</h2>
@@ -38,9 +38,12 @@ export function PrivacyPage() {
 
             <h2>3. Cookies, analytics and advertising</h2>
             <p>
-                The site does not set cookies or use analytics, advertising or tracking. It does not store anything
-                on your device or ask for an account. If this changes, we will ask for your consent first where the
-                law requires it and update this policy.
+                The site does not set cookies, run analytics or show advertising, and it does not track you. There are
+                no accounts. The one thing it saves on your device is your light or dark theme choice, which is kept
+                in your browser&apos;s local storage (under the key &quot;vt-theme&quot;) so the site can remember it
+                on your next visit. It stays on your device, is never sent to us and is not used to identify you. You
+                can remove it at any time by clearing the site&apos;s data in your browser. If this changes, we will
+                ask for your consent first where the law requires it and update this policy.
             </p>
 
             <h2>4. Transfers outside the EU/EEA</h2>

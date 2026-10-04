@@ -12,18 +12,18 @@ export const TAG_ROWS: readonly TagRow[] = [
     { example: '<i>', effect: 'Italic (slanted) text.', cost: 3 },
     {
         example: '<u>',
-        effect: 'Underline. The line keeps the colour that was active when the tag opened, so put the colour tag first.',
+        effect: 'Underline. The line keeps the color that was active when the tag opened, so put the color tag first.',
         cost: 3,
     },
-    { example: '<s>', effect: 'Strikethrough. Coloured the same way as underline.', cost: 3 },
-    { example: '<#f00>', effect: 'Colour from a 3-digit hex code.', cost: 6 },
-    { example: '<#ff0000>', effect: 'Colour from a 6-digit hex code.', cost: 9 },
+    { example: '<s>', effect: 'Strikethrough. Colored the same way as underline.', cost: 3 },
+    { example: '<#f00>', effect: 'Color from a 3-digit hex code.', cost: 6 },
+    { example: '<#ff0000>', effect: 'Color from a 6-digit hex code.', cost: 9 },
     {
         example: '<#0f08>',
         effect: 'A 4th digit sets opacity. This one is green at about half strength. The 8-digit form takes two opacity digits.',
         cost: 7,
     },
-    { example: '<color=red>', effect: 'Colour by name. A hex code gives the same result in fewer characters.', cost: 11 },
+    { example: '<color=red>', effect: 'Color by name. A hex code gives the same result in fewer characters.', cost: 11 },
     {
         example: '<size=9>',
         effect: 'Text size. Sizes are absolute and linear: 9 is nine fifths the height of 5, and there is no upper limit.',

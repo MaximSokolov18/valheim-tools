@@ -13,14 +13,14 @@ type MatrixRow = readonly [number, number, number, number];
  * A uniform "darken + desaturate + rotate hue" model (this file's previous
  * approach) does not fit the data: the blue channel is suppressed more than
  * red (e.g. full-brightness blue ends up far darker than full-brightness
- * red or yellow), and fully neutral colors (white/silver/grey) pick up a
+ * red or yellow), and fully neutral colors (white/silver/gray) pick up a
  * warm rose tint in-game rather than staying gray — behavior only a
  * per-channel matrix (not a hue/saturation/value scale, which by
  * construction can never move a neutral color off the gray axis) can
  * reproduce. This is still a fixed approximation, not an exact conversion:
  * Valheim has no public LUT/formula for this, actual brightness depends on
  * ambient in-game lighting, and 3 of the 16 reference colors (brown,
- * maroon, grey) were too close to the wood background to sample reliably
+ * maroon, gray) were too close to the wood background to sample reliably
  * and were excluded from the fit (though the fitted matrix still produces
  * a reasonable estimate for them).
  */

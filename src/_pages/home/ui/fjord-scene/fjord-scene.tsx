@@ -1,15 +1,12 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { preload } from 'react-dom';
 import { cn } from '../../../../shared/lib';
+import { IMAGES } from '../../../../shared/config/images';
 import { mountFjordScene, type FjordSceneOptions } from './mount-fjord-scene';
 
-const LAYER_IMAGES = {
-    far: '/images/scene/layer-far.webp',
-    mid: '/images/scene/layer-mid.webp',
-    near: '/images/scene/layer-near.webp',
-    ship: '/images/scene/longship.webp',
-} as const;
+const LAYER_IMAGES = IMAGES.scene;
 
 type SceneLayout = Omit<FjordSceneOptions, keyof typeof LAYER_IMAGES | 'track'>;
 
@@ -18,10 +15,14 @@ type SceneLayout = Omit<FjordSceneOptions, keyof typeof LAYER_IMAGES | 'track'>;
  * longship that follows the cursor, rippling water and a sun/moon that trade
  * places when the theme changes. The pointer is tracked on the parent element,
  * so the scene reacts while the hero copy stays clickable on top of it.
- * Without WebGL (or before the layers load) a static painting shows instead.
+ * The live scene fades in over plain paper once its layers have loaded; the
+ * static painting is shown only when WebGL is unavailable, so the page never
+ * flashes one picture and then swaps it for another.
  */
 export function FjordScene({ className, ...layout }: SceneLayout & { className?: string }) {
     const hostRef = useRef<HTMLDivElement>(null);
+    // Start fetching the layers with the HTML instead of after hydration, so the scene fades in sooner.
+    Object.values(LAYER_IMAGES).forEach((src) => preload(src, { as: 'image' }));
     const { shipX, shipW, waterline, horizon, wash, cycleSeconds } = layout;
 
     useEffect(() => {
@@ -38,14 +39,18 @@ export function FjordScene({ className, ...layout }: SceneLayout & { className?:
             wash,
             cycleSeconds,
         });
-        return () => scene?.destroy();
+        if (!scene) host.dataset.fallback = 'true';
+        return () => {
+            scene?.destroy();
+            delete host.dataset.fallback;
+        };
     }, [shipX, shipW, waterline, horizon, wash, cycleSeconds]);
 
     return (
         <div ref={hostRef} aria-hidden="true" className={cn('group pointer-events-none overflow-hidden', className)}>
             <div
                 className={cn(
-                    'absolute inset-0 bg-cover bg-center transition-opacity duration-700 group-data-[live=true]:opacity-0',
+                    'absolute inset-0 bg-cover bg-center opacity-0 transition-opacity duration-700 group-data-[fallback=true]:opacity-100',
                     "bg-[url('/images/scene/fjord-day.webp')] dark:bg-[url('/images/scene/fjord-night.webp')]",
                     'mask-[linear-gradient(to_right,transparent_30%,black_62%)] max-md:mask-[linear-gradient(to_bottom,transparent,black_18%,black_85%,transparent)]',
                 )}

@@ -1,10 +1,10 @@
-import Link from 'next/link';
+import { TextLink } from '../../../../components/text-link';
 
 export function SignEditorInfo() {
     return (
         <section
             aria-labelledby="about-sign-editor"
-            className="mx-auto max-w-3xl px-4 py-16 font-heading text-[1.02rem] leading-[1.7] [&_a]:underline [&_a]:decoration-foreground/35 [&_a]:underline-offset-4 hover:[&_a]:decoration-foreground [&_p]:mt-4"
+            className="mx-auto max-w-3xl px-4 py-16 font-heading text-[1.02rem] leading-[1.7] [&_p]:mt-4"
         >
             <h2
                 id="about-sign-editor"
@@ -13,15 +13,15 @@ export function SignEditorInfo() {
                 About the Sign Editor
             </h2>
             <p className="mt-3">
-                Type your sign text, choose colours and emoji from the toolbar, and see the result on a sign
-                board as you go. When it looks right, copy the finished text and paste it into a sign in Valheim.
+                Type your sign text, add colors and emoji from the toolbar, and watch it appear on the sign board.
+                When it looks right, copy the finished text and paste it into a sign in Valheim.
             </p>
             <p className="mt-3">
                 Formatting tags count towards the game&apos;s limit of 50 characters per sign. The{' '}
-                <Link href="/guides/sign-formatting" className="underline underline-offset-4">
+                <TextLink href="/guides/sign-formatting">
                     sign tag guide
-                </Link>{' '}
-                lists every tag with its cost, plus the font and colour quirks to expect.
+                </TextLink>{' '}
+                lists every tag with its cost, plus the font and color quirks to watch for.
             </p>
             <p className="mt-3">
                 The editor runs in your browser; your text is not sent to us. Viking Tools is an unofficial fan-made

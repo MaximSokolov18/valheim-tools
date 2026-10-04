@@ -1,16 +1,21 @@
-import Link from 'next/link';
 import { ROUTES } from '../../../shared/config/site';
 import { articleJsonLd, breadcrumbJsonLd } from '../../../shared/seo/json-ld';
 import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';
 import { TAG_ROWS } from '../model/tag-data';
+import { Card } from '../../../../components/ui/card';
+import { Note } from '../../../../components/note';
+import { Spot } from '../../../../components/spot';
+import { TextLink } from '../../../../components/text-link';
+import { SignExample } from './sign-example';
+import { SignGallery } from './sign-gallery';
 
 const h2 = 'font-heading mt-14 scroll-mt-6 text-[1.7rem] font-medium leading-tight tracking-[-0.01em] sm:text-[1.9rem]';
 
 const GUIDE_PATH = '/guides/sign-formatting';
 const GUIDE_UPDATED = ROUTES.find((route) => route.path === GUIDE_PATH)?.lastModified ?? '2026-10-02';
 const GUIDE_DESCRIPTION =
-    'Every tag a Valheim sign accepts, what it costs against the 50-character limit, and how colour, underline and size tags behave in game.';
+    'Every tag a Valheim sign accepts, what it costs against the 50-character limit, and how color, underline and size tags behave in game.';
 
 export function SignGuidePage() {
     return (
@@ -31,7 +36,7 @@ export function SignGuidePage() {
                 ])}
             />
 
-            <article className="mx-auto max-w-3xl font-heading text-[1.02rem] leading-[1.7] [&_a]:underline [&_a]:decoration-foreground/35 [&_a]:underline-offset-4 hover:[&_a]:decoration-foreground [&_code]:rounded-md [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.8em] [&_code]:text-brand-text [&_li]:marker:text-brand-text">
+            <article className="mx-auto max-w-3xl font-heading text-[1.02rem] leading-[1.7] [&_code]:rounded-md [&_code]:bg-muted [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.8em] [&_code]:text-brand-text [&_li]:marker:text-brand-text">
                 <div className="flex items-end justify-between gap-6 border-b-2 border-foreground pb-5">
                     <div>
                         <h1 className="text-[2.6rem] leading-[1.02] font-normal tracking-[-0.025em] sm:text-[3.4rem]">
@@ -41,42 +46,46 @@ export function SignGuidePage() {
                             Last updated <time dateTime={GUIDE_UPDATED}>{GUIDE_UPDATED}</time>
                         </p>
                     </div>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                        src="/images/spots/signpost.webp"
-                        alt=""
-                        aria-hidden="true"
-                        className="-mb-3 hidden w-24 shrink-0 mix-blend-multiply sm:block dark:mix-blend-normal dark:opacity-90"
-                    />
+                    <Spot name="signpost" className="-mb-3 hidden w-24 sm:block" />
                 </div>
                 <p className="mt-8 text-[1.2rem] leading-relaxed">
                     A Valheim sign holds 50 characters, and every character of a formatting tag counts towards that
-                    limit. Colour tags such as <code>&lt;#ff0&gt;</code> (6 characters) are far cheaper than{' '}
-                    <code>&lt;color=yellow&gt;</code> (14) and look identical.
+                    limit. Yellow written as <code>&lt;#ff0&gt;</code> costs 6 characters; written as{' '}
+                    <code>&lt;color=yellow&gt;</code> it costs 14, for exactly the same result.
                 </p>
                 <p className="mt-4 text-[1.2rem] leading-relaxed text-foreground/85">
-                    Signs in Valheim understand rich-text tags for colour, size, spacing and more. This guide lists the
-                    tags we have tested, what each one costs and the quirks worth knowing. Prefer to experiment? Open
-                    the{' '}
-                    <Link href="/sign-editor" className="underline underline-offset-4">
+                    Signs accept the same rich-text tags as Unity&apos;s TextMeshPro: color, size, spacing and more.
+                    This guide lists the ones we have tested, what each costs and the quirks worth knowing. Prefer to
+                    experiment? Open the{' '}
+                    <TextLink href="/sign-editor">
                         Sign Editor
-                    </Link>
+                    </TextLink>
                     .
                 </p>
-                <p className="font-body mt-8 rounded-xl border border-border border-l-4 border-l-primary bg-card p-5 text-[0.8rem] leading-relaxed text-muted-foreground shadow-[var(--shadow-panel)]">
-                    These notes come from building signs in the game and watching what happened. They are not official
-                    documentation, they may be incomplete and a game patch can make them out of date. If a sign behaves
-                    differently from what is written here, trust the sign.
-                </p>
+                <Card className="font-body mt-8 rounded-xl border-l-4 border-l-primary px-5 text-[0.8rem] leading-relaxed text-muted-foreground shadow-[var(--shadow-panel)]">
+                    <p>
+                    These notes come from building signs in the game and seeing what happened. They are not official
+                    documentation, they may be incomplete, and a game patch can make them out of date. If a sign
+                    behaves differently from what is written here, trust the sign.
+                    </p>
+                </Card>
 
                 <h2 id="character-limit" className={h2}>
                     The 50-character budget
                 </h2>
                 <p className="mt-4">
-                    A sign holds 50 characters, and every character of every tag counts towards that total.{' '}
-                    <code>&lt;color=yellow&gt;</code> uses 14 characters, while <code>&lt;#ff0&gt;</code> uses 6 and
-                    looks identical. Choosing the shortest tag that does the job is the main skill of sign design.
+                    Opening tags, closing tags and line breaks all count, and only the visible text is free. One
+                    long tag can use up nearly a third of the sign before you have typed a word, so the main skill of
+                    sign design is choosing the shortest tag that does the job.
                 </p>
+                <Note variant="cost">
+                    <code>&lt;#f00&gt;</code> is 6 characters, <code>&lt;#ff0000&gt;</code> is 9 and{' '}
+                    <code>&lt;color=red&gt;</code> is 11, for the same red.
+                </Note>
+
+                <SignExample number={1} markups={['<color=red>Troll path', '<#f00>Troll path']}>
+                    The same red either way: 21 characters with the color name, 16 with the short hex code.
+                </SignExample>
 
                 <h2 id="tag-reference" className={h2}>
                     Tag reference
@@ -116,26 +125,47 @@ export function SignGuidePage() {
                     </table>
                 </div>
 
-                <h2 id="colour" className={h2}>
-                    Colour and the order of tags
+                <h2 id="color" className={h2}>
+                    Color and the order of tags
                 </h2>
                 <ul className="mt-4 list-disc space-y-3 pl-6">
-                    <li>Text with no colour tag is black.</li>
+                    <li>Text with no color tag is black.</li>
                     <li>
-                        Where both digits of a hex pair match, you can drop one: <code>&lt;#ff66ff&gt;</code> becomes{' '}
-                        <code>&lt;#f6f&gt;</code>.
+                        The 3-digit form works when both digits of every pair match: <code>&lt;#ff6600&gt;</code> becomes{' '}
+                        <code>&lt;#f60&gt;</code>, but <code>&lt;#ff6a00&gt;</code> has no short form.
                     </li>
                     <li>
-                        Underline and strikethrough take the colour that is active when their tag opens.{' '}
+                        Underline and strikethrough take the color that is active when their tag opens.{' '}
                         <code>&lt;#f00&gt;&lt;u&gt;</code> gives a red line; <code>&lt;u&gt;&lt;#f00&gt;</code> gives red
                         text with a black line.
                     </li>
                     <li>
-                        Closing tags are optional when the formatting should run to the end of the sign. Each one you
-                        leave out saves at least four characters, and <code>&lt;/smallcaps&gt;</code> saves twelve. Keep
-                        the closing tag if more text follows it, or the style carries on.
+                        Closing tags are optional when the formatting should run to the end of the sign. Leaving out{' '}
+                        <code>&lt;/smallcaps&gt;</code> saves twelve characters. Keep the closing tag if more text
+                        follows, or the style carries on.
                     </li>
                 </ul>
+                <div className="my-6 grid gap-6 sm:grid-cols-3">
+                    <Note variant="tip" className="my-0">
+                        Use the 3-digit form when you can: <code>&lt;#ff66ff&gt;</code> becomes <code>&lt;#f6f&gt;</code>,
+                        three characters cheaper.
+                    </Note>
+                    <Note variant="watch" className="my-0">
+                        Open the color before <code>&lt;u&gt;</code> or <code>&lt;s&gt;</code>, or the line stays black.
+                    </Note>
+                    <Note variant="save" className="my-0">
+                        Each closing tag you leave out saves at least four characters.
+                    </Note>
+                </div>
+
+                <SignExample number={2} markups={['<#f00><u>Mead hall', '<u><#f00>Mead hall']}>
+                    Color first and the line is red. Open <code>&lt;u&gt;</code> first and the text turns red, but
+                    the line stays black.
+                </SignExample>
+                <SignExample number={3} markups={['<#f00>Copper</color> ore', '<#f00>Copper ore']}>
+                    With <code>&lt;/color&gt;</code> only the first word is red. Leave it off and the color runs to
+                    the end of the sign.
+                </SignExample>
 
                 <h2 id="size" className={h2}>
                     Size and automatic fitting
@@ -143,17 +173,24 @@ export function SignGuidePage() {
                 <p className="mt-4">
                     Without a size tag the game fits text to the board. A single character lands near size 8 and every
                     extra character steps it down, so the same sentence is larger on one line than split over two. A{' '}
-                    <code>&lt;size&gt;</code> tag is not affected by this fitting. In our measurements sizes 5, 7 and 9
-                    drew at 14, 19 and 25 pixels on one sign. A capital letter at size 14 spans the board from top to
-                    bottom, and at 15 it overhangs it.
+                    <code>&lt;size&gt;</code> tag skips this fitting. In our measurements, sizes 5, 7 and 9 drew at 14,
+                    19 and 25 pixels on one sign. The board is the limit: size 14 is the largest capital that fits
+                    inside it.
                 </p>
+                <Note variant="watch">
+                    A capital at size 14 spans the board from top to bottom; at 15 it overhangs.
+                </Note>
+
+                <SignExample number={4} markups={['<size=5>5 <size=7>7 <size=9>9']}>
+                    Sizes are absolute and linear: 9 is nine fifths the height of 5.
+                </SignExample>
 
                 <h2 id="letters" className={h2}>
                     Letters and fonts
                 </h2>
                 <ul className="mt-4 list-disc space-y-3 pl-6">
                     <li>
-                        Signs use the Norsebold font, the only cut available, so <code>&lt;b&gt;</code> changes nothing.
+                        Signs use the Norsebold font, the only cut available, so bold text is already what you get.
                     </li>
                     <li>
                         Lowercase Latin letters are drawn with the capital glyphs, so &quot;hi there&quot; shows as
@@ -170,32 +207,59 @@ export function SignGuidePage() {
                         and shows squares until you confirm. Paste them in and trust the sign.
                     </li>
                 </ul>
+                <Note variant="tip">
+                    Skip <code>&lt;b&gt;</code>. It costs three characters and changes nothing.
+                </Note>
+
+                <SignExample number={5} markups={['Hi there', '<smallcaps>Hi there']}>
+                    Lowercase letters are drawn as capitals. <code>&lt;smallcaps&gt;</code> makes them shorter
+                    capitals, while letters typed as capitals keep full height.
+                </SignExample>
 
                 <h2 id="emoji" className={h2}>
                     Emoji
                 </h2>
                 <p className="mt-4">
                     Emoji come from a Noto Emoji font that the game ships, so they look the same for every player. They
-                    are single-colour and take whichever colour tag is active. The font covers emoji up to Emoji 15.0
+                    are single-color and take whichever color tag is active. The font covers emoji up to Emoji 15.0
                     (2022); newer ones show as a box. Emoji built from several parts (skin tones, joined sequences,
-                    flags) are not combined, and each part is drawn as its own symbol. There are also 16 built-in sprite
-                    graphics, <code>&lt;sprite=0&gt;</code> to <code>&lt;sprite=15&gt;</code>.
+                    flags) are not combined, so each part is drawn as its own symbol. For something more colorful, the
+                    game also has 16 built-in sprite graphics, <code>&lt;sprite=0&gt;</code> to <code>&lt;sprite=15&gt;</code>.
                 </p>
+                <Note variant="watch">
+                    Emoji newer than Emoji 15.0 (2022) show as a box.
+                </Note>
+
+                <SignExample number={6} markups={['<#00f>\u2693 Harbour']}>
+                    Emoji are single-color, so they take whichever color tag is active.
+                </SignExample>
 
                 <h2 id="edit-box" className={h2}>
                     The edit box applies tags live
                 </h2>
                 <p className="mt-4">
                     While you type, the game&apos;s edit box already applies your tags instead of showing them as raw
-                    text. Text that is very small or coloured close to the plank can look as if it vanished, though
-                    usually part of it stays visible. Confirm the sign to see the finished result.
+                    text. Very small text, or text colored close to the plank, can look as if it vanished, although
+                    usually part of it stays visible. What you see after confirming is the real result.
                 </p>
+                <Note variant="tip">
+                    Not sure it worked? Confirm the sign and look at the board.
+                </Note>
+
+                <h2 id="six-signs" className={h2}>
+                    Six signs worth stealing
+                </h2>
+                <p className="mt-4">
+                    Each one fits within the 50-character limit. Copy the markup, paste it into a sign and change the
+                    words to suit your base.
+                </p>
+                <SignGallery />
 
                 <p className="mt-14 border-t border-border pt-6">
                     Ready to try it? Open the{' '}
-                    <Link href="/sign-editor" className="underline underline-offset-4">
+                    <TextLink href="/sign-editor">
                         Sign Editor
-                    </Link>
+                    </TextLink>
                     .
                 </p>
             </article>

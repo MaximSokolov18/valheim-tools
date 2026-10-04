@@ -8,10 +8,12 @@
     --font-heading: var(--font-newsreader), Georgia, serif;
     --font-serif: var(--font-newsreader), Georgia, serif;
     --font-sans: var(--font-geist), system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", monospace;
+    /* Emoji in sign markup fall back to Noto Emoji, the monochrome font Valheim signs use. */
+    --font-mono: var(--font-geist-mono), var(--font-noto-emoji), ui-monospace, "SF Mono", monospace;
     --font-sign: var(--font-norse), var(--font-noto-emoji);
     --color-brand-text: var(--brand-text);
     --color-moss: var(--moss);
+    --color-warning: var(--warning);
     --color-stage: var(--stage);
     --color-on-stage: var(--on-stage);
     --shadow-board: var(--shadow-board);
@@ -106,6 +108,7 @@
     --sidebar-ring: #1d1a16;
     --brand-text: #7a4f00;
     --moss: #4d6638;
+    --warning: #a14a0a;
     --stage: #1d1a16;
     --on-stage: #f2ede4;
     --shadow-panel: 0 1px 2px rgba(21, 23, 43, 0.06), 0 8px 24px rgba(21, 23, 43, 0.06);
@@ -152,6 +155,7 @@
     --sidebar-ring: #f2ede4;
     --brand-text: #f6c445;
     --moss: #a8bf8c;
+    --warning: #ff9f5a;
     --stage: #0b0a09;
     --on-stage: #f2ede4;
     --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
@@ -165,7 +169,7 @@
     }
   body {
     @apply bg-background text-foreground;
-    /* Matte paper grain baked into the page colour, like the painted illustrations. */
+    /* Matte paper grain baked into the page color, like the painted illustrations. */
     background-image: var(--paper-grain);
     overflow-x: clip;
     }
@@ -179,7 +183,7 @@
 
 /*
  * Theme switch crossfade: the toggle adds this class for ~1.4s so every
- * colour eases into the other theme while the hero sky turns day <-> night.
+ * color eases into the other theme while the hero sky turns day <-> night.
  */
 html.theme-transition,
 html.theme-transition *,

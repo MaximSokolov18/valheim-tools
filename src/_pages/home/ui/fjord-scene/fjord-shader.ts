@@ -4,7 +4,7 @@
  * Painted layers (far range, mid range, near cliffs, the longship) sit over a
  * sky painted in code. A sun and a moon ride one wheel (`uAng`); the water
  * mirrors the scene with ripples, and the frame dissolves into the page's
- * paper colour (`uPaper`) with an ink-wash edge from `uWash` (0-1 from the left).
+ * paper color (`uPaper`) with an ink-wash edge from `uWash` (0-1 from the left).
  * `uPar` is the pointer parallax; `uScroll` is how far the scene has scrolled
  * past the middle of the viewport (-1..1), which sinks each layer at its own depth.
  */

@@ -1,40 +1,23 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { cn } from '../../../shared/lib';
+import { IMAGES } from '../../../shared/config/images';
+import { buttonVariants } from '../../../../components/ui/button';
+import { Card, CardContent } from '../../../../components/ui/card';
+import { Spot, type SpotName } from '../../../../components/spot';
+import { TextLink } from '../../../../components/text-link';
 import { websiteJsonLd } from '../../../shared/seo/json-ld';
 import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';
 import { FjordScene } from './fjord-scene';
 
-const buttonBase = cn(
-    'font-body inline-flex h-11 items-center gap-2 rounded-xl px-5 text-[0.8rem] font-semibold transition-colors',
-    'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
-);
-// Mead gold marks the one primary action; the secondary sits on paper with an ink edge.
-const primaryButton = cn(buttonBase, 'bg-primary text-primary-foreground shadow-sm hover:brightness-95');
-const secondaryButton = cn(
-    buttonBase,
-    'border border-input/60 bg-background/70 text-foreground backdrop-blur-sm hover:bg-control',
-);
-const inlineLink = 'underline decoration-foreground/35 underline-offset-4 transition-colors hover:decoration-foreground';
+// Kit button styles on links, so the CTAs keep their link role. Mead gold marks the one primary action.
+const ctaSize = 'h-11 rounded-xl px-5 text-[0.8rem] font-semibold';
+const primaryButton = cn(buttonVariants({ size: 'lg' }), ctaSize, 'shadow-sm hover:bg-primary/90');
+const secondaryButton = cn(buttonVariants({ variant: 'outline', size: 'lg' }), ctaSize, 'border-input/60 bg-background/70 backdrop-blur-sm');
 const sectionTitle = 'font-heading text-[1.9rem] font-normal leading-tight tracking-[-0.015em] sm:text-[2.2rem]';
 
-/** Small painted spot drawing beside a section heading. Decorative. */
-function Spot({ name, className }: { name: 'hammer' | 'chest' | 'portal' | 'signpost'; className?: string }) {
-    return (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-            src={`/images/spots/${name}.webp`}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            decoding="async"
-            className={cn('pointer-events-none h-auto shrink-0 select-none mix-blend-multiply dark:mix-blend-normal dark:opacity-90', className)}
-        />
-    );
-}
-
-function SectionHeading({ id, spot, children }: { id: string; spot: Parameters<typeof Spot>[0]['name']; children: ReactNode }) {
+function SectionHeading({ id, spot, children }: { id: string; spot: SpotName; children: ReactNode }) {
     return (
         <div className="flex items-end justify-between gap-6 border-b border-foreground/80 pb-3">
             <h2 id={id} className={sectionTitle}>
@@ -48,26 +31,26 @@ function SectionHeading({ id, spot, children }: { id: string; spot: Parameters<t
 const FEATURES = [
     {
         title: 'Made for sign text',
-        text: 'Signs have a tight character budget and their own quirks. The editor is built around them, so you can focus on how the sign looks.',
+        text: 'A Valheim sign holds just 50 characters, and every formatting tag eats into that. The editor keeps count as you type, so you find out about a sign that is too long before you are standing in front of it.',
     },
     {
         title: 'Runs in your browser',
         text: 'No account and nothing to install. The text you write stays on your device.',
     },
     {
-        title: 'Free to use',
-        text: 'The tools are free for everyone. Start designing as soon as the page loads.',
+        title: 'Free, with no ads',
+        text: 'Open a tool and start. No sign-up, no ads, no tracking.',
     },
 ] as const;
 
 const STEPS = [
     {
         title: 'Write and style',
-        text: 'Type your text, then pick colours and emoji from the toolbar.',
+        text: 'Type your text, then add colors and emoji from the toolbar.',
     },
     {
         title: 'Check that it fits',
-        text: 'Formatting tags count towards the sign limit of 50 characters, so keep an eye on the total.',
+        text: 'Tags count towards the 50-character limit. The editor shows your running total.',
     },
     {
         title: 'Copy it into the game',
@@ -84,7 +67,7 @@ const FAQ: readonly FaqItem[] = [
     },
     {
         question: 'Does it cost anything?',
-        answer: 'No, the tools are free to use.',
+        answer: 'No. The tools are free, and there are no ads.',
     },
     {
         question: 'Do I need an account?',
@@ -95,16 +78,25 @@ const FAQ: readonly FaqItem[] = [
         answer: (
             <>
                 No. The editor works in your browser and your text is not sent to us. See the{' '}
-                <Link href="/privacy" className={inlineLink}>
+                <TextLink href="/privacy">
                     privacy policy
-                </Link>{' '}
+                </TextLink>{' '}
                 for details.
             </>
         ),
     },
     {
         question: 'Why does my lowercase text look like capitals?',
-        answer: 'The in-game sign font draws lowercase letters as capitals. The sign tag guide explains this and other font quirks.',
+        answer: (
+            <>
+                Valheim&apos;s sign font draws lowercase letters as capitals, so &quot;hi there&quot; shows as
+                &quot;HI THERE&quot;. The{' '}
+                <TextLink href="/guides/sign-formatting#letters">
+                    sign tag guide
+                </TextLink>{' '}
+                covers this and the other font quirks.
+            </>
+        ),
     },
 ];
 
@@ -135,7 +127,7 @@ export function HomePage() {
                             Viking Tools
                         </h1>
                         <p className="font-heading text-[1.1rem] leading-relaxed text-foreground/85 sm:text-[1.2rem]">
-                            Free browser tools for Valheim players. Design sign text with colours and emoji, then copy
+                            Free browser tools for Valheim players. Design sign text with colors and emoji, then copy
                             it into the game.
                         </p>
                         <div className="flex flex-wrap gap-3">
@@ -155,7 +147,8 @@ export function HomePage() {
                     Tools
                 </SectionHeading>
                 <ul className="mt-8 grid gap-5 sm:grid-cols-2">
-                    <li className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card text-card-foreground shadow-[var(--shadow-panel)]">
+                    <li className="group flex">
+                        <Card className="w-full gap-0 rounded-2xl py-0 text-base shadow-[var(--shadow-panel)]">
                         <div className="relative flex aspect-[2.4/1] items-center justify-center overflow-hidden bg-stage">
                             <div
                                 aria-hidden="true"
@@ -163,7 +156,7 @@ export function HomePage() {
                             />
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src="/images/boards/board-oak.webp"
+                                src={IMAGES.boards.oak}
                                 alt=""
                                 aria-hidden="true"
                                 loading="lazy"
@@ -171,10 +164,10 @@ export function HomePage() {
                                 className="relative w-[62%] drop-shadow-[0_14px_18px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:-translate-y-1 group-hover:-rotate-1"
                             />
                         </div>
-                        <div className="flex flex-1 flex-col p-6">
+                        <CardContent className="flex flex-1 flex-col p-6">
                             <h3 className="font-heading text-[1.4rem] font-medium">Sign Editor</h3>
                             <p className="mt-2 text-[0.85rem] leading-relaxed text-muted-foreground">
-                                Pick colours and emoji, stay within the character limit and copy the finished
+                                Pick colors and emoji, stay within the character limit and copy the finished
                                 sign text.
                             </p>
                             <Link
@@ -183,12 +176,15 @@ export function HomePage() {
                             >
                                 Open the Sign Editor
                             </Link>
-                        </div>
+                        </CardContent>
+                        </Card>
                     </li>
-                    <li className="flex flex-col items-start justify-end gap-2 rounded-2xl border border-dashed border-input/50 p-6">
-                        <Spot name="chest" className="mb-auto w-32 opacity-90" />
-                        <h3 className="font-heading text-[1.4rem] font-medium">More tools</h3>
-                        <p className="text-[0.85rem] leading-relaxed text-muted-foreground">More tools are planned. Check back soon.</p>
+                    <li className="flex">
+                        <Card className="w-full items-start justify-end gap-2 rounded-2xl border border-dashed border-input/50 bg-transparent p-6 text-base ring-0">
+                            <Spot name="chest" className="mb-auto w-32 opacity-90" />
+                            <h3 className="font-heading text-[1.4rem] font-medium">More tools</h3>
+                            <p className="text-[0.85rem] leading-relaxed text-muted-foreground">The Sign Editor is the first tool. More are on the way.</p>
+                        </Card>
                     </li>
                 </ul>
             </section>
@@ -213,20 +209,22 @@ export function HomePage() {
                 </SectionHeading>
                 <ol className="mt-8 grid gap-5 sm:grid-cols-3">
                     {STEPS.map((step, index) => (
-                        <li key={step.title} className="rounded-2xl border border-border bg-card p-6 shadow-[var(--shadow-panel)]">
-                            <h3 className="font-heading text-[1.25rem] font-medium">
-                                <span className="text-brand-text">{index + 1}.</span> {step.title}
-                            </h3>
-                            <p className="mt-2 text-[0.85rem] leading-relaxed text-muted-foreground">{step.text}</p>
+                        <li key={step.title} className="flex">
+                            <Card className="w-full gap-2 rounded-2xl p-6 text-base shadow-[var(--shadow-panel)]">
+                                <h3 className="font-heading text-[1.25rem] font-medium">
+                                    <span className="text-brand-text">{index + 1}.</span> {step.title}
+                                </h3>
+                                <p className="text-[0.85rem] leading-relaxed text-muted-foreground">{step.text}</p>
+                            </Card>
                         </li>
                     ))}
                 </ol>
                 <p className="mt-6 text-[0.85rem]">
-                    Want to go deeper? The{' '}
-                    <Link href="/guides/sign-formatting" className={inlineLink}>
+                    Want to know what each tag does? The{' '}
+                    <TextLink href="/guides/sign-formatting">
                         sign tag guide
-                    </Link>{' '}
-                    lists every tag and what it costs.
+                    </TextLink>{' '}
+                    lists every one with its character cost.
                 </p>
             </section>
 

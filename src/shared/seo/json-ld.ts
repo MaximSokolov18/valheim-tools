@@ -24,13 +24,13 @@ export const signEditorAppJsonLd = (): JsonLdObject => ({
     name: `${SITE.name} Sign Editor`,
     url: absoluteUrl('/sign-editor'),
     description:
-        'Browser-based editor for Valheim sign text with colours and emoji.',
+        'Browser-based editor for Valheim sign text with colors and emoji.',
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Any (web browser)',
     inLanguage: SITE.language,
     isAccessibleForFree: true,
     author: operatorJsonLd(),
-    featureList: ['Text colours', 'Emoji picker', '50-character limit check', 'One-click copy for Valheim'],
+    featureList: ['Text colors', 'Emoji picker', '50-character limit check', 'One-click copy for Valheim'],
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
 });
 

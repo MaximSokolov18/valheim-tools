@@ -13,6 +13,7 @@ import {
 import { BORDER_ID, TEXT_AREA_ID } from './constants';
 import { useAutoFitFontSize } from './use-auto-fit-font-size';
 import { SpriteOverlay } from './sprite-overlay';
+import { IMAGES } from '../../../shared/config/images';
 
 /**
  * Beyond this many pixels of movement between mousedown and the trailing
@@ -20,7 +21,7 @@ import { SpriteOverlay } from './sprite-overlay';
  */
 const CLICK_DRAG_THRESHOLD_PX = 5;
 
-const BOARD_IMAGE = '/images/boards/board-dark.webp';
+const BOARD_IMAGE = IMAGES.editorBoard;
 
 /**
  * Board artwork. It's an <img> (not a CSS background) so the browser fetches it

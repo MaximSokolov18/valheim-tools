@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 import { cn } from '../lib';
+import { Toggle } from '../../../components/ui/toggle';
 import { THEME_STORAGE_KEY, THEME_TRANSITION_MS } from '../config/theme';
 
 const subscribe = (onChange: () => void) => {
@@ -17,15 +18,14 @@ let transitionTimer: number | undefined;
 /**
  * Sun/moon theme switch. Birch (light) shows the sun, Peat (dark) the moon;
  * on click one sets with a quarter turn while the other rises, and the page
- * crossfades its colours (html.theme-transition). The icons follow the `dark`
+ * crossfades its colors (html.theme-transition). The icons follow the `dark`
  * class through CSS, so they are right on first paint.
  */
 export function ThemeToggle({ className }: { className?: string }) {
     const isDark = useSyncExternalStore(subscribe, getIsDark, getServerIsDark);
 
-    const toggle = () => {
+    const setDark = (next: boolean) => {
         const root = document.documentElement;
-        const next = !root.classList.contains('dark');
         root.classList.add('theme-transition');
         window.clearTimeout(transitionTimer);
         transitionTimer = window.setTimeout(() => root.classList.remove('theme-transition'), THEME_TRANSITION_MS);
@@ -40,14 +40,16 @@ export function ThemeToggle({ className }: { className?: string }) {
     const icon = 'absolute inset-0 m-auto size-5 transition-[transform,opacity] duration-700 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none';
 
     return (
-        <button
-            type="button"
-            onClick={toggle}
-            aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+        // Kit toggle: a fixed name with a pressed state is how screen readers expect a switch like this.
+        <Toggle
+            aria-label="Dark theme"
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            pressed={isDark}
+            onPressedChange={setDark}
             className={cn(
-                'relative inline-flex size-9 shrink-0 sm:size-10 items-center justify-center overflow-hidden rounded-full text-foreground',
-                'transition-colors hover:bg-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                'relative size-9 overflow-hidden rounded-full p-0 text-foreground sm:size-10',
+                'hover:bg-control aria-pressed:bg-transparent aria-pressed:hover:bg-control',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                 className,
             )}
         >
@@ -77,6 +79,6 @@ export function ThemeToggle({ className }: { className?: string }) {
             >
                 <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" />
             </svg>
-        </button>
+        </Toggle>
     );
 }

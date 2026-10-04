@@ -8,9 +8,9 @@ import { SiteFooter } from '@/shared/ui/site-footer';
 import { SITE_HEADER_HEIGHT, SiteHeader } from '@/shared/ui/site-header';
 
 export const metadata: Metadata = buildPageMetadata({
-    title: 'Sign Editor for Valheim: Colour & Emoji | Viking Tools',
+    title: 'Sign Editor for Valheim: Color & Emoji | Viking Tools',
     description:
-        'Design Valheim sign text with colours and emoji. Stay within the 50-character limit and copy the finished text straight into the game.',
+        'Design Valheim sign text with colors and emoji. Stay within the 50-character limit and copy the finished text straight into the game.',
     path: '/sign-editor',
 });
 
