@@ -18,7 +18,7 @@ describe('SupportDialog', () => {
         expect(koFi).toHaveAttribute('rel', 'noopener noreferrer');
         expect(dialog.getByRole('link', { name: /Buy Me a Coffee/ })).toHaveAttribute(
             'href',
-            'https://buymeacoffee.com/makssokoloh',
+            'https://buymeacoffee.com/vikingtools',
         );
     });
 
