@@ -11,7 +11,7 @@ import { ClearButtons } from './clear-buttons';
 
 export const Toolbar = () => {
     return (
-        <div className="relative z-10 flex w-full max-w-250 items-center gap-1 rounded-xl border border-border bg-card/90 p-1.5 h-12 shadow-[var(--shadow-panel)] backdrop-blur-md">
+        <div className="relative z-10 flex w-full max-w-250 flex-wrap items-center gap-1 rounded-xl border border-border bg-card/90 p-1.5 min-h-12 shadow-[var(--shadow-panel)] backdrop-blur-md">
             <TextColorPicker />
             <HighlightColorPicker />
             <FormatButtons />

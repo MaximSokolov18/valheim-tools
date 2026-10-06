@@ -1,6 +1,7 @@
 'use client';
 
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState, type RefObject } from 'react';
+import type { Editor } from '@tiptap/core';
 import { useSignEditor } from '../model';
 import { spriteStyle } from '../lib';
 import { BORDER_ID } from './constants';
@@ -23,12 +24,24 @@ interface PlacedSprite {
  * invisible, same-sized placeholder (for layout, caret and selection) and this
  * overlay paints the real picture on top, outside the filter.
  */
-export const SpriteOverlay = ({ visible }: { visible: boolean }) => {
-    const editor = useSignEditor();
+export const SpriteOverlay = ({
+    visible,
+    editor: editorProp,
+    boardRef,
+}: {
+    visible: boolean;
+    /** A read-only board's own editor; the sign editor's shared instance by default. */
+    editor?: Editor | null;
+    /** That board's element; the sign editor's board by default. */
+    boardRef?: RefObject<HTMLElement | null>;
+}) => {
+    const sharedEditor = useSignEditor();
+    const editor = editorProp ?? sharedEditor;
+    const getBoard = useCallback(() => boardRef?.current ?? document.getElementById(BORDER_ID), [boardRef]);
     const [sprites, setSprites] = useState<PlacedSprite[]>([]);
 
     const measure = useCallback(() => {
-        const board = document.getElementById(BORDER_ID);
+        const board = getBoard();
         if (!editor || editor.isDestroyed || !board) return;
         const origin = board.getBoundingClientRect();
         // The invisible placeholders show no native selection highlight, so the
@@ -59,7 +72,7 @@ export const SpriteOverlay = ({ visible }: { visible: boolean }) => {
                 ? previous
                 : placed,
         );
-    }, [editor]);
+    }, [editor, getBoard]);
 
     useEffect(() => {
         if (!editor) return;
@@ -69,7 +82,7 @@ export const SpriteOverlay = ({ visible }: { visible: boolean }) => {
             frame = requestAnimationFrame(measure);
         };
         const observer = new ResizeObserver(schedule);
-        const board = document.getElementById(BORDER_ID);
+        const board = getBoard();
         if (board) observer.observe(board);
         observer.observe(editor.view.dom);
         editor.on('update', schedule);
@@ -83,7 +96,7 @@ export const SpriteOverlay = ({ visible }: { visible: boolean }) => {
             editor.off('transaction', schedule);
             window.removeEventListener('resize', schedule);
         };
-    }, [editor, measure]);
+    }, [editor, measure, getBoard]);
 
     // Font-size changes resize the placeholders without resizing the editor box; re-measure after every paint of a change.
     useEffect(() => {

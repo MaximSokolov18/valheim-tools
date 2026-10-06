@@ -33,6 +33,12 @@ const MAX_BOARD_PASSES = 8;
 export const useAutoFitFontSize = (
     editor: Editor | null,
     containerRef: RefObject<HTMLElement | null>,
+    {
+        fitToScreen = true,
+    }: {
+        /** Shrink the editor's board when big text would not fit on screen. Off for the read-only boards of saved signs. */
+        fitToScreen?: boolean;
+    } = {},
 ): void => {
     useLayoutEffect(() => {
         const container = containerRef.current;
@@ -134,6 +140,7 @@ export const useAutoFitFontSize = (
          * to the space between the toolbar and the copy panel. Returns whether the board size changed.
          */
         const fitBoardToScreen = (): boolean => {
+            if (!fitToScreen) return false;
             const board = document.getElementById(BORDER_ID);
             const stage = board?.parentElement;
             const content = container.firstElementChild;
@@ -192,5 +199,5 @@ export const useAutoFitFontSize = (
             observer.disconnect();
             fonts?.removeEventListener?.('loadingdone', applyFit);
         };
-    }, [editor, containerRef]);
+    }, [editor, containerRef, fitToScreen]);
 };

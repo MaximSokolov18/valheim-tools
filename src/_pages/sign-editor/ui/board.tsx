@@ -10,7 +10,7 @@ import {
     GAME_COLOR_FILTER_ID,
     GAME_COLOR_MATRIX_VALUES,
 } from '../lib';
-import { BORDER_ID, TEXT_AREA_ID } from './constants';
+import { BOARD_TEXT_AREA_CLASS, BORDER_ID, TEXT_AREA_ID } from './constants';
 import { useAutoFitFontSize } from './use-auto-fit-font-size';
 import { SpriteOverlay } from './sprite-overlay';
 import { IMAGES } from '../../../shared/config/images';
@@ -143,7 +143,7 @@ export const Board = () => {
             <div
                 id={TEXT_AREA_ID}
                 ref={textAreaRef}
-                className={`relative w-[90%] h-[80%] py-[2.4%] flex flex-col justify-center text-black transition-opacity duration-200 [&_[data-sprite]]:bg-none! ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
+                className={`${BOARD_TEXT_AREA_CLASS} transition-opacity duration-200 ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
                 style={{ filter: GAME_COLOR_FILTER }}
             >
                 <EditorContent editor={editor} className="w-full" />
