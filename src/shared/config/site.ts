@@ -25,6 +25,12 @@ export const SITE = {
     },
 } as const;
 
+/** Where players can tip the project. Shown in the header's support dialog. */
+export const SUPPORT_LINKS = [
+    { id: 'ko-fi', name: 'Ko-fi', href: 'https://ko-fi.com/vikingtools', host: 'ko-fi.com' },
+    { id: 'buy-me-a-coffee', name: 'Buy Me a Coffee', href: 'https://buymeacoffee.com/makssokoloh', host: 'buymeacoffee.com' },
+] as const;
+
 export const ROUTES: readonly SiteRoute[] = [
     { path: '/', lastModified: '2026-10-03', changeFrequency: 'monthly', priority: 1 },
     { path: '/sign-editor', lastModified: '2026-10-03', changeFrequency: 'monthly', priority: 0.9 },
