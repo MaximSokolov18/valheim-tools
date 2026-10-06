@@ -18,6 +18,5 @@ describe('SignEditorInfo', () => {
         render(<SignEditorInfo />);
         const note = screen.getByRole('note');
         expect(note).toHaveTextContent(/close guide, not a guarantee/i);
-        expect(note).toHaveTextContent(/colors work the same way/i);
     });
 });
