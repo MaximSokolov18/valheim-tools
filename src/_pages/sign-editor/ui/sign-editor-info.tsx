@@ -22,7 +22,7 @@ export function SignEditorInfo() {
                 than it does here.
                 <br />
                 <br />
-                Colors work the same way. The editor shows them as they appear on a sign in soft, fairly dim light,
+                The editor shows colors as they appear on a sign in soft, fairly dim light,
                 so they look a little darker and duller than the picker swatch. In the game they can come out
                 different, depending on the time of day, nearby light sources, the weather, and the sign&apos;s
                 position. If the exact look matters, check the sign in the game.
