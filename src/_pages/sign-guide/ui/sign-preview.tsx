@@ -2,7 +2,12 @@
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { computeAutoFitFontSize } from '../../sign-editor/lib/auto-fit-font-size';
-import { MIN_AUTO_FIT_SIZE, TEXT_AREA_WIDTH_RATIO } from '../../sign-editor/lib/font-size';
+import {
+    MIN_AUTO_FIT_SIZE,
+    MIN_OFFSET_FIT_SIZE,
+    MIN_PLAIN_FIT_SIZE,
+    TEXT_AREA_WIDTH_RATIO,
+} from '../../sign-editor/lib/font-size';
 import { GAME_COLOR_MATRIX_VALUES } from '../../sign-editor/lib/game-color';
 import { IMAGES } from '../../../shared/config/images';
 import { parseSignMarkup, type SignLine, type SignRun } from '../lib/parse-sign-markup';
@@ -22,8 +27,15 @@ const CAP_HEIGHT = 0.735;
 const SIZE_UNIT = STAGE_H / (14 * CAP_HEIGHT);
 /** Unsized text auto-fits, and the guide notes a single character lands near size 8. */
 const AUTO_FIT_MAX = Math.round(8 * SIZE_UNIT);
-/** The editor's floor too: what the game leaves unsized text at when sized text takes all the room. */
-const AUTO_FIT_MIN = Math.round(MIN_AUTO_FIT_SIZE * SIZE_UNIT);
+/** Floor (px) for unsized text, as in the editor: it depends on what else is on the sign (see `autoFitMin`). */
+const floorPx = (size: number) => Math.max(1, Math.round(size * SIZE_UNIT));
+const autoFitMin = (lines: SignLine[]) => {
+    const runs = lines.flatMap((line) => line.runs);
+    if (runs.some((run) => run.style.marginLeft || run.style.marginRight || run.style.voffset)) {
+        return floorPx(MIN_OFFSET_FIT_SIZE);
+    }
+    return floorPx(runs.some((run) => run.style.size != null) ? MIN_AUTO_FIT_SIZE : MIN_PLAIN_FIT_SIZE);
+};
 /** Norse's natural line height, which the game's sign text uses (the editor sets the same value). */
 const EDITOR_LINE_HEIGHT = 1.1;
 /** Longest the preview waits for the sign fonts before showing anyway. */
@@ -102,7 +114,16 @@ function Run({ run, indent }: { run: SignRun; indent: boolean }) {
         // Read by the global `span[style*="--sign-mark"]` rule: a faint tint, like in game.
         '--sign-mark': style.mark ? style.mark.slice(0, 7) : undefined,
     };
-    let content: ReactNode = style.smallcaps ? smallcaps(run.text) : run.text;
+    // The game only wraps at spaces, but browsers also break between emoji: keep each word on one line.
+    let content: ReactNode = run.text.split(/(\s+)/).map((part, i) =>
+        i % 2 || !part ? (
+            part
+        ) : (
+            <span key={i} className="sign-no-break">
+                {style.smallcaps ? smallcaps(part) : part}
+            </span>
+        ),
+    );
     if (style.script) {
         content = (
             <span style={{ fontSize: '0.6em', verticalAlign: style.script === 'sup' ? 'super' : 'sub' }}>{content}</span>
@@ -153,10 +174,11 @@ export function SignPreview({
         const frame = frameRef.current;
         const area = areaRef.current;
         if (!frame || !area) return;
+        const min = Math.min(AUTO_FIT_MAX, autoFitMin(lines));
         const fit = () => {
             const search = () =>
                 computeAutoFitFontSize({
-                    min: AUTO_FIT_MIN,
+                    min,
                     max: AUTO_FIT_MAX,
                     fits: (px) => {
                         area.style.fontSize = `${px}px`;
@@ -166,10 +188,12 @@ export function SignPreview({
             // Same as the editor: lines break only at spaces, unless even the smallest unsized text leaves a
             // line too wide (big sized glyphs), where the game breaks it between characters.
             area.style.overflowWrap = 'normal';
+            area.removeAttribute('data-break');
             let size = search();
             area.style.fontSize = `${size}px`;
             if (area.scrollWidth > area.clientWidth) {
                 area.style.overflowWrap = 'break-word';
+                area.setAttribute('data-break', '');
                 size = search();
             }
             area.style.fontSize = `${size}px`;

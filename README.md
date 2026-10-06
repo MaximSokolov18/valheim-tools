@@ -51,3 +51,7 @@ The structure follows Feature-Sliced Design; see `CLAUDE.md` for the layer and i
 The site is a static export hosted on Firebase Hosting. `.github/workflows/ci-cd.yml` runs lint, tests and
 build on every push and pull request, and deploys to the live channel on every push to `main` (or a manual
 run). Details, header rules and how to verify them are in [`docs/deployment-guide.md`](docs/deployment-guide.md).
+
+## AI disclosure
+
+The idea, logic and design are mine; the code was written with AI assistance.

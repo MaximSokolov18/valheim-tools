@@ -132,7 +132,7 @@ export const Board = () => {
             id={BORDER_ID}
             onMouseDown={handleBoardMouseDown}
             onClick={handleBoardClick}
-            className="max-w-[calc(62.5rem*var(--sign-board-scale,1))] w-full aspect-2/1 relative flex items-center justify-center"
+            className="max-w-[calc(62.5rem*var(--sign-board-scale,1))] w-[min(100cqw,200cqh)] aspect-2/1 relative flex items-center justify-center"
         >
             <BoardArtwork onReady={handleArtworkReady} />
             <svg width="0" height="0" aria-hidden focusable="false" className="absolute">

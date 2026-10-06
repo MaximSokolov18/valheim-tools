@@ -5,6 +5,7 @@ import { Subscript } from '@tiptap/extension-subscript';
 import { Superscript } from '@tiptap/extension-superscript';
 import type { Extensions } from '@tiptap/core';
 import { SelectionHighlight } from './selection-highlight';
+import { NoBreakWords } from './no-break-words';
 import { StripEmojiPresentation } from './strip-emoji-presentation';
 import { SignLengthLimit } from './sign-length-limit';
 import { Sprite } from './sprite-node';
@@ -107,6 +108,7 @@ export const createSignEditorExtensions = (onLimitReached?: () => void): Extensi
     Placeholder.configure({ placeholder: 'Carve your rune…' }),
     SelectionHighlight,
     Sprite,
+    NoBreakWords,
     StripEmojiPresentation,
     ClearFormattingShortcut,
     SignLengthLimit.configure({ onLimitReached }),

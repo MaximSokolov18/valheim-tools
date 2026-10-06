@@ -71,12 +71,24 @@ describe('useAutoFitFontSize', () => {
         expect((container.firstChild as HTMLElement).style.fontSize).toBe('200px');
     });
 
-    it('never shrinks unsized text below the size the game leaves it at, even when nothing fits', () => {
-        const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
+    it('keeps unsized text at the size the game leaves it at when sized text takes the room, even when nothing fits', () => {
+        const editor = new Editor({
+            extensions: signEditorExtensions,
+            content: '<p><span style="--sign-size:5">big</span> hi</p>',
+        });
         const { container } = render(<Harness editor={editor} state={{ overflowAt: 0 }} />);
         const el = container.firstChild as HTMLElement;
         const unit = parseFloat(el.style.getPropertyValue('--sign-unit'));
 
         expect(parseFloat(el.style.fontSize)).toBe(Math.round(2 * unit));
+    });
+
+    it('lets plain unsized text shrink further, so an unspaced run such as a dozen emoji stays on one line', () => {
+        const editor = new Editor({ extensions: signEditorExtensions, content: '<p>hi</p>' });
+        const { container } = render(<Harness editor={editor} state={{ overflowAt: 0 }} />);
+        const el = container.firstChild as HTMLElement;
+        const unit = parseFloat(el.style.getPropertyValue('--sign-unit'));
+
+        expect(parseFloat(el.style.fontSize)).toBe(Math.max(1, Math.round(0.25 * unit)));
     });
 });

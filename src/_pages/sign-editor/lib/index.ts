@@ -45,6 +45,8 @@ export type { FontSizeFitCheck } from './auto-fit-font-size';
 export {
     AUTO_FIT_SIZE,
     MIN_AUTO_FIT_SIZE,
+    MIN_OFFSET_FIT_SIZE,
+    MIN_PLAIN_FIT_SIZE,
     STAGE_WIDTH,
     STAGE_TEXT_AREA_WIDTH,
     SIZE_UNIT_PX,

@@ -14,6 +14,16 @@ export const AUTO_FIT_SIZE = 8;
  */
 export const MIN_AUTO_FIT_SIZE = 2;
 
+/** Smallest size unsized text shrinks to when a `<voffset>` or a margin leaves no room for it (measured in game). */
+export const MIN_OFFSET_FIT_SIZE = 1;
+
+/**
+ * Smallest size plain unsized text (no `<size>`, margins or offsets) shrinks to before the line breaks between
+ * characters. In game a long unspaced run such as a dozen emoji keeps shrinking to stay on one line, below the
+ * `MIN_AUTO_FIT_SIZE` it keeps when sized text takes the room.
+ */
+export const MIN_PLAIN_FIT_SIZE = 0.25;
+
 /** The board art is laid out at this width (px) when `SIZE_UNIT_PX` applies. */
 export const STAGE_WIDTH = 1250;
 const STAGE_HEIGHT = STAGE_WIDTH / 2;

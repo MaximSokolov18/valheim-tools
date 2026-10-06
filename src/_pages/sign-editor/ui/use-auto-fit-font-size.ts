@@ -8,6 +8,8 @@ import {
     maxLineMargins,
     AUTO_FIT_SIZE,
     MIN_AUTO_FIT_SIZE,
+    MIN_OFFSET_FIT_SIZE,
+    MIN_PLAIN_FIT_SIZE,
     SIZE_UNIT_PX,
     SIZE_UNIT_VAR,
     STAGE_TEXT_AREA_WIDTH,
@@ -16,9 +18,6 @@ import { BORDER_ID, BOARD_SCALE_VAR } from './constants';
 
 /** The board never shrinks below this fraction of its full size, even for a `<size=9000>` glyph. */
 const MIN_BOARD_SCALE = 0.0001;
-
-/** Smallest size unsized text shrinks to when a `<voffset>` or a margin leaves no room for it (measured in game). */
-const MIN_OFFSET_FIT_SIZE = 1;
 
 /** Space (px) kept free around the sign when fitting it to the screen. */
 const STAGE_GUTTER = 48;
@@ -80,7 +79,12 @@ export const useAutoFitFontSize = (
             // A vertical offset grows its line and a margin narrows it; the game then shrinks unsized text further
             // (measured at about size 1 for both, e.g. `<margin-left=30>d`).
             const squeezed = margins.left + margins.right > 0 || container.querySelector('[style*="--sign-voffset"]');
-            const floorSize = squeezed ? MIN_OFFSET_FIT_SIZE : MIN_AUTO_FIT_SIZE;
+            const hasSizedText = container.querySelector('[style*="--sign-size"]');
+            const floorSize = squeezed
+                ? MIN_OFFSET_FIT_SIZE
+                : hasSizedText
+                  ? MIN_AUTO_FIT_SIZE
+                  : MIN_PLAIN_FIT_SIZE;
             const min = Math.min(max, Math.max(1, Math.round(floorSize * unit)));
             const fit = () =>
                 computeAutoFitFontSize({

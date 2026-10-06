@@ -15,9 +15,12 @@ export const SignEditorPage = () => {
                     className="pointer-events-none absolute inset-0 -z-10 bg-[url('/images/scene/fjord-day.webp')] bg-cover bg-center opacity-70 mask-[radial-gradient(ellipse_70%_62%_at_50%_48%,black_35%,transparent_100%)] dark:bg-[url('/images/scene/fjord-night.webp')] dark:opacity-80"
                 />
                 {/* The board's own column: it sizes the board to the space between the toolbar and the copy panel. */}
-                <div className="flex h-[calc(100dvh-var(--site-header-height,0px)-1.5rem)] min-w-0 flex-1 flex-col items-center justify-between gap-3 lg:h-full">
+                <div className="flex h-[calc(100dvh-var(--site-header-height,0px)-1.5rem)] min-w-0 flex-col items-center justify-between gap-3 lg:h-full lg:flex-1">
                     <Toolbar />
-                    <Board />
+                    {/* The space left between them; the board fits it by width and height (`cqw`/`cqh`). */}
+                    <div className="flex min-h-0 w-full flex-1 items-center justify-center [container-type:size]">
+                        <Board />
+                    </div>
                     <CopySignPanel />
                 </div>
                 <SavedSignsPanel className="lg:h-full lg:w-[17.5rem] lg:shrink-0" />
