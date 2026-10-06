@@ -4,6 +4,7 @@ export { LineShifts, setLineShifts, measureLineShifts } from './line-shifts';
 export {
     TextOffset,
     OFFSET_SPECS,
+    OFFSET_PRESETS,
     HORIZONTAL_OFFSET_SPEC,
     clampOffset,
     parseOffset,
@@ -35,6 +36,8 @@ export {
     clearHighlightColor,
     insertEmoji,
     insertSprite,
+    clearFormatting,
+    clearSign,
 } from './commands';
 export { resolveClickSelection } from './resolve-click-selection';
 export { computeAutoFitFontSize } from './auto-fit-font-size';

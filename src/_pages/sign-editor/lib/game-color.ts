@@ -13,11 +13,11 @@ type MatrixRow = readonly [number, number, number, number];
  * A uniform "darken + desaturate + rotate hue" model (this file's previous
  * approach) does not fit the data: the blue channel is suppressed more than
  * red (e.g. full-brightness blue ends up far darker than full-brightness
- * red or yellow), and fully neutral colors (white/silver/gray) pick up a
- * warm rose tint in-game rather than staying gray — behavior only a
- * per-channel matrix (not a hue/saturation/value scale, which by
- * construction can never move a neutral color off the gray axis) can
- * reproduce. This is still a fixed approximation, not an exact conversion:
+ * red or yellow) — behavior only a per-channel matrix (not a
+ * hue/saturation/value scale) can reproduce. The diagonal was later
+ * re-tuned against an in-game sign with `<#fff>` text so white renders as a
+ * light, slightly warm gray (#c8c2b8) instead of the rose tint the original
+ * fit gave it. This is still a fixed approximation, not an exact conversion:
  * Valheim has no public LUT/formula for this, actual brightness depends on
  * ambient in-game lighting, and 3 of the 16 reference colors (brown,
  * maroon, gray) were too close to the wood background to sample reliably
@@ -25,9 +25,9 @@ type MatrixRow = readonly [number, number, number, number];
  * a reasonable estimate for them).
  */
 export const GAME_COLOR_MATRIX: readonly [MatrixRow, MatrixRow, MatrixRow] = [
-    [0.7274, 0.0556, -0.0087, -0.0189],
-    [0.0041, 0.5329, 0.0361, -0.0103],
-    [0.1155, 0.1292, 0.4692, -0.1202],
+    [0.7563, 0.0556, -0.0087, -0.0189],
+    [0.0041, 0.7309, 0.0361, -0.0103],
+    [0.1155, 0.1292, 0.5971, -0.1202],
 ];
 
 /**

@@ -5,6 +5,7 @@ import { Popover } from '@base-ui/react/popover';
 import { ChevronDown } from 'lucide-react';
 import { useEditorState } from '@tiptap/react';
 import { useSignEditor } from '../model';
+import { useSelectionHighlight } from './use-selection-highlight';
 import {
     FONT_SIZE_PRESETS,
     parseFontSize,
@@ -25,6 +26,7 @@ export const FontSizeSelect = () => {
     const editor = useSignEditor();
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState('');
+    useSelectionHighlight(editor, open);
 
     const activeSize =
         useEditorState({

@@ -234,10 +234,10 @@ html.theme-transition *::after {
         text-underline-offset: 0.075em;
     }
 
-    /* Stands in for the native text-selection highlight while the color
-       picker's hex input holds focus (see selection-highlight.ts) — focusing
-       a plain form control collapses the browser's Selection, which would
-       otherwise make the selected text look deselected. */
+    /* Stands in for the native text-selection highlight while a toolbar
+       popover (color, size, offset, emoji) holds focus (see selection-highlight.ts):
+       focusing it collapses the browser's Selection, which would otherwise make
+       the selected text look deselected. */
     .tiptap .sign-editor-force-selection {
         background-color: color-mix(in oklab, var(--primary) 35%, transparent);
     }

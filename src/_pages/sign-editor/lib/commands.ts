@@ -1,4 +1,5 @@
 import type { Editor } from '@tiptap/core';
+import { closeHistory } from '@tiptap/pm/history';
 import { clampFontSize, formatFontSize, parseFontSize } from './font-size';
 import { normalizeHexColor } from './text-color';
 import { HORIZONTAL_OFFSET_SPEC, clampOffset, parseOffset, type OffsetKind } from './text-offset';
@@ -226,4 +227,46 @@ export const insertSprite = (editor: Editor, index: number): boolean => {
     const { storedMarks, selection } = editor.state;
     const marks = (storedMarks ?? selection.$from.marks()).map((mark) => mark.toJSON());
     return editor.chain().focus().insertContent({ type: 'sprite', attrs: { index }, marks }).run();
+};
+
+/**
+ * "Clear formatting" (Word's Clear All Formatting, Google Docs' Ctrl+\): strip every mark — format toggles,
+ * size, offsets, color, highlight — from the selection, sprites included, leaving the text itself. At a
+ * collapsed caret it drops the armed (stored) marks, so the next typed characters come out plain. Removing
+ * marks from already plain text adds no step, so it never pushes an empty undo entry.
+ */
+export const clearFormatting = (editor: Editor): boolean =>
+    editor
+        .chain()
+        .focus()
+        .unsetAllMarks()
+        .command(({ tr }) => {
+            tr.setStoredMarks([]);
+            return true;
+        })
+        .run();
+
+/**
+ * Empty the whole sign: text, sprites and formatting, including marks armed at the caret. Kept as one
+ * ordinary undo step so Ctrl+Z (or the toast's Undo) brings it all back. `false` when the sign is already empty.
+ * The history group is closed first: otherwise a clear within 500 ms of typing merges into that typing's undo
+ * step, and undoing it would also revert the typing, leaving the sign empty as if Undo did nothing.
+ */
+export const clearSign = (editor: Editor): boolean => {
+    if (editor.isEmpty) {
+        return false;
+    }
+    return editor
+        .chain()
+        .focus()
+        .command(({ tr }) => {
+            closeHistory(tr);
+            return true;
+        })
+        .clearContent(true)
+        .command(({ tr }) => {
+            tr.setStoredMarks([]);
+            return true;
+        })
+        .run();
 };

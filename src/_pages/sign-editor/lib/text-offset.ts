@@ -13,16 +13,18 @@ export type OffsetKind = 'verticalOffset' | 'marginLeft' | 'marginRight';
 interface OffsetSpec {
     min: number;
     max: number;
-    presets: readonly number[];
     /** CSS custom property that carries the raw value so pasted/serialized HTML round-trips. */
     cssVar: string;
 }
 
 export const OFFSET_SPECS: Record<OffsetKind, OffsetSpec> = {
-    verticalOffset: { min: -100, max: 100, presets: [-8, -4, -2, 2, 4, 8], cssVar: '--sign-voffset' },
-    marginLeft: { min: 1, max: 100, presets: [2, 4, 6, 8, 10, 12], cssVar: '--sign-margin-left' },
-    marginRight: { min: 1, max: 100, presets: [2, 4, 6, 8, 10, 12], cssVar: '--sign-margin-right' },
+    verticalOffset: { min: -100, max: 100, cssVar: '--sign-voffset' },
+    marginLeft: { min: 1, max: 100, cssVar: '--sign-margin-left' },
+    marginRight: { min: 1, max: 100, cssVar: '--sign-margin-right' },
 };
+
+/** Presets of the toolbar's vertical and horizontal offset controls (both signed). */
+export const OFFSET_PRESETS: readonly number[] = [-40, -30, -20, -10, 10, 20, 30, 40];
 
 /** Round to an integer and clamp to the kind's range; non-finite input gives `null`. */
 export const clampOffset = (kind: OffsetKind, value: number): number | null => {
@@ -55,7 +57,6 @@ const offsetCss = (value: number) => `calc(${value} * var(${SIZE_UNIT_VAR}))`;
 export const HORIZONTAL_OFFSET_SPEC = {
     min: -OFFSET_SPECS.marginRight.max,
     max: OFFSET_SPECS.marginLeft.max,
-    presets: [-12, -8, -4, 4, 8, 12],
 } as const;
 
 /** Parse a typed horizontal offset (an optionally signed number), rounded and clamped; `0` or anything else is `null`. */
@@ -153,25 +154,30 @@ export const readMargins = (node: PMNode | null | undefined): { left: number; ri
 };
 
 /**
- * The widest left and right margins (sign units) of any line, each read from the line's first glyph. The game
- * fits unsized text into the width these leave, so the editor reserves that much before auto-fitting.
+ * The widest left and right margins (sign units) of any line, each read from the line's last glyph (TextMeshPro
+ * aligns a line by the margin in effect where it ends). The game fits unsized text into the width these leave, so
+ * the editor reserves that much before auto-fitting.
  */
 export const maxLineMargins = (doc: PMNode): { left: number; right: number } => {
     const max = { left: 0, right: 0 };
     doc.forEach((paragraph) => {
-        let atLineStart = true;
-        paragraph.forEach((node) => {
-            if (node.type.name === 'hardBreak') {
-                atLineStart = true;
-                return;
-            }
-            if (atLineStart) {
-                const { left, right } = readMargins(node);
+        let last: PMNode | null = null;
+        const endLine = () => {
+            if (last) {
+                const { left, right } = readMargins(last);
                 max.left = Math.max(max.left, left);
                 max.right = Math.max(max.right, right);
-                atLineStart = false;
             }
+            last = null;
+        };
+        paragraph.forEach((node) => {
+            if (node.type.name === 'hardBreak') {
+                endLine();
+                return;
+            }
+            last = node;
         });
+        endLine();
     });
     return max;
 };

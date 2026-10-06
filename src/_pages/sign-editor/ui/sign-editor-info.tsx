@@ -18,11 +18,14 @@ export function SignEditorInfo() {
                 When it looks right, copy the finished text and paste it into a sign in Valheim.
             </p>
             <Note variant="watch">
-                <strong>The preview follows the game, not your screen.</strong> Colors are shown as Valheim
-                renders them on the sign, in its lighting and shading, so they look a little darker and duller than
-                the picker swatch. Text is centered, lines wrap only at spaces, and unsized text shrinks to fit the
-                board just as it does in the game. If something looks different from what you expected, that is
-                usually the game&apos;s sign rules at work.
+                <strong>The preview is a close guide, not a guarantee.</strong> A sign might look different in the game
+                than it does here.
+                <br />
+                <br />
+                Colors work the same way. The editor shows them as they appear on a sign in soft, fairly dim light,
+                so they look a little darker and duller than the picker swatch. In the game they can come out
+                different, depending on the time of day, nearby light sources, the weather, and the sign&apos;s
+                position. If the exact look matters, check the sign in the game.
             </Note>
             <p className="mt-3">
                 Formatting tags count towards the game&apos;s limit of 50 characters per sign. The{' '}

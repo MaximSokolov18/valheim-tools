@@ -11,6 +11,7 @@ import { Sprite } from './sprite-node';
 import { SizedLines } from './sized-lines';
 import { LineShifts } from './line-shifts';
 import { TextOffset } from './text-offset';
+import { ClearFormattingShortcut } from './clear-formatting-shortcut';
 import { SIZE_VALUE_VAR, parseFontSize, sizeToCss } from './font-size';
 
 /**
@@ -107,6 +108,7 @@ export const createSignEditorExtensions = (onLimitReached?: () => void): Extensi
     SelectionHighlight,
     Sprite,
     StripEmojiPresentation,
+    ClearFormattingShortcut,
     SignLengthLimit.configure({ onLimitReached }),
 ];
 

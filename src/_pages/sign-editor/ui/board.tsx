@@ -143,7 +143,7 @@ export const Board = () => {
             <div
                 id={TEXT_AREA_ID}
                 ref={textAreaRef}
-                className={`relative w-[66%] h-[80%] py-[2.4%] flex flex-col justify-center text-black transition-opacity duration-200 [&_[data-sprite]]:bg-none! ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
+                className={`relative w-[90%] h-[80%] py-[2.4%] flex flex-col justify-center text-black transition-opacity duration-200 [&_[data-sprite]]:bg-none! ${artworkReady ? 'opacity-100' : 'opacity-0'}`}
                 style={{ filter: GAME_COLOR_FILTER }}
             >
                 <EditorContent editor={editor} className="w-full" />

@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Popover } from '@base-ui/react/popover';
 import { useSignEditor } from '../model';
 import { EMOJI_CATEGORIES, SPRITES, insertEmoji, insertSprite, spriteStyle } from '../lib';
 import { useFontPreload } from './use-font-preload';
+import { useSelectionHighlight } from './use-selection-highlight';
 
 const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();
 
@@ -27,6 +29,8 @@ const EMOJI_TEXT = EMOJI_CATEGORIES.flatMap((category) => category.emoji.map((op
 export const EmojiPicker = () => {
     const editor = useSignEditor();
     useFontPreload('--font-noto-emoji', EMOJI_TEXT);
+    const [open, setOpen] = useState(false);
+    useSelectionHighlight(editor, open);
 
     const handlePick = (char: string) => {
         if (!editor) return;
@@ -39,7 +43,7 @@ export const EmojiPicker = () => {
     };
 
     return (
-        <Popover.Root>
+        <Popover.Root open={open} onOpenChange={setOpen}>
             <Popover.Trigger
                 aria-label="Insert emoji"
                 onMouseDown={preventFocusSteal}

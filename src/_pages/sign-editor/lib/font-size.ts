@@ -17,8 +17,13 @@ export const MIN_AUTO_FIT_SIZE = 2;
 /** The board art is laid out at this width (px) when `SIZE_UNIT_PX` applies. */
 export const STAGE_WIDTH = 1250;
 const STAGE_HEIGHT = STAGE_WIDTH / 2;
-/** Width of the text area (66% of the board) at `STAGE_WIDTH`. */
-export const STAGE_TEXT_AREA_WIDTH = STAGE_WIDTH * 0.66;
+/**
+ * Share of the board's width the text fits into. Measured in game: `<#f00>New</color><size=8> <#00f><size=5>sign`
+ * keeps the unsized "New" near size 8 on one line that spans about 90% of the board.
+ */
+export const TEXT_AREA_WIDTH_RATIO = 0.9;
+/** Width of the text area at `STAGE_WIDTH`. */
+export const STAGE_TEXT_AREA_WIDTH = STAGE_WIDTH * TEXT_AREA_WIDTH_RATIO;
 /** Norsebold capital height as a fraction of the font size (735 / 1000 units). */
 const CAP_HEIGHT = 0.735;
 /** Pixels per `<size>` unit at `STAGE_WIDTH`: a size-14 capital is the board's full height. */

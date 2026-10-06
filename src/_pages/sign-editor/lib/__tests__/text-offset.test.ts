@@ -4,6 +4,7 @@ import { signEditorExtensions } from '../editor-extensions';
 import { setTextOffset, clearTextOffset, setHorizontalOffset, clearHorizontalOffset } from '../commands';
 import {
     clampOffset,
+    maxLineMargins,
     parseOffset,
     parseHorizontalOffset,
     resolveActiveOffset,
@@ -152,5 +153,22 @@ describe('horizontal offset (both margins as one signed value)', () => {
         setHorizontalOffset(editor, 4);
         select(editor, 1, 3);
         expect(resolveActiveHorizontalOffset(editor)).toBeNull();
+    });
+});
+
+describe('maxLineMargins', () => {
+    it('reads each line by its last glyph, like the game aligns it', () => {
+        const editor = makeEditor('<p>ddd</p>');
+        select(editor, 2, 4);
+        setHorizontalOffset(editor, -10);
+        expect(translateSignText(editor)).toBe('d<margin-right=10>dd');
+        expect(maxLineMargins(editor.state.doc)).toEqual({ left: 0, right: 10 });
+    });
+
+    it('ignores a margin closed before the line ends', () => {
+        const editor = makeEditor('<p>ddd</p>');
+        select(editor, 1, 2);
+        setHorizontalOffset(editor, 6);
+        expect(maxLineMargins(editor.state.doc)).toEqual({ left: 0, right: 0 });
     });
 });

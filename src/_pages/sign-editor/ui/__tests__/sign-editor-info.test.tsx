@@ -14,8 +14,10 @@ describe('SignEditorInfo', () => {
         expect(screen.getByRole('link', { name: /sign tag guide/i })).toHaveAttribute('href', '/guides/sign-formatting');
     });
 
-    it('warns that the preview follows the game\'s colors and sign rules', () => {
+    it('warns that the preview and colors can differ from the game', () => {
         render(<SignEditorInfo />);
-        expect(screen.getByRole('note')).toHaveTextContent(/follows the game/i);
+        const note = screen.getByRole('note');
+        expect(note).toHaveTextContent(/close guide, not a guarantee/i);
+        expect(note).toHaveTextContent(/colors work the same way/i);
     });
 });

@@ -11,6 +11,8 @@ import {
     insertEmoji,
     insertSprite,
     setHighlightColor,
+    clearFormatting,
+    clearSign,
 } from '../commands';
 import { resolveActiveFontSize } from '../font-size';
 import { resolveActiveColor, DEFAULT_TEXT_COLOR } from '../text-color';
@@ -299,5 +301,72 @@ describe('insertSprite', () => {
         editor.commands.setTextSelection(3);
         insertSprite(editor, 2);
         expect(editor.getHTML()).not.toContain('--sign-mark');
+    });
+});
+
+describe('clearFormatting', () => {
+    it('strips every mark from the selection and keeps the text', () => {
+        const editor = makeEditor(
+            '<p><strong><em><u>he</u></em></strong><span style="color: #ff0000; --sign-mark: #00ff00">llo</span> world</p>',
+        );
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        clearFormatting(editor);
+        expect(editor.getHTML()).toBe('<p>hello world</p>');
+    });
+
+    it('leaves formatting outside the selection alone', () => {
+        const editor = makeEditor('<p><strong>hello</strong></p>');
+        editor.commands.setTextSelection({ from: 1, to: 3 });
+        clearFormatting(editor);
+        expect(editor.getHTML()).toBe('<p>he<strong>llo</strong></p>');
+    });
+
+    it('disarms the marks at a collapsed caret so typed text is plain', () => {
+        const editor = makeEditor('<p><strong>hello</strong></p>');
+        editor.commands.setTextSelection({ from: 6, to: 6 });
+        clearFormatting(editor);
+        editor.view.dispatch(editor.state.tr.insertText('X'));
+        expect(editor.getHTML()).toBe('<p><strong>hello</strong>X</p>');
+    });
+
+    it('is undone in one step', () => {
+        const editor = makeEditor('<p><strong>hello</strong></p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        clearFormatting(editor);
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p><strong>hello</strong></p>');
+    });
+});
+
+describe('clearSign', () => {
+    it('empties the sign and is undoable', () => {
+        const editor = makeEditor('<p><strong>hello</strong></p><p>world</p>');
+        expect(clearSign(editor)).toBe(true);
+        expect(editor.isEmpty).toBe(true);
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p><strong>hello</strong></p><p>world</p>');
+    });
+
+    it('undoes only the clear when it follows an edit within the history group delay', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection(6);
+        editor.commands.insertContent('!');
+        clearSign(editor);
+        editor.commands.undo();
+        expect(editor.getHTML()).toBe('<p>hello!</p>');
+    });
+
+    it('drops marks armed at the caret', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 6, to: 6 });
+        toggleBold(editor);
+        clearSign(editor);
+        editor.view.dispatch(editor.state.tr.insertText('X'));
+        expect(editor.getHTML()).toBe('<p>X</p>');
+    });
+
+    it('does nothing on an empty sign', () => {
+        const editor = makeEditor('');
+        expect(clearSign(editor)).toBe(false);
     });
 });

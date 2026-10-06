@@ -5,14 +5,14 @@ import { Decoration, DecorationSet } from '@tiptap/pm/view';
 const key = new PluginKey<boolean>('selectionHighlight');
 
 /**
- * Focusing a plain form control (the color picker's hex input) collapses the
+ * Focusing a plain form control (a toolbar popover's input) collapses the
  * browser's native Selection, which erases the *visual* highlight on the
  * sign's selected text even though the editor's own `state.selection` is
  * untouched — the text looks deselected while a toolbar control has focus,
  * though commands still apply to the right range. This extension paints a
  * decoration over the selection instead, independent of DOM focus, for
  * exactly that window (toggled by `showSelectionHighlight`/
- * `hideSelectionHighlight` around the color picker's open state).
+ * `hideSelectionHighlight` around each toolbar popover's open state).
  */
 export const SelectionHighlight = Extension.create({
     name: 'selectionHighlight',

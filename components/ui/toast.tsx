@@ -23,6 +23,8 @@ const ToastList = () => {
             <Toast.Content>
                 <Toast.Title className={cn('font-bold', toast.type === 'error' && 'text-destructive')} />
                 <Toast.Description className="mt-1 text-muted-foreground" />
+                {/* Renders only when the toast was added with `actionProps` (e.g. an "Undo" button). */}
+                <Toast.Action className="mt-2 rounded-md bg-control px-2 py-1 text-xs font-bold text-control-foreground transition-colors hover:bg-control-hover" />
                 <Toast.Close
                     aria-label="Close"
                     className="absolute right-2 top-2 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"

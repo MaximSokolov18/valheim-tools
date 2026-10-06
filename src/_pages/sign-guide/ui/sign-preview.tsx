@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { computeAutoFitFontSize } from '../../sign-editor/lib/auto-fit-font-size';
-import { MIN_AUTO_FIT_SIZE } from '../../sign-editor/lib/font-size';
+import { MIN_AUTO_FIT_SIZE, TEXT_AREA_WIDTH_RATIO } from '../../sign-editor/lib/font-size';
 import { GAME_COLOR_MATRIX_VALUES } from '../../sign-editor/lib/game-color';
 import { IMAGES } from '../../../shared/config/images';
 import { parseSignMarkup, type SignLine, type SignRun } from '../lib/parse-sign-markup';
@@ -10,7 +10,7 @@ import { parseSignMarkup, type SignLine, type SignRun } from '../lib/parse-sign-
 /*
  * Same stage as the editor's board (see sign-editor/ui/board.tsx): a 2:1 box at
  * its max-w-250 size (62.5rem = 1250px at the site's 20px root), and a text area
- * 66% x 80% with a 30px vertical inset. The preview is laid out at that size and scaled
+ * 90% x 80% with a 30px vertical inset. The preview is laid out at that size and scaled
  * down, so it wraps and fits exactly like the editor.
  */
 const STAGE_W = 1250;
@@ -219,7 +219,7 @@ export function SignPreview({
                     ref={areaRef}
                     className="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col justify-center overflow-hidden text-center [font-family:var(--font-norse),var(--font-noto-emoji)]"
                     style={{
-                        width: STAGE_W * 0.66,
+                        width: STAGE_W * TEXT_AREA_WIDTH_RATIO,
                         height: STAGE_H * 0.8,
                         padding: '30px 0',
                         fontSize: AUTO_FIT_MAX,

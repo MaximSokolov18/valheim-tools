@@ -5,6 +5,7 @@ import { Popover } from '@base-ui/react/popover';
 import { useEditorState } from '@tiptap/react';
 import { Highlighter } from 'lucide-react';
 import { useSignEditor } from '../model';
+import { useSelectionHighlight } from './use-selection-highlight';
 import {
     TEXT_COLOR_PRESETS,
     normalizeHexColor,
@@ -33,6 +34,8 @@ export const HighlightColorPicker = () => {
                 return raw == null ? null : normalizeHexColor(raw);
             },
         }) ?? null;
+
+    useSelectionHighlight(editor, open);
 
     const apply = (hex: string) => {
         if (!editor) return;

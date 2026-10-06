@@ -64,7 +64,7 @@ export const setLineShifts = (editor: Editor, shifts: LineShift[]): void => {
 
 /**
  * Finds the rendered lines that must move sideways and by how much. A line wider than `box` is centered on
- * it. A line with `<margin-left=L>` / `<margin-right=R>` is centered in what they leave, which is `(L - R) / 2`
+ * it. A line ending under `<margin-left=L>` / `<margin-right=R>` is centered in what they leave, which is `(L - R) / 2`
  * right of the box center (the game's behavior, also for a wide glyph). `box.unit` is the px size of one `<size>` unit. `box` is the text box with the editor's margin
  * padding already taken off, which already moves every line by `box.baseNet / 2` (padding-left minus padding-right
  * in px); lines are shifted by the rest.
@@ -105,8 +105,10 @@ export const measureLineShifts = (
                 if (line && start.left < line.right - 2) {
                     flush();
                 }
+                // TextMeshPro aligns a line by the margin in effect at its last glyph, so a margin opened
+                // mid-line (`d<margin-right=10>dd`) moves the whole line.
                 line = line
-                    ? { ...line, to, right: Math.max(line.right, end.right) }
+                    ? { ...line, to, right: Math.max(line.right, end.right), margin: marginAt(from) }
                     : { from, to, left: start.left, right: end.right, margin: marginAt(from) };
             };
 

@@ -7,6 +7,7 @@ import { ArrowLeftRight, ArrowUpDown } from 'lucide-react';
 import { OffsetSelect } from './offset-select';
 import { EmojiPicker } from './emoji-picker';
 import { FormatButtons } from './format-buttons';
+import { ClearButtons } from './clear-buttons';
 
 export const Toolbar = () => {
     return (
@@ -28,6 +29,7 @@ export const Toolbar = () => {
                 noneLabel="None"
             />
             <EmojiPicker />
+            <ClearButtons />
         </div>
     );
 };

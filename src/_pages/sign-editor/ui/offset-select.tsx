@@ -4,10 +4,10 @@ import { useState, type ReactNode } from 'react';
 import { Popover } from '@base-ui/react/popover';
 import { useEditorState } from '@tiptap/react';
 import { useSignEditor } from '../model';
+import { useSelectionHighlight } from './use-selection-highlight';
 import type { Editor } from '@tiptap/core';
 import {
-    OFFSET_SPECS,
-    HORIZONTAL_OFFSET_SPEC,
+    OFFSET_PRESETS,
     parseOffset,
     parseHorizontalOffset,
     resolveActiveOffset,
@@ -21,7 +21,6 @@ import {
 type OffsetAxis = 'vertical' | 'horizontal';
 
 interface AxisControl {
-    presets: readonly number[];
     parse: (value: string) => number | null;
     resolve: (editor: Editor) => number | null;
     set: (editor: Editor, value: number) => boolean;
@@ -31,14 +30,12 @@ interface AxisControl {
 /** Vertical is `<voffset>`; horizontal is one signed value over both margins (`N` left margin, `-N` right margin). */
 const AXES: Record<OffsetAxis, AxisControl> = {
     vertical: {
-        presets: OFFSET_SPECS.verticalOffset.presets,
         parse: (value) => parseOffset('verticalOffset', value),
         resolve: (editor) => resolveActiveOffset(editor, 'verticalOffset'),
         set: (editor, value) => setTextOffset(editor, 'verticalOffset', value),
         clear: (editor) => clearTextOffset(editor, 'verticalOffset'),
     },
     horizontal: {
-        presets: HORIZONTAL_OFFSET_SPEC.presets,
         parse: parseHorizontalOffset,
         resolve: resolveActiveHorizontalOffset,
         set: setHorizontalOffset,
@@ -60,7 +57,7 @@ const preventFocusSteal = (event: React.MouseEvent) => event.preventDefault();
 /**
  * Toolbar control for a per-run signed offset: `<voffset>` (vertical) or the margins (horizontal, `N` is
  * `<margin-left=N>` and `-N` is `<margin-right=N>`). Same shape as `FontSizeSelect`: the
- * trigger shows whether the selection carries a value, the popover has a free numeric input (applied on
+ * trigger shows the value covering the selection (highlighted only while open), the popover has a free numeric input (applied on
  * Enter), an entry that removes the value, and the preset ladder. Mousedown is prevented so opening it
  * does not collapse the editor selection.
  */
@@ -68,7 +65,8 @@ export const OffsetSelect = ({ axis, label, icon, noneLabel }: OffsetSelectProps
     const editor = useSignEditor();
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState('');
-    const { presets, parse, resolve, set, clear } = AXES[axis];
+    useSelectionHighlight(editor, open);
+    const { parse, resolve, set, clear } = AXES[axis];
 
     const active =
         useEditorState({
@@ -106,9 +104,8 @@ export const OffsetSelect = ({ axis, label, icon, noneLabel }: OffsetSelectProps
         <Popover.Root open={open} onOpenChange={handleOpenChange}>
             <Popover.Trigger
                 aria-label={active == null ? label : `${label}: ${active}`}
-                aria-pressed={active != null}
                 onMouseDown={preventFocusSteal}
-                className="flex items-center justify-center gap-1 h-7 min-w-8 rounded-[calc(var(--radius-md)-2px)] px-2 text-xs font-bold outline-hidden select-none bg-control text-control-foreground transition-colors hover:bg-control-hover aria-expanded:bg-control-active aria-expanded:text-control-active-foreground aria-pressed:bg-control-active aria-pressed:text-control-active-foreground"
+                className="flex items-center justify-center gap-1 h-7 min-w-8 rounded-[calc(var(--radius-md)-2px)] px-2 text-xs font-bold outline-hidden select-none bg-control text-control-foreground transition-colors hover:bg-control-hover aria-expanded:bg-control-active aria-expanded:text-control-active-foreground"
             >
                 {icon}
                 {active != null && <span className="tabular-nums">{active}</span>}
@@ -141,7 +138,7 @@ export const OffsetSelect = ({ axis, label, icon, noneLabel }: OffsetSelectProps
                         >
                             {noneLabel}
                         </button>
-                        {presets.map((preset) => (
+                        {OFFSET_PRESETS.map((preset) => (
                             <button
                                 key={preset}
                                 type="button"
