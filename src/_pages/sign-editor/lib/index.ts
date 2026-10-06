@@ -1,6 +1,19 @@
 export { signEditorExtensions, createSignEditorExtensions } from './editor-extensions';
 export { SizedLines } from './sized-lines';
 export { LineShifts, setLineShifts, measureLineShifts } from './line-shifts';
+export {
+    TextOffset,
+    OFFSET_SPECS,
+    HORIZONTAL_OFFSET_SPEC,
+    clampOffset,
+    parseOffset,
+    parseHorizontalOffset,
+    resolveActiveOffset,
+    resolveActiveHorizontalOffset,
+    maxLineMargins,
+    readMargins,
+} from './text-offset';
+export type { OffsetKind } from './text-offset';
 export { SignLengthLimit } from './sign-length-limit';
 export {
     toggleBold,
@@ -11,6 +24,10 @@ export {
     toggleSuperscript,
     setFontSize,
     clearFontSize,
+    setTextOffset,
+    clearTextOffset,
+    setHorizontalOffset,
+    clearHorizontalOffset,
     setTextColor,
     setTextColorTransient,
     unsetTextColorTransient,

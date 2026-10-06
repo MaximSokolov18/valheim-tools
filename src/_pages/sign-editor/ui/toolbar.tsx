@@ -3,6 +3,8 @@
 import { TextColorPicker } from './text-color-picker';
 import { HighlightColorPicker } from './highlight-color-picker';
 import { FontSizeSelect } from './font-size-select';
+import { ArrowLeftRight, ArrowUpDown } from 'lucide-react';
+import { OffsetSelect } from './offset-select';
 import { EmojiPicker } from './emoji-picker';
 import { FormatButtons } from './format-buttons';
 
@@ -13,6 +15,18 @@ export const Toolbar = () => {
             <HighlightColorPicker />
             <FormatButtons />
             <FontSizeSelect />
+            <OffsetSelect
+                axis="vertical"
+                label="Vertical offset"
+                icon={<ArrowUpDown className="size-4" aria-hidden />}
+                noneLabel="None"
+            />
+            <OffsetSelect
+                axis="horizontal"
+                label="Horizontal offset"
+                icon={<ArrowLeftRight className="size-4" aria-hidden />}
+                noneLabel="None"
+            />
             <EmojiPicker />
         </div>
     );

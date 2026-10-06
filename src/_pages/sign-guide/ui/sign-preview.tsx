@@ -88,12 +88,17 @@ function smallcaps(text: string): ReactNode[] {
     );
 }
 
-function Run({ run }: { run: SignRun }) {
+function Run({ run, indent }: { run: SignRun; indent: boolean }) {
     const { style } = run;
     const css: CSSProperties & Record<'--sign-mark', string | undefined> = {
         color: signColor(style.color, style.opacity),
         fontSize: style.size == null ? undefined : `${style.size * SIZE_UNIT}px`,
         fontStyle: style.italic ? 'italic' : undefined,
+        // Same scale as <size>. Padding the line's first run by M inside a centered line shifts it by M / 2, like the game's margin.
+        position: style.voffset ? 'relative' : undefined,
+        top: style.voffset ? `${-style.voffset * SIZE_UNIT}px` : undefined,
+        paddingLeft: indent && style.marginLeft ? `${style.marginLeft * SIZE_UNIT}px` : undefined,
+        paddingRight: indent && style.marginRight ? `${style.marginRight * SIZE_UNIT}px` : undefined,
         // Read by the global `span[style*="--sign-mark"]` rule: a faint tint, like in game.
         '--sign-mark': style.mark ? style.mark.slice(0, 7) : undefined,
     };
@@ -230,7 +235,9 @@ export function SignPreview({
                                 className="m-0 [word-break:normal] whitespace-pre-wrap"
                                 style={{ textAlign: line.align, fontSize: lineFontSize(line) }}
                             >
-                                {line.runs.length ? line.runs.map((run, j) => <Run key={j} run={run} />) : ' '}
+                                {line.runs.length ? line.runs.map((run, j) => (
+                                    <Run key={j} run={run} indent={line.runs.findIndex((r) => r.style.marginLeft || r.style.marginRight) === j} />
+                                )) : ' '}
                             </p>
                         ))}
                     </div>

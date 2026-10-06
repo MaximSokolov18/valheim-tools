@@ -1,5 +1,6 @@
 import type { Editor, JSONContent } from '@tiptap/core';
 import { parseFontSize } from './font-size';
+import { parseOffset } from './text-offset';
 import { normalizeHexColor, shortenHexColor } from './text-color';
 
 /** Valheim's in-game sign text box caps input at 50 characters, tags included. */
@@ -18,6 +19,9 @@ interface RunStyle {
     color: string | null;
     highlight: string | null;
     size: number | null;
+    voffset: number | null;
+    margin: number | null;
+    marginRight: number | null;
     italic: boolean;
     underline: boolean;
     strike: boolean;
@@ -31,6 +35,9 @@ const resolveRunStyle = (marks: JSONContent['marks']): RunStyle => {
         color: normalizeHexColor(String(textStyle?.attrs?.color ?? '')),
         highlight: normalizeHexColor(String(textStyle?.attrs?.backgroundColor ?? '')),
         size: parseFontSize(textStyle?.attrs?.fontSize as string | null | undefined),
+        voffset: parseOffset('verticalOffset', textStyle?.attrs?.verticalOffset as string | null | undefined),
+        margin: parseOffset('marginLeft', textStyle?.attrs?.marginLeft as string | null | undefined),
+        marginRight: parseOffset('marginRight', textStyle?.attrs?.marginRight as string | null | undefined),
         italic: has('italic'),
         underline: has('underline'),
         strike: has('strike'),
@@ -68,6 +75,9 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
     let sizeDepth = 0;
     let activeColor: string | null = null;
     let activeSize: number | null = null;
+    let activeVoffset: number | null = null;
+    let activeMargin: number | null = null;
+    let activeMarginRight: number | null = null;
     let activeHighlight: string | null = null;
     let italicOpen = false;
     let underlineOpen = false;
@@ -80,6 +90,22 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             out += '</size>'.repeat(sizeDepth);
             sizeDepth = 0;
             activeSize = null;
+        }
+    };
+    // voffset/margin-left set an absolute value, so a new value just overrides; one close resets either.
+    const closeVoffset = () => {
+        if (activeVoffset != null) {
+            out += '</voffset>';
+            activeVoffset = null;
+        }
+    };
+    // The game only knows `</margin>` (a literal `</margin-left>` prints on the sign), and it resets both
+    // sides, so a margin that must end while the other stays open is reopened afterwards.
+    const closeMargins = () => {
+        if (activeMargin != null || activeMarginRight != null) {
+            out += '</margin>';
+            activeMargin = null;
+            activeMarginRight = null;
         }
     };
     const closeHighlight = () => {
@@ -124,6 +150,8 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
         closeItalic();
         closeStrike();
         closeUnderline();
+        closeVoffset();
+        closeMargins();
         closeSize();
         closeHighlight();
         closeColor();
@@ -140,7 +168,7 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             return;
         }
 
-        const { color, highlight, size, italic, underline, strike, script } = resolveRunStyle(node.marks);
+        const { color, highlight, size, voffset, margin, marginRight, italic, underline, strike, script } = resolveRunStyle(node.marks);
         const colorChanges = color !== activeColor;
 
         // closes, innermost first; a color change also closes u/s so they reopen in the new color
@@ -158,6 +186,12 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
         }
         if (size == null) {
             closeSize();
+        }
+        if (voffset == null) {
+            closeVoffset();
+        }
+        if ((margin == null && activeMargin != null) || (marginRight == null && activeMarginRight != null)) {
+            closeMargins();
         }
         if (highlight !== activeHighlight) {
             closeHighlight();
@@ -187,6 +221,18 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             out += `<size=${size}>`;
             sizeDepth += 1;
             activeSize = size;
+        }
+        if (voffset != null && voffset !== activeVoffset) {
+            out += `<voffset=${voffset}>`;
+            activeVoffset = voffset;
+        }
+        if (margin != null && margin !== activeMargin) {
+            out += `<margin-left=${margin}>`;
+            activeMargin = margin;
+        }
+        if (marginRight != null && marginRight !== activeMarginRight) {
+            out += `<margin-right=${marginRight}>`;
+            activeMarginRight = marginRight;
         }
         if (italic && !italicOpen) {
             out += '<i>';

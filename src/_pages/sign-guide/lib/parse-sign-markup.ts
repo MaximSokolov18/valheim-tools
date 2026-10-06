@@ -15,6 +15,12 @@ export interface SignRunStyle {
     opacity: number;
     /** `<size=N>` in sign units, or null for auto-fitted text. */
     size: number | null;
+    /** `<voffset=N>` in sign units (positive is up), or null. */
+    voffset: number | null;
+    /** `<margin-left=N>` in sign units, or null (negative margins are ignored, as in game). */
+    marginLeft: number | null;
+    /** `<margin-right=N>` in sign units, or null (negative margins are ignored, as in game). */
+    marginRight: number | null;
     italic: boolean;
     /** Underline/strikethrough take the color active when their tag opened. */
     underline: string | null;
@@ -65,6 +71,9 @@ export function parseHexColor(value: string): { hex: string; opacity: number } |
 export function parseSignMarkup(markup: string): SignLine[] {
     const colors: { hex: string; opacity: number }[] = [];
     const sizes: number[] = [];
+    let voffset: number | null = null;
+    let marginLeft: number | null = null;
+    let marginRight: number | null = null;
     let italic = false;
     let underline: string | null = null;
     let strike: string | null = null;
@@ -82,6 +91,9 @@ export function parseSignMarkup(markup: string): SignLine[] {
             color: color.hex,
             opacity: color.opacity,
             size: sizes[sizes.length - 1] ?? null,
+            voffset,
+            marginLeft,
+            marginRight,
             italic,
             underline,
             strike,
@@ -146,6 +158,23 @@ export function parseSignMarkup(markup: string): SignLine[] {
                 const n = Number(value);
                 if (!Number.isFinite(n) || n <= 0) return false;
                 sizes.push(n);
+                return true;
+            }
+            case 'voffset':
+            case 'margin-left':
+            case 'margin-right': {
+                const set = (n: number | null) => {
+                    if (name === 'voffset') voffset = n;
+                    else if (name === 'margin-left') marginLeft = n;
+                    else marginRight = n;
+                };
+                if (closing) {
+                    set(null);
+                    return true;
+                }
+                const n = Number(value);
+                if (value === undefined || value === '' || !Number.isFinite(n)) return false;
+                set(name !== 'voffset' && n <= 0 ? null : n);
                 return true;
             }
             case 'b':

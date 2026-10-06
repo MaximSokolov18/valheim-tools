@@ -10,13 +10,14 @@ import { SignLengthLimit } from './sign-length-limit';
 import { Sprite } from './sprite-node';
 import { SizedLines } from './sized-lines';
 import { LineShifts } from './line-shifts';
+import { TextOffset } from './text-offset';
 import { SIZE_VALUE_VAR, parseFontSize, sizeToCss } from './font-size';
 
 /**
  * The extension set for the sign editor.
  *
  * A sign only needs plain paragraphs, hard breaks, bold, italic, underline,
- * strikethrough, subscript, superscript, per-run font size, per-run text
+ * strikethrough, subscript, superscript, per-run font size, per-run vertical offset and left margin, per-run text
  * color, per-run background highlight, and undo/redo. Every other StarterKit format is
  * switched off here. `TextStyle` is the shared `<span style>` mark; `FontSize`
  * adds the `fontSize` attribute and `Color` adds the `color` attribute and
@@ -97,6 +98,7 @@ export const createSignEditorExtensions = (onLimitReached?: () => void): Extensi
     Superscript,
     TextStyle,
     SignFontSize,
+    TextOffset,
     SizedLines,
     LineShifts,
     Color,

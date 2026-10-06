@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core';
 import { clampFontSize, formatFontSize, parseFontSize } from './font-size';
 import { normalizeHexColor } from './text-color';
+import { HORIZONTAL_OFFSET_SPEC, clampOffset, parseOffset, type OffsetKind } from './text-offset';
 
 /**
  * Toggle the bold mark for the current selection with the semantics people
@@ -61,6 +62,62 @@ export const clearFontSize = (editor: Editor): boolean => {
         return false;
     }
     return editor.chain().focus().unsetFontSize().run();
+};
+
+/**
+ * Set a `<voffset>` (vertical) or `<margin-left>` / `<margin-right>` (horizontal) value on the selection, or arm it at a
+ * collapsed caret. The value is rounded and clamped to the kind's range; a margin that is not positive
+ * is rejected (the game ignores it) and returns `false`.
+ */
+export const setTextOffset = (editor: Editor, kind: OffsetKind, value: number): boolean => {
+    const clamped = clampOffset(kind, value);
+    if (clamped == null || clamped === 0 || (kind !== 'verticalOffset' && value <= 0)) {
+        return false;
+    }
+    return editor.chain().focus().setMark('textStyle', { [kind]: String(clamped) }).run();
+};
+
+/** Remove a vertical offset or left margin from the selection. No-op when the selection has none. */
+export const clearTextOffset = (editor: Editor, kind: OffsetKind): boolean => {
+    if (parseOffset(kind, editor.getAttributes('textStyle')[kind] as string | undefined) == null) {
+        return false;
+    }
+    return editor.chain().focus().setMark('textStyle', { [kind]: null }).removeEmptyTextStyle().run();
+};
+
+/**
+ * Set the signed horizontal offset on the selection: `N` writes `<margin-left=N>`, `-N` writes `<margin-right=N>`,
+ * and either one clears the other side. Rounded and clamped; `0` or non-finite input is rejected (`false`).
+ */
+export const setHorizontalOffset = (editor: Editor, value: number): boolean => {
+    if (!Number.isFinite(value)) {
+        return false;
+    }
+    const { min, max } = HORIZONTAL_OFFSET_SPEC;
+    const clamped = Math.min(max, Math.max(min, Math.round(value)));
+    if (clamped === 0) {
+        return false;
+    }
+    return editor
+        .chain()
+        .focus()
+        .setMark('textStyle', {
+            marginLeft: clamped > 0 ? String(clamped) : null,
+            marginRight: clamped < 0 ? String(-clamped) : null,
+        })
+        .run();
+};
+
+/** Remove both margins from the selection. No-op when the selection has neither. */
+export const clearHorizontalOffset = (editor: Editor): boolean => {
+    const attrs = editor.getAttributes('textStyle');
+    if (
+        parseOffset('marginLeft', attrs.marginLeft as string | undefined) == null &&
+        parseOffset('marginRight', attrs.marginRight as string | undefined) == null
+    ) {
+        return false;
+    }
+    return editor.chain().focus().setMark('textStyle', { marginLeft: null, marginRight: null }).removeEmptyTextStyle().run();
 };
 
 /**

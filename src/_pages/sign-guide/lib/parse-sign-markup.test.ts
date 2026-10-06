@@ -47,4 +47,26 @@ describe('parseSignMarkup', () => {
     it('shows unknown tags as literal text and treats <b> as a no-op', () => {
         expect(texts('<b>A<wave>B')).toEqual(['A<wave>B']);
     });
+
+    it('reads <voffset> and <margin-left>, and drops them on their closing tags', () => {
+        const [line] = parseSignMarkup('<voffset=-4>a</voffset>b<margin-left=8>c');
+        expect(line.runs.map((r) => [r.style.voffset, r.style.marginLeft])).toEqual([
+            [-4, null],
+            [null, null],
+            [null, 8],
+        ]);
+    });
+
+    it('ignores a negative margin and shows a valueless <voffset> literally', () => {
+        expect(parseSignMarkup('<margin-left=-3>a')[0].runs[0].style.marginLeft).toBeNull();
+        expect(texts('<voffset>a')).toEqual(['<voffset>a']);
+    });
+
+    it('reads <margin-right> separately from <margin-left>', () => {
+        const [line] = parseSignMarkup('<margin-right=100>a</margin-right>b');
+        expect(line.runs.map((r) => [r.style.marginLeft, r.style.marginRight])).toEqual([
+            [null, 100],
+            [null, null],
+        ]);
+    });
 });

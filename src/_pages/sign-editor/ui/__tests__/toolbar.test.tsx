@@ -51,3 +51,16 @@ describe('Toolbar font size', () => {
         expect(screen.getByRole('button', { name: /^Font size/ })).toBeInTheDocument();
     });
 });
+
+describe('Toolbar offsets', () => {
+    it('renders the vertical and horizontal offset controls', () => {
+        renderWithEditor('<p>hello</p>');
+        expect(screen.getByRole('button', { name: 'Vertical offset' })).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: 'Horizontal offset' })).toBeInTheDocument();
+    });
+
+    it('shows a right margin as a negative horizontal offset', () => {
+        renderWithEditor('<p><span style="--sign-margin-right: 6">hello</span></p>');
+        expect(screen.getByRole('button', { name: 'Horizontal offset: -6' })).toBeInTheDocument();
+    });
+});

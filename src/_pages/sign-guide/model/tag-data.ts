@@ -34,7 +34,11 @@ export const TAG_ROWS: readonly TagRow[] = [
         effect: 'Upside-down, heavier text. While the text is short, a negative value is relative to the auto-fit size of 8 (-16 is a flipped 8, -8 vanishes). Once the text is long enough to shrink, it is read as absolute.',
         cost: 10,
     },
-    { example: '<voffset=-4>', effect: 'Shifts text down; positive values shift it up.', cost: 12 },
+    {
+        example: '<voffset=-4>',
+        effect: 'Shifts text down; positive values shift it up. The number uses the same units as <size>. Close it with </voffset>.',
+        cost: 12,
+    },
     { example: '<cspace=1>', effect: 'Letter spacing; negative values tighten it.', cost: 10 },
     { example: '<mspace=6>', effect: 'Gives every glyph the same width.', cost: 10 },
     { example: '<sub>', effect: 'Subscript.', cost: 5 },
@@ -45,7 +49,7 @@ export const TAG_ROWS: readonly TagRow[] = [
         cost: 14,
     },
     { example: '<align=left>', effect: 'Aligns the line. Also accepts center and right.', cost: 12 },
-    { example: '<margin-left=8>', effect: 'Insets the left edge. margin-right works the same way.', cost: 15 },
+    { example: '<margin-left=8>', effect: 'Insets the left edge; negative values are ignored. Close it with </margin> (</margin-left> prints as text). <margin-right=N> insets the right edge the same way, so the two together centre the text in what is left.', cost: 15 },
     {
         example: '<smallcaps>',
         effect: 'Draws lowercase-typed characters as shorter capitals. Characters typed as capitals keep full height.',
