@@ -32,4 +32,10 @@ describe('EMOJI_CATEGORIES', () => {
             expect(option.char).not.toContain('\uFE0F');
         });
     });
+
+    it('uses single code points only (the sign font does not combine skin tones, flags or joined sequences)', () => {
+        EMOJI_CATEGORIES.flatMap((category) => category.emoji).forEach((option) => {
+            expect([...option.char]).toHaveLength(1);
+        });
+    });
 });
