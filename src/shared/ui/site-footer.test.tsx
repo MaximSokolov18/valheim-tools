@@ -17,6 +17,15 @@ describe('SiteFooter', () => {
         expect(screen.getByRole('link', { name: 'Terms of Use' })).toHaveAttribute('href', '/terms');
     });
 
+    it('asks players to report bugs to the support email', () => {
+        render(<SiteFooter />);
+        expect(screen.getByText(/Found a bug/)).toBeInTheDocument();
+        expect(screen.getByRole('link', { name: 'support@vikingtools.eu' })).toHaveAttribute(
+            'href',
+            'mailto:support@vikingtools.eu',
+        );
+    });
+
     it('states that the project is unofficial', () => {
         render(<SiteFooter />);
         expect(screen.getByText(/not affiliated with, endorsed by or sponsored by/)).toBeInTheDocument();

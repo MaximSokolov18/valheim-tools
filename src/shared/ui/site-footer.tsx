@@ -38,7 +38,17 @@ export function SiteFooter() {
                         </li>
                     </ul>
                 </nav>
-                <p className="max-w-xl md:col-span-3 md:border-t md:border-border md:pt-4">{SITE.disclaimer}</p>
+                <p className="max-w-xl md:col-span-3 md:border-t md:border-border md:pt-4">
+                    Found a bug or something not working? Please report it to{' '}
+                    <a
+                        href={`mailto:${SITE.operator.contactEmail}`}
+                        className="font-medium text-foreground underline underline-offset-4 decoration-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm"
+                    >
+                        {SITE.operator.contactEmail}
+                    </a>{' '}
+                    and it will be fixed as soon as possible.
+                </p>
+                <p className="max-w-xl md:col-span-3">{SITE.disclaimer}</p>
                 <p className="md:col-span-3">
                     &copy; {SITE.copyrightYear} {SITE.name}
                 </p>

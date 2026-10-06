@@ -21,7 +21,7 @@ export const SITE = {
     operator: {
         name: 'Maksym Sokolov',
         country: 'Spain',
-        contactEmail: 'makssokolov107@gmail.com',
+        contactEmail: 'support@vikingtools.eu',
     },
 } as const;
 
