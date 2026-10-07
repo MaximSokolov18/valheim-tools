@@ -1,7 +1,7 @@
 import type { Editor, JSONContent } from '@tiptap/core';
 import { parseFontSize } from './font-size';
 import { parseOffset } from './text-offset';
-import { normalizeHexColor, shortenHexColor } from './text-color';
+import { DEFAULT_TEXT_COLOR, normalizeHexColor, shortenHexColor } from './text-color';
 
 /** Valheim's in-game sign text box caps input at 50 characters, tags included. */
 export const SIGN_CHAR_LIMIT = 50;
@@ -45,16 +45,28 @@ const resolveRunStyle = (marks: JSONContent['marks']): RunStyle => {
     };
 };
 
+/** State carried from one line of the sign to the next. */
+interface SignState {
+    /** The color in effect: the game's default until a color tag changes it. */
+    color: string;
+}
+
 /**
  * Emits the minimal Unity Rich Text markup for one paragraph's inline nodes.
- * `<color>`/`<size>` stay in effect until explicitly closed, so an
- * already-open tag never needs closing just to switch to a *different*
- * value — the next run's own opening tag overrides it outright, same as
- * `<color=green>green <color=blue>blue</color> green</color>` nests rather
- * than requiring `</color>` before every new `<color>`. Closing tags are
- * only emitted where the following content has no tag of its own and would
- * otherwise inherit still-open styling, and — since a still-open tag can be
- * many runs deep by that point — as many closing tags as remain open.
+ *
+ * Color is never closed: a color tag stays in effect, across line breaks too,
+ * until the next color tag replaces it, so `<#ff0>Hello<#fff>World` needs no
+ * `</color>`. Text without an explicit color gets the default color back with
+ * `<#000>` (6 characters) instead of `</color>` (8 characters for each color
+ * still open). A run whose color is already in effect emits no tag at all,
+ * and neither does whitespace with no underline or strikethrough: a space shows
+ * no color, so it keeps whatever color is in effect, and the next visible
+ * character opens its own (`<#0ff>hello <#f0f>world`).
+ *
+ * `<size>` stays in effect until explicitly closed, so an already-open size
+ * never needs closing just to switch to a *different* value. Closing tags are
+ * only emitted where the following content has no size of its own, and as
+ * many `</size>` as remain open.
  *
  * `<mark=#rrggbb>` is always written as a full 6-digit hex (the game ignores
  * shorter codes) and is closed and reopened whenever the highlight changes.
@@ -70,10 +82,8 @@ const resolveRunStyle = (marks: JSONContent['marks']): RunStyle => {
  * at the sign's end for free, so paying for that close here would only cost
  * characters.
  */
-const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: boolean): string => {
-    let colorDepth = 0;
+const translateParagraphContent = (nodes: JSONContent[], state: SignState, suppressTrailingClose: boolean): string => {
     let sizeDepth = 0;
-    let activeColor: string | null = null;
     let activeSize: number | null = null;
     let activeVoffset: number | null = null;
     let activeMargin: number | null = null;
@@ -114,13 +124,6 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
             activeHighlight = null;
         }
     };
-    const closeColor = () => {
-        if (colorDepth > 0) {
-            out += '</color>'.repeat(colorDepth);
-            colorDepth = 0;
-            activeColor = null;
-        }
-    };
     const closeItalic = () => {
         if (italicOpen) {
             out += '</i>';
@@ -154,7 +157,6 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
         closeMargins();
         closeSize();
         closeHighlight();
-        closeColor();
     };
 
     nodes.forEach((node) => {
@@ -169,7 +171,10 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
         }
 
         const { color, highlight, size, voffset, margin, marginRight, italic, underline, strike, script } = resolveRunStyle(node.marks);
-        const colorChanges = color !== activeColor;
+        // a bare space shows no color, so it never needs a color tag; underline/strike lines take the color, so they do
+        const colorless = node.type === 'text' && !underline && !strike && /^\s*$/.test(node.text ?? '');
+        const runColor = colorless ? state.color : (color ?? DEFAULT_TEXT_COLOR);
+        const colorChanges = runColor !== state.color;
 
         // closes, innermost first; a color change also closes u/s so they reopen in the new color
         if (script !== activeScript) {
@@ -196,14 +201,10 @@ const translateParagraphContent = (nodes: JSONContent[], suppressTrailingClose: 
         if (highlight !== activeHighlight) {
             closeHighlight();
         }
-        if (color == null) {
-            closeColor();
-        }
         // opens, outermost (color) first
-        if (color != null && colorChanges) {
-            out += `<${shortenHexColor(color)}>`;
-            colorDepth += 1;
-            activeColor = color;
+        if (colorChanges) {
+            out += `<${shortenHexColor(runColor)}>`;
+            state.color = runColor;
         }
         if (highlight != null && highlight !== activeHighlight) {
             out += `<mark=${highlight}>`;
@@ -268,11 +269,12 @@ export const translateSignText = (editor: Editor): string => translateSignDoc(ed
 /** Same as `translateSignText`, for a document JSON (e.g. a not-yet-applied transaction's doc). */
 export const translateSignDoc = (doc: JSONContent): string => {
     const paragraphs = doc.content ?? [];
+    const state: SignState = { color: DEFAULT_TEXT_COLOR };
     const lastContentfulParagraph = [...paragraphs].reverse().find((paragraph) => (paragraph.content?.length ?? 0) > 0);
 
     return paragraphs
         .map((paragraph) =>
-            translateParagraphContent(paragraph.content ?? [], paragraph === lastContentfulParagraph),
+            translateParagraphContent(paragraph.content ?? [], state, paragraph === lastContentfulParagraph),
         )
         .join(SIGN_NEWLINE);
 };

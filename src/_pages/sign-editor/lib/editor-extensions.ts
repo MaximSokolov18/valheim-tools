@@ -13,6 +13,7 @@ import { SizedLines } from './sized-lines';
 import { LineShifts } from './line-shifts';
 import { TextOffset } from './text-offset';
 import { ClearFormattingShortcut } from './clear-formatting-shortcut';
+import { TypedTextInput } from './typed-text-input';
 import { SIZE_VALUE_VAR, parseFontSize, sizeToCss } from './font-size';
 
 /**
@@ -111,6 +112,7 @@ export const createSignEditorExtensions = (onLimitReached?: () => void): Extensi
     NoBreakWords,
     StripEmojiPresentation,
     ClearFormattingShortcut,
+    TypedTextInput,
     SignLengthLimit.configure({ onLimitReached }),
 ];
 

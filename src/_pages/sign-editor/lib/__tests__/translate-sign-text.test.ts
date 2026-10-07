@@ -82,11 +82,70 @@ describe('translateSignText', () => {
         expect(translateSignText(editor)).toBe('hello <#f00>world');
     });
 
-    it('keeps the closing tag on a styled run that is not the last content on the sign', () => {
+    it('switches back to the default color with <#000> instead of </color> when plain text follows', () => {
         const editor = makeEditor('<p>hello world</p>');
         editor.commands.setTextSelection({ from: 1, to: 6 });
         setTextColor(editor, '#ff0000');
-        expect(translateSignText(editor)).toBe('<#f00>hello</color> world');
+        expect(translateSignText(editor)).toBe('<#f00>hello<#000> world');
+    });
+
+    it('emits no color tag for plain spaces between two colored words', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setTextColor(editor, '#00ffff');
+        editor.commands.setTextSelection({ from: 7, to: 12 });
+        setTextColor(editor, '#ff00ff');
+        expect(translateSignText(editor)).toBe('<#0ff>hello <#f0f>world');
+    });
+
+    it('keeps one color across a plain space between two words of that color', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setTextColor(editor, '#00ffff');
+        editor.commands.setTextSelection({ from: 7, to: 12 });
+        setTextColor(editor, '#00ffff');
+        expect(translateSignText(editor)).toBe('<#0ff>hello world');
+    });
+
+    it('still colors an underlined space, since the underline takes the color', () => {
+        const editor = makeEditor('<p>hello world</p>');
+        editor.commands.setTextSelection({ from: 1, to: 12 });
+        toggleUnderline(editor);
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setTextColor(editor, '#00ffff');
+        editor.commands.setTextSelection({ from: 7, to: 12 });
+        setTextColor(editor, '#00ffff');
+        expect(translateSignText(editor)).toBe('<#0ff><u>hello</u><#000><u> </u><#0ff><u>world');
+    });
+
+    it('emits no tag for text explicitly colored with the default color', () => {
+        const editor = makeEditor('<p>hello</p>');
+        editor.commands.setTextSelection({ from: 1, to: 6 });
+        setTextColor(editor, '#000000');
+        expect(translateSignText(editor)).toBe('hello');
+    });
+
+    it('keeps the color across a line break instead of closing it', () => {
+        const editor = makeEditor('<p>one</p><p>two</p>');
+        editor.commands.setTextSelection({ from: 1, to: 10 });
+        setTextColor(editor, '#ff0000');
+        expect(translateSignText(editor)).toBe('<#f00>one\\ntwo');
+    });
+
+    it('only opens the next line\'s own color after a line break', () => {
+        const editor = makeEditor('<p>one</p><p>two</p>');
+        editor.commands.setTextSelection({ from: 1, to: 4 });
+        setTextColor(editor, '#ff0000');
+        editor.commands.setTextSelection({ from: 6, to: 9 });
+        setTextColor(editor, '#ffffff');
+        expect(translateSignText(editor)).toBe('<#f00>one\\n<#fff>two');
+    });
+
+    it('restores the default color on a plain line that follows a colored one', () => {
+        const editor = makeEditor('<p>one</p><p>two</p>');
+        editor.commands.setTextSelection({ from: 1, to: 4 });
+        setTextColor(editor, '#ff0000');
+        expect(translateSignText(editor)).toBe('<#f00>one\\n<#000>two');
     });
 
     it('drops the closing tag on a styled run followed only by a trailing empty paragraph', () => {
@@ -125,7 +184,7 @@ describe('translateSignText', () => {
         expect(translateSignText(editor)).toBe('<#f00>h<#0ff>e<#ffa500>l<#0f0>l<#ff0>o');
     });
 
-    it('still closes every accumulated color once trailing plain text needs the default color back', () => {
+    it('restores the default color with one tag however many colors came before', () => {
         const editor = makeEditor('<p>abc rest</p>');
         [
             [1, 2, '#ff0000'],
@@ -135,7 +194,7 @@ describe('translateSignText', () => {
             editor.commands.setTextSelection({ from: from as number, to: to as number });
             setTextColor(editor, hex as string);
         });
-        expect(translateSignText(editor)).toBe('<#f00>a<#0ff>b<#0f0>c</color></color></color> rest');
+        expect(translateSignText(editor)).toBe('<#f00>a<#0ff>b<#0f0>c<#000> rest');
     });
 });
 
@@ -168,7 +227,7 @@ describe('translateSignText on/off formats', () => {
         toggleUnderline(editor);
         select(editor, 1, 6);
         setTextColor(editor, '#ff0000');
-        expect(translateSignText(editor)).toBe('<#f00><u>hello</u></color><u> world');
+        expect(translateSignText(editor)).toBe('<#f00><u>hello</u><#000><u> world');
     });
 
     it('opens underline after color so the line takes the color', () => {
