@@ -69,7 +69,9 @@ interface SignState {
  * many `</size>` as remain open.
  *
  * `<mark=#rrggbb>` is always written as a full 6-digit hex (the game ignores
- * shorter codes) and is closed and reopened whenever the highlight changes.
+ * shorter codes). Like `<size>`, a new highlight just overrides the open one
+ * (`<mark=#ff0000>a<mark=#00ff00>b`), and `</mark>` is only written once the
+ * following content has no highlight, once for each mark still open.
  *
  * `<i>`, `<u>`, `<s>`, `<sub>` and `<sup>` are on/off tags: opened when a run
  * needs them and not already open, closed as soon as a run no longer does.
@@ -89,6 +91,7 @@ const translateParagraphContent = (nodes: JSONContent[], state: SignState, suppr
     let activeMargin: number | null = null;
     let activeMarginRight: number | null = null;
     let activeHighlight: string | null = null;
+    let highlightDepth = 0;
     let italicOpen = false;
     let underlineOpen = false;
     let strikeOpen = false;
@@ -119,8 +122,9 @@ const translateParagraphContent = (nodes: JSONContent[], state: SignState, suppr
         }
     };
     const closeHighlight = () => {
-        if (activeHighlight != null) {
-            out += '</mark>';
+        if (highlightDepth > 0) {
+            out += '</mark>'.repeat(highlightDepth);
+            highlightDepth = 0;
             activeHighlight = null;
         }
     };
@@ -198,7 +202,7 @@ const translateParagraphContent = (nodes: JSONContent[], state: SignState, suppr
         if ((margin == null && activeMargin != null) || (marginRight == null && activeMarginRight != null)) {
             closeMargins();
         }
-        if (highlight !== activeHighlight) {
+        if (highlight == null) {
             closeHighlight();
         }
         // opens, outermost (color) first
@@ -208,6 +212,7 @@ const translateParagraphContent = (nodes: JSONContent[], state: SignState, suppr
         }
         if (highlight != null && highlight !== activeHighlight) {
             out += `<mark=${highlight}>`;
+            highlightDepth += 1;
             activeHighlight = highlight;
         }
         if (underline && !underlineOpen) {

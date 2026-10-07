@@ -275,6 +275,26 @@ describe('translateSignText highlight', () => {
         expect(translateSignText(editor)).toBe('<mark=#ff0000>hello</mark> world');
     });
 
+    it('switches between highlights without closing the previous one', () => {
+        const editor = makeEditor('<p>abc</p>');
+        editor.commands.setTextSelection({ from: 1, to: 2 });
+        setHighlightColor(editor, '#ff0000');
+        editor.commands.setTextSelection({ from: 2, to: 3 });
+        setHighlightColor(editor, '#00ff00');
+        editor.commands.setTextSelection({ from: 3, to: 4 });
+        setHighlightColor(editor, '#0000ff');
+        expect(translateSignText(editor)).toBe('<mark=#ff0000>a<mark=#00ff00>b<mark=#0000ff>c');
+    });
+
+    it('closes every open highlight once plain text follows', () => {
+        const editor = makeEditor('<p>ab rest</p>');
+        editor.commands.setTextSelection({ from: 1, to: 2 });
+        setHighlightColor(editor, '#ff0000');
+        editor.commands.setTextSelection({ from: 2, to: 3 });
+        setHighlightColor(editor, '#00ff00');
+        expect(translateSignText(editor)).toBe('<mark=#ff0000>a<mark=#00ff00>b</mark></mark> rest');
+    });
+
     it('rejects an invalid hex', () => {
         const editor = makeEditor('<p>hello</p>');
         expect(setHighlightColor(editor, 'red')).toBe(false);
