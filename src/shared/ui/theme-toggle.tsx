@@ -13,6 +13,8 @@ const subscribe = (onChange: () => void) => {
 const getIsDark = () => document.documentElement.classList.contains('dark');
 const getServerIsDark = () => true;
 
+const icon = 'absolute inset-0 m-auto size-5 transition-[transform,opacity] duration-700 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none';
+
 let transitionTimer: number | undefined;
 
 /**
@@ -24,7 +26,7 @@ let transitionTimer: number | undefined;
 export function ThemeToggle({ className }: { className?: string }) {
     const isDark = useSyncExternalStore(subscribe, getIsDark, getServerIsDark);
 
-    const setDark = (next: boolean) => {
+    const onToggle = (next: boolean) => {
         const root = document.documentElement;
         root.classList.add('theme-transition');
         window.clearTimeout(transitionTimer);
@@ -37,15 +39,13 @@ export function ThemeToggle({ className }: { className?: string }) {
         }
     };
 
-    const icon = 'absolute inset-0 m-auto size-5 transition-[transform,opacity] duration-700 ease-[cubic-bezier(.2,.8,.2,1)] motion-reduce:transition-none';
-
     return (
         // Kit toggle: a fixed name with a pressed state is how screen readers expect a switch like this.
         <Toggle
             aria-label="Dark theme"
             title={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
             pressed={isDark}
-            onPressedChange={setDark}
+            onPressedChange={onToggle}
             className={cn(
                 'relative size-9 overflow-hidden rounded-full p-0 text-foreground sm:size-10',
                 'hover:bg-control aria-pressed:bg-transparent aria-pressed:hover:bg-control',

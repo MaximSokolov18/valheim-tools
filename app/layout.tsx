@@ -4,7 +4,6 @@ import { Noto_Emoji } from 'next/font/google'
 import "./globals.css";
 import { cn } from "../lib/utils";
 import { SITE } from "@/shared/config/site";
-import { SkipLink } from "@/shared/ui/skip-link";
 import { THEME_STORAGE_KEY } from "@/shared/config/theme";
 
 
@@ -71,7 +70,20 @@ export const viewport: Viewport = {
  * Applies the saved theme (or the system preference) before first paint, so the
  * page never flashes the wrong colors. See ThemeToggle for the switch itself.
  */
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";document.documentElement.classList.toggle("dark",t==="dark")}catch(e){}})()`;
+// TODO: When moving from a static website to a server-side app, change this script to use cookies. The current
+//  implementation is a security vulnerability for server-side apps.
+const THEME_SCRIPT = `(function(){
+    try {
+        let theme = localStorage.getItem("${THEME_STORAGE_KEY}");
+        console.log(theme);
+        
+        if (!theme) {
+            theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        }
+        
+        document.documentElement.classList.toggle("dark", theme === "dark");
+    } catch (e) {console.error(e)}
+})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -84,7 +96,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <SkipLink />
         {children}
       </body>
     </html>
