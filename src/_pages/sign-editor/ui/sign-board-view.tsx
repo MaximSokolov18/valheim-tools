@@ -56,12 +56,13 @@ function BoardText({ doc, boardRef }: { doc: JSONContent; boardRef: RefObject<HT
     useAutoFitFontSize(editor, areaRef, { fitToScreen: false });
 
     return (
-        <>
+        // Clip anything moved (offsets, sprites) past the board so it can't spill onto neighbouring cards.
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
             <div ref={areaRef} className={cn(BOARD_TEXT_AREA_CLASS, 'pointer-events-none')} style={{ filter: GAME_COLOR_FILTER }}>
                 <EditorContent editor={editor} className="w-full" />
             </div>
             <SpriteOverlay visible editor={editor} boardRef={boardRef} />
-        </>
+        </div>
     );
 }
 
