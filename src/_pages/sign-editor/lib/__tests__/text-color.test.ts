@@ -6,6 +6,7 @@ import {
     DEFAULT_TEXT_COLOR,
     isValidHexColor,
     normalizeHexColor,
+    parseHexInput,
     shortenHexColor,
     resolveActiveColor,
 } from '../text-color';
@@ -41,6 +42,21 @@ describe('isValidHexColor', () => {
         expect(isValidHexColor('#ffff')).toBe(false);
         expect(isValidHexColor('red')).toBe(false);
         expect(isValidHexColor('')).toBe(false);
+    });
+});
+
+describe('parseHexInput', () => {
+    it('accepts codes with or without #, spaces and the 3-digit shorthand', () => {
+        expect(parseHexInput('ff8800')).toBe('#ff8800');
+        expect(parseHexInput('  #FF8800 ')).toBe('#ff8800');
+        expect(parseHexInput('f80')).toBe('#ff8800');
+    });
+
+    it('rejects anything that is not 3 or 6 hex digits', () => {
+        expect(parseHexInput('')).toBeNull();
+        expect(parseHexInput('#ff88')).toBeNull();
+        expect(parseHexInput('##ff8800')).toBeNull();
+        expect(parseHexInput('orange')).toBeNull();
     });
 });
 

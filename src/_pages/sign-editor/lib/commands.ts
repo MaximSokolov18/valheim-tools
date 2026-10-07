@@ -176,6 +176,13 @@ export const setTextColorTransient = (editor: Editor, hex: string): boolean => {
 };
 
 /**
+ * Remove the explicit text color from the selection (or disarm it at a
+ * collapsed caret), so the sign markup has no color tag there and the text
+ * shows in the default color. A recorded, undoable step like `setTextColor`.
+ */
+export const clearTextColor = (editor: Editor): boolean => editor.chain().focus().unsetColor().run();
+
+/**
  * The inverse of `setTextColorTransient` — removes the color transiently, so
  * a drag or edit that started with no explicit color can be rolled back to
  * that state before the real, recorded commit is applied.

@@ -30,6 +30,7 @@ export {
     setHorizontalOffset,
     clearHorizontalOffset,
     setTextColor,
+    clearTextColor,
     setTextColorTransient,
     unsetTextColorTransient,
     setHighlightColor,
@@ -66,8 +67,10 @@ export {
     DEFAULT_TEXT_COLOR,
     isValidHexColor,
     normalizeHexColor,
+    parseHexInput,
     resolveActiveColor,
 } from './text-color';
+export { addRecentColor, parseRecentColors, RECENT_COLORS_LIMIT } from './recent-colors';
 export { hexToHsv, hsvToHex } from './hsv-color';
 export type { Hsv } from './hsv-color';
 export { toGameColor, GAME_COLOR_FILTER, GAME_COLOR_FILTER_ID, GAME_COLOR_MATRIX_VALUES } from './game-color';

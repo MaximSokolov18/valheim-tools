@@ -40,6 +40,16 @@ export const normalizeHexColor = (value: string): string | null => {
 };
 
 /**
+ * Reads a color the player typed or pasted into a hex field: surrounding
+ * spaces and the leading `#` are optional (`ff8800`, ` #F80 `), and the result
+ * is normalized to `#rrggbb`. Anything else -> `null`.
+ */
+export const parseHexInput = (value: string): string | null => {
+    const trimmed = value.trim();
+    return normalizeHexColor(trimmed.startsWith('#') ? trimmed : `#${trimmed}`);
+};
+
+/**
  * Shortens a normalized `#rrggbb` hex to `#rgb` when every channel's two
  * digits match (`#ff66ff` -> `#f6f`), saving 3 characters toward
  * `SIGN_CHAR_LIMIT` in the sign markup. Returns the input unchanged when a

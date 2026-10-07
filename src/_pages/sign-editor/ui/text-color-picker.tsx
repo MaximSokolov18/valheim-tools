@@ -1,15 +1,22 @@
 'use client';
 
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react';
+import {
+    useId,
+    useRef,
+    useState,
+    type PointerEvent as ReactPointerEvent,
+} from 'react';
 import { Popover } from '@base-ui/react/popover';
 import { useEditorState } from '@tiptap/react';
-import { useSignEditor } from '../model';
+import { recentColorsStore, useRecentColors, useSignEditor } from '../model';
+import { HexColorField, PickerSection, SwatchRow } from './color-picker-parts';
 import {
     TEXT_COLOR_PRESETS,
     DEFAULT_TEXT_COLOR,
     resolveActiveColor,
-    normalizeHexColor,
+    parseHexInput,
     setTextColor,
+    clearTextColor,
     setTextColorTransient,
     unsetTextColorTransient,
     showSelectionHighlight,
@@ -28,8 +35,9 @@ const isDragging = (event: ReactPointerEvent): boolean => (event.buttons & 1) ==
  * Word-style text-color control for the toolbar. The trigger swatch shows the
  * color that covers the whole selection — black by default, per
  * `resolveActiveColor` — or a "no color" outline when colors are mixed. The
- * popover holds a preset swatch grid, a mouse-driven saturation/value square
- * and hue slider, and a free hex input that live-previews as you type. Like
+ * popover holds preset swatches, the player's recent custom colors, a
+ * saturation/value square and hue slider to drag, and a
+ * labelled hex code field that live-previews as you type. Like
  * the Bold button and `FontSizeSelect` it prevents mousedown default so
  * opening it does not collapse the editor selection.
  */
@@ -37,6 +45,9 @@ export const TextColorPicker = () => {
     const editor = useSignEditor();
     const [open, setOpen] = useState(false);
     const [draft, setDraft] = useState('');
+    const [draftInvalid, setDraftInvalid] = useState(false);
+    const recentColors = useRecentColors('text');
+    const defaultHintId = useId();
     const [hsv, setHsv] = useState<Hsv>(() => hexToHsv(DEFAULT_TEXT_COLOR));
     const squareRef = useRef<HTMLDivElement>(null);
     const hueRef = useRef<HTMLDivElement>(null);
@@ -88,6 +99,7 @@ export const TextColorPicker = () => {
     const applyColor = (hex: string, nextHsv?: Hsv) => {
         if (!editor) return;
         setTextColor(editor, hex);
+        recentColorsStore.remember('text', hex);
         setDraft(hex);
         setHsv(nextHsv ?? hexToHsv(hex));
     };
@@ -134,17 +146,40 @@ export const TextColorPicker = () => {
         }
         const color = activeColor ?? DEFAULT_TEXT_COLOR;
         setDraft(color);
+        setDraftInvalid(false);
         setHsv(hexToHsv(color));
         if (editor) showSelectionHighlight(editor);
         setOpen(true);
     };
 
     const commitDraft = () => {
-        const trimmed = draft.trim();
-        if (normalizeHexColor(trimmed) == null) {
+        const hex = parseHexInput(draft);
+        if (hex == null) {
+            setDraftInvalid(true);
             return;
         }
-        commitColor(trimmed);
+        commitColor(hex);
+        closePopover();
+    };
+
+    const changeDraft = (value: string) => {
+        setDraft(value);
+        setDraftInvalid(false);
+        const hex = parseHexInput(value);
+        if (hex != null) {
+            beginPreview();
+            if (editor) setTextColorTransient(editor, hex);
+            setHsv(hexToHsv(hex));
+        }
+    };
+
+    /** Drop the color tag: the text goes back to the default color. One undo step. */
+    const applyDefault = () => {
+        if (!editor) return;
+        rollBackPreview();
+        clearTextColor(editor);
+        setDraft(DEFAULT_TEXT_COLOR);
+        setHsv(hexToHsv(DEFAULT_TEXT_COLOR));
         closePopover();
     };
 
@@ -190,6 +225,7 @@ export const TextColorPicker = () => {
         <Popover.Root open={open} onOpenChange={handleOpenChange}>
             <Popover.Trigger
                 aria-label={activeColor == null ? 'Text color' : `Text color: ${activeColor}`}
+                title="Text color"
                 onMouseDown={preventFocusSteal}
                 className="flex flex-col items-center justify-center gap-0.5 h-7 min-w-7 rounded-[calc(var(--radius-md)-2px)] px-1.5 text-xs font-bold outline-hidden select-none bg-control text-control-foreground transition-colors hover:bg-control-hover aria-expanded:bg-control-active aria-expanded:text-control-active-foreground"
             >
@@ -204,80 +240,86 @@ export const TextColorPicker = () => {
                 <Popover.Positioner sideOffset={6} align="start">
                     <Popover.Popup
                         aria-label="Text color options"
-                        className="flex w-48 flex-col gap-2 rounded-md border bg-popover p-2 text-xs text-popover-foreground shadow-md outline-hidden"
+                        className="flex w-64 flex-col gap-3 rounded-md border bg-popover p-3 text-xs text-popover-foreground shadow-md outline-hidden"
                     >
-                        <div className="grid grid-cols-4 gap-1">
-                            {TEXT_COLOR_PRESETS.map((preset) => (
-                                <button
-                                    key={preset.hex}
-                                    type="button"
-                                    aria-label={preset.label}
-                                    aria-pressed={activeColor === preset.hex}
-                                    onMouseDown={preventFocusSteal}
-                                    onClick={() => applyPreset(preset.hex)}
-                                    className="aspect-square rounded-sm border border-border outline-hidden aria-pressed:ring-2 aria-pressed:ring-primary"
-                                    style={{ backgroundColor: preset.hex }}
+                        <PickerSection title="Colors">
+                            <SwatchRow colors={TEXT_COLOR_PRESETS} activeColor={activeColor} onPick={applyPreset} />
+                            <button
+                                type="button"
+                                aria-describedby={defaultHintId}
+                                onMouseDown={preventFocusSteal}
+                                onClick={applyDefault}
+                                className="mt-1 flex h-7 items-center gap-2 rounded-sm bg-control px-2 text-xs font-medium text-control-foreground hover:bg-control-hover focus-visible:ring-2 focus-visible:ring-ring outline-hidden"
+                            >
+                                <span
+                                    aria-hidden
+                                    className="size-4 rounded-sm border border-border"
+                                    style={{ backgroundColor: DEFAULT_TEXT_COLOR }}
                                 />
-                            ))}
-                        </div>
-                        <div
-                            ref={squareRef}
-                            aria-label="Saturation and brightness"
-                            onMouseDown={preventFocusSteal}
-                            onPointerDown={startSquareDrag}
-                            onPointerMove={updateFromSquare}
-                            onPointerUp={endDrag}
-                            className="relative h-28 w-full touch-none rounded-sm border border-border select-none"
-                            style={{
-                                backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
-                                backgroundImage:
-                                    'linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, transparent)',
-                            }}
-                        >
-                            <span
-                                aria-hidden
-                                className="pointer-events-none absolute h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow"
-                                style={{ left: `${hsv.s}%`, top: `${100 - hsv.v}%` }}
-                            />
-                        </div>
-                        <div
-                            ref={hueRef}
-                            aria-label="Hue"
-                            onMouseDown={preventFocusSteal}
-                            onPointerDown={startHueDrag}
-                            onPointerMove={updateFromHue}
-                            onPointerUp={endDrag}
-                            className="relative h-3 w-full touch-none rounded-sm border border-border select-none"
-                            style={{
-                                backgroundImage:
-                                    'linear-gradient(to right, hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%))',
-                            }}
-                        >
-                            <span
-                                aria-hidden
-                                className="pointer-events-none absolute top-1/2 h-4 w-2 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-white shadow"
-                                style={{ left: `${(hsv.h / 360) * 100}%` }}
-                            />
-                        </div>
-                        <input
-                            aria-label="Custom text color"
+                                Default color
+                                <span id={defaultHintId} className="ml-auto text-[0.6rem] font-normal text-muted-foreground">
+                                    no color tag
+                                </span>
+                            </button>
+                        </PickerSection>
+                        {recentColors.length > 0 && (
+                            <PickerSection title="Recent">
+                                <SwatchRow
+                                    colors={recentColors.map((hex) => ({ hex, label: hex }))}
+                                    activeColor={activeColor}
+                                    onPick={applyPreset}
+                                    labelFor={(color) => `Recent color ${color.hex}`}
+                                />
+                            </PickerSection>
+                        )}
+                        <PickerSection title="Fine-tune">
+                            <div
+                                ref={squareRef}
+                                aria-label="Saturation and brightness"
+                                onMouseDown={preventFocusSteal}
+                                onPointerDown={startSquareDrag}
+                                onPointerMove={updateFromSquare}
+                                onPointerUp={endDrag}
+                                className="relative h-36 w-full cursor-crosshair touch-none rounded-sm border border-border select-none"
+                                style={{
+                                    backgroundColor: `hsl(${hsv.h}, 100%, 50%)`,
+                                    backgroundImage:
+                                        'linear-gradient(to bottom, transparent, #000), linear-gradient(to right, #fff, transparent)',
+                                }}
+                            >
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.5)]"
+                                    style={{ left: `${hsv.s}%`, top: `${100 - hsv.v}%`, backgroundColor: hsvToHex(hsv) }}
+                                />
+                            </div>
+                            <div
+                                ref={hueRef}
+                                aria-label="Hue"
+                                onMouseDown={preventFocusSteal}
+                                onPointerDown={startHueDrag}
+                                onPointerMove={updateFromHue}
+                                onPointerUp={endDrag}
+                                className="relative mt-1 h-4 w-full cursor-pointer touch-none rounded-sm border border-border select-none"
+                                style={{
+                                    backgroundImage:
+                                        'linear-gradient(to right, hsl(0,100%,50%), hsl(60,100%,50%), hsl(120,100%,50%), hsl(180,100%,50%), hsl(240,100%,50%), hsl(300,100%,50%), hsl(360,100%,50%))',
+                                }}
+                            >
+                                <span
+                                    aria-hidden
+                                    className="pointer-events-none absolute top-1/2 h-5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-white shadow-[0_0_0_1px_rgba(0,0,0,0.5)]"
+                                    style={{ left: `${(hsv.h / 360) * 100}%` }}
+                                />
+                            </div>
+                        </PickerSection>
+                        <HexColorField
+                            inputLabel="Custom text color"
                             value={draft}
-                            placeholder="#rrggbb"
-                            onFocus={(event) => event.target.select()}
-                            onChange={(event) => {
-                                const value = event.target.value;
-                                setDraft(value);
-                                if (normalizeHexColor(value.trim()) != null) {
-                                    previewColor(value.trim());
-                                }
-                            }}
-                            onKeyDown={(event) => {
-                                if (event.key === 'Enter') {
-                                    event.preventDefault();
-                                    commitDraft();
-                                }
-                            }}
-                            className="w-full rounded-sm border px-2 py-1 outline-hidden"
+                            previewColor={parseHexInput(draft)}
+                            invalid={draftInvalid}
+                            onChange={changeDraft}
+                            onCommit={commitDraft}
                         />
                     </Popover.Popup>
                 </Popover.Positioner>

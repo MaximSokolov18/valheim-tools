@@ -6,6 +6,7 @@ import {
     setFontSize,
     clearFontSize,
     setTextColor,
+    clearTextColor,
     setTextColorTransient,
     unsetTextColorTransient,
     insertEmoji,
@@ -138,6 +139,16 @@ describe('clearFontSize', () => {
         editor.commands.setTextSelection({ from: 1, to: 6 });
         expect(clearFontSize(editor)).toBe(false);
         expect(editor.can().undo()).toBe(false);
+    });
+});
+
+describe('clearTextColor', () => {
+    it('removes the color tag from the selection only', () => {
+        const editor = makeEditor('<p><span style="color: #ff0000">hello</span></p>');
+        editor.commands.setTextSelection({ from: 1, to: 3 });
+        clearTextColor(editor);
+        expect(editor.getHTML()).toBe('<p>he<span style="color: rgb(255, 0, 0);">llo</span></p>');
+        expect(resolveActiveColor(editor)).toBe(DEFAULT_TEXT_COLOR);
     });
 });
 
