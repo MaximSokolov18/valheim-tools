@@ -17,7 +17,7 @@ export const SITE = {
     socialImageAlt: 'Viking Tools: free sign editor and tools for Valheim players',
     /** Year the site was first published. Fixed on purpose: a static export would freeze `new Date()` at build time. */
     copyrightYear: '2026',
-    legalUpdated: '4 October 2026',
+    legalUpdated: '8 October 2026',
     operator: {
         name: 'Maksym Sokolov',
         country: 'Spain',
@@ -32,11 +32,11 @@ export const SUPPORT_LINKS = [
 ] as const;
 
 export const ROUTES: readonly SiteRoute[] = [
-    { path: '/', lastModified: '2026-10-03', changeFrequency: 'monthly', priority: 1 },
+    { path: '/', lastModified: '2026-10-08', changeFrequency: 'monthly', priority: 1 },
     { path: '/sign-editor', lastModified: '2026-10-03', changeFrequency: 'monthly', priority: 0.9 },
     { path: '/guides/sign-formatting', lastModified: '2026-10-03', changeFrequency: 'monthly', priority: 0.8 },
-    { path: '/privacy', lastModified: '2026-10-03', changeFrequency: 'yearly', priority: 0.3 },
-    { path: '/terms', lastModified: '2026-10-03', changeFrequency: 'yearly', priority: 0.3 },
+    { path: '/privacy', lastModified: '2026-10-08', changeFrequency: 'yearly', priority: 0.3 },
+    { path: '/terms', lastModified: '2026-10-08', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
 export const absoluteUrl = (path: string): string => new URL(path, SITE.url).toString();

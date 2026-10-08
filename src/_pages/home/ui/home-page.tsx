@@ -9,6 +9,7 @@ import { TextLink } from '../../../shared/ui/text-link';
 import { websiteJsonLd } from '../../../shared/seo/json-ld';
 import { JsonLd } from '../../../shared/ui/json-ld';
 import { SiteShell } from '../../../shared/ui/site-shell';
+import { AdSlot } from '../../../shared/ui/ad-slot';
 import { FjordScene } from './fjord-scene';
 
 // Kit button styles on links, so the CTAs keep their link role. Mead gold marks the one primary action.
@@ -38,8 +39,8 @@ const FEATURES = [
         text: 'No account and nothing to install. The text you write stays on your device.',
     },
     {
-        title: 'Free, with no ads',
-        text: 'Open a tool and start. No sign-up, no ads, no tracking.',
+        title: 'Free, no sign-up',
+        text: 'Open a tool and start. No account, nothing to install. A few ads help keep it free.',
     },
 ] as const;
 
@@ -67,7 +68,7 @@ const FAQ: readonly FaqItem[] = [
     },
     {
         question: 'Does it cost anything?',
-        answer: 'No. The tools are free, and there are no ads.',
+        answer: 'No. The tools are free; a few ads help cover the running costs.',
     },
     {
         question: 'Do I need an account?',
@@ -227,6 +228,8 @@ export function HomePage() {
                     lists every one with its character cost.
                 </p>
             </section>
+
+            <AdSlot placement="home" className="mt-20 md:mt-28" />
 
             <section aria-labelledby="faq-title" className="mt-20 md:mt-28">
                 <SectionHeading id="faq-title" spot="chest">

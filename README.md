@@ -41,7 +41,6 @@ src/_pages/<page>/    One slice per page: ui/, model/, lib/, tests, public index
 src/shared/           Config, helpers, SEO and UI pieces reused across pages
 components/ui/        shadcn UI kit only
 public/               Images, PWA icons, llms.txt
-docs/                 Deployment guide
 ```
 
 The structure follows Feature-Sliced Design; see `CLAUDE.md` for the layer and import rules.
@@ -51,6 +50,10 @@ The structure follows Feature-Sliced Design; see `CLAUDE.md` for the layer and i
 The site is a static export hosted on Firebase Hosting. `.github/workflows/ci-cd.yml` runs lint, tests and
 build on every push and pull request, and deploys to the live channel on every push to `main` (or a manual
 run). Details, header rules and how to verify them are in [`docs/deployment-guide.md`](docs/deployment-guide.md).
+
+## Ads, analytics and consent
+
+Google AdSense and Google Analytics load only after consent through Google's TCF consent message.
 
 ## AI disclosure
 

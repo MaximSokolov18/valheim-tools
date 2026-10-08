@@ -36,10 +36,14 @@ export function TermsPage() {
                 to their respective owners and are used only to describe what the tools are for.
             </p>
 
-            <h2>5. Links</h2>
+            <h2>5. Links and advertising</h2>
             <p>
                 The site may link to other sites. We do not control them and are not responsible for their content. See
                 the <Link href="/privacy">Privacy Policy</Link> for how we handle personal data.
+            </p>
+            <p>
+                Some pages show ads, marked &quot;Advertisement&quot;, delivered by Google. Advertisers, not us, are
+                responsible for their ads and the sites they lead to; showing an ad does not mean we recommend it.
             </p>
 
             <h2>6. Availability and liability</h2>

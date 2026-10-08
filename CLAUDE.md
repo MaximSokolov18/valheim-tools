@@ -9,8 +9,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Viking Tools: free browser tools for Valheim players (sign editor, sign tag guide, legal pages). It is a
 fully static Next.js 16 (App Router) site: `output: 'export'` builds to `out/`, which is hosted on Firebase
 Hosting (see `docs/deployment-guide.md`). No server features: no route handlers reading requests, middleware,
-server actions, ISR, or `cookies()`/`headers()`. There are no cookies, ads, analytics or consent layer; do not
-re-add them unprompted.
+server actions, ISR, or `cookies()`/`headers()`.
+
+Google AdSense and Google Analytics 4 load only through `src/shared/lib/consent` after consent from Google's
+Privacy & messaging CMP (IAB TCF v2.2), configured by `NEXT_PUBLIC_*` env vars (see
+`docs/compliance/google-ads-analytics.md`). Never add a Google tag, pixel or other tracker outside that gate, never
+load one before consent, and keep the privacy policy (`src/_pages/legal/ui/privacy-page.tsx`) in sync with any change.
+Ads only go in fixed `<AdSlot placement="..." />` spots, never inside the editor UI.
 
 ## Commands
 

@@ -21,8 +21,17 @@ jobs:
 
       - uses: ./.github/actions/setup-node-app
 
+      # Google IDs are public values (they appear in the page) kept in repository variables, not secrets.
+      # Unset means no consent message, no Analytics and no ads in that build. See docs/compliance/google-ads-analytics.md.
       - name: Build static export
         run: npm run build
+        env:
+          NEXT_PUBLIC_ADSENSE_PUBLISHER_ID: ${{ vars.ADSENSE_PUBLISHER_ID }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
+          NEXT_PUBLIC_ADSENSE_SLOT_HOME: ${{ vars.ADSENSE_SLOT_HOME }}
+          NEXT_PUBLIC_ADSENSE_SLOT_GUIDE: ${{ vars.ADSENSE_SLOT_GUIDE }}
+          NEXT_PUBLIC_ADSENSE_SLOT_EDITOR: ${{ vars.ADSENSE_SLOT_EDITOR }}
+          NEXT_PUBLIC_ADSENSE_SLOT_EDITOR_RAIL: ${{ vars.ADSENSE_SLOT_EDITOR_RAIL }}
 
       # Deploy ships exactly this output instead of building a second time.
       - name: Upload build output

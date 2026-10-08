@@ -27,10 +27,18 @@ describe('PrivacyPage', () => {
         expect(screen.getAllByText(new RegExp(SITE.operator.contactEmail.replace(/[[\]]/g, '\\$&'))).length).toBeGreaterThan(0);
     });
 
-    it('states that there are no cookies, analytics or advertising, and discloses the theme preference', () => {
+    it('explains that analytics and ads need consent, and discloses local storage', () => {
         render(<PrivacyPage />);
-        expect(screen.getByText(/does not set cookies, run analytics or show advertising/i)).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /statistics \(google analytics\)/i })).toBeInTheDocument();
+        expect(screen.getByRole('heading', { name: /advertising \(google adsense\)/i })).toBeInTheDocument();
+        expect(screen.getByText(/until you choose, and if you say no/i)).toBeInTheDocument();
         expect(screen.getByText(/light or dark theme choice/i)).toBeInTheDocument();
+    });
+
+    it('tells visitors how to withdraw consent', () => {
+        render(<PrivacyPage />);
+        expect(screen.getByRole('heading', { name: /changing or withdrawing consent/i })).toBeInTheDocument();
+        expect(screen.getByText(/global privacy control/i)).toBeInTheDocument();
     });
 
     it('explains the data-subject rights and the right to complain', () => {

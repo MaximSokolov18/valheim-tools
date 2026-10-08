@@ -43,7 +43,7 @@ export function SupportDialog ({className}: {className?: string}) {
                         Support Viking Tools
                     </DialogTitle>
                     <DialogDescription className="text-[0.75rem] leading-relaxed">
-                        Viking Tools is free, with no ads or tracking, and I build it in my spare time. If it helped you
+                        Viking Tools is free, and I build it in my spare time. If it helped you
                         sort your chests, a small tip helps keep it running and supports the development of new tools.
                         Only if you’d like to support it. Thank you!
                     </DialogDescription>

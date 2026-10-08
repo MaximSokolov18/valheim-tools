@@ -5,6 +5,8 @@ import "./globals.css";
 import { cn } from "../lib/utils";
 import { SITE } from "@/shared/config/site";
 import { THEME_STORAGE_KEY } from "@/shared/config/theme";
+import { GoogleServices } from "@/shared/ui/google-services";
+import { GOOGLE } from "@/shared/config/google";
 
 
 const norse = localFont({
@@ -55,6 +57,8 @@ export const metadata: Metadata = {
   title: `${SITE.name} | Free Sign Editor & Tools for Valheim`,
   description: SITE.description,
   openGraph: { siteName: SITE.name, locale: SITE.locale, type: "website" },
+  // Lets AdSense verify site ownership without loading any ad code (that waits for consent).
+  ...(GOOGLE.publisherId && { other: { "google-adsense-account": `ca-${GOOGLE.publisherId}` } }),
 };
 
 export const viewport: Viewport = {
@@ -97,6 +101,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="min-h-full flex flex-col">
         {children}
+        <GoogleServices />
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 import { Note } from '../../../shared/ui/note';
 import { TextLink } from '../../../shared/ui/text-link';
+import { AdSlot } from '../../../shared/ui/ad-slot';
 
 export function SignEditorInfo() {
     return (
@@ -38,6 +39,8 @@ export function SignEditorInfo() {
                 The editor runs in your browser; your text is not sent to us. Viking Tools is an unofficial fan-made
                 project.
             </p>
+            {/* Below the editor and its explanation, well away from the toolbar and Copy button. */}
+            <AdSlot placement="editor" className="mt-12" />
         </section>
     );
 }

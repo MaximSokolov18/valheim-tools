@@ -1,5 +1,9 @@
 import Link from 'next/link';
 import { SITE } from '../config/site';
+import { PrivacySettingsButton } from './privacy-settings-button';
+
+const footerLink =
+    'underline-offset-4 decoration-1 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring rounded-sm';
 
 export function SiteFooter() {
     return (
@@ -36,6 +40,7 @@ export function SiteFooter() {
                                 Terms of Use
                             </Link>
                         </li>
+                        <PrivacySettingsButton className={`cursor-pointer font-medium ${footerLink}`} />
                     </ul>
                 </nav>
                 <p className="max-w-xl md:col-span-3 md:border-t md:border-border md:pt-4">

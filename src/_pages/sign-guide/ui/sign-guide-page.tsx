@@ -7,6 +7,7 @@ import { Card } from '../../../../components/ui/card';
 import { Note } from '../../../shared/ui/note';
 import { Spot } from '../../../shared/ui/spot';
 import { TextLink } from '../../../shared/ui/text-link';
+import { AdSlot } from '../../../shared/ui/ad-slot';
 import { SignExample } from './sign-example';
 import { SignGallery } from './sign-gallery';
 
@@ -124,6 +125,8 @@ export function SignGuidePage() {
                         </tbody>
                     </table>
                 </div>
+
+                <AdSlot placement="guide" className="mt-14" />
 
                 <h2 id="color" className={h2}>
                     Color and the order of tags
